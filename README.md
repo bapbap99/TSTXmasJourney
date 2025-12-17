@@ -1,5 +1,3 @@
-Ok anh, em soạn **README hướng dẫn người chơi** đúng theo logic + UI + flow của file HTML này.
-Anh chỉ việc **copy nguyên khối này → dán vào README.md** (hoặc gửi thẳng cho mọi người đọc cũng hiểu).
 
 ---
 
