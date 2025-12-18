@@ -3,14 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TRẠM 3: ONLINE GAMEFI</title>
+    <title>TRẠM 3: ONLINE PRO</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&family=Mali:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root { --bg-dark: #2b0a0a; --gold: #ffd700; --glass: rgba(20, 40, 20, 0.9); --glass-border: rgba(255, 215, 0, 0.3); }
+        :root { --bg-dark: #2b0a0a; --gold: #ffd700; --glass: rgba(20, 40, 20, 0.95); --glass-border: rgba(255, 215, 0, 0.3); }
         body { font-family: 'Mali', cursive; background-color: var(--bg-dark); background-image: repeating-linear-gradient(45deg, #3e0e0e 0, #3e0e0e 10px, #2b0a0a 10px, #2b0a0a 20px); color: #fff; margin: 0; min-height: 100vh; display: flex; justify-content: center; align-items: center; overflow-x: hidden; user-select: none; }
-        .snowflake { position: fixed; top: -10px; color: #fff; font-size: 8px; animation: snowfall linear infinite; pointer-events: none; opacity: 0.6; }
-        @keyframes snowfall { to { transform: translateY(100vh) rotate(360deg); opacity: 0; } }
         .app-container { width: 95%; max-width: 420px; background: var(--glass); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 2px solid var(--glass-border); border-radius: 24px; padding: 24px; box-shadow: 0 0 60px rgba(0,0,0,0.9); position: relative; z-index: 10; box-sizing: border-box; max-height: 98vh; overflow-y: auto; }
         h1 { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 26px; text-align: center; margin: 0; background: linear-gradient(to bottom, #fff, #ffd700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-transform: uppercase; filter: drop-shadow(0 2px 0 rgba(0,0,0,0.5)); }
         .subtitle { font-size: 12px; text-align: center; color: #aaa; margin-bottom: 25px; font-weight: 700; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
@@ -37,30 +35,33 @@
         .st-reject { color: #f44336; background: rgba(244, 67, 54, 0.1); border: 1px solid #f44336; }
         .list-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px dashed rgba(255,255,255,0.2); font-size: 13px; color: #eee; }
         #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 100; display: none; justify-content: center; align-items: center; }
-        .modal-card { background: #fff; width: 90%; max-width: 400px; padding: 25px; border-radius: 20px; border: 5px solid #1a4c1a; text-align: center; position: relative; }
+        .modal-card { background: #fff; width: 90%; max-width: 400px; padding: 25px; border-radius: 20px; border: 5px solid #1a4c1a; text-align: center; position: relative; max-height: 90vh; overflow-y: auto; }
         #adminPanel { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1a1a1a; z-index: 200; padding: 20px; overflow-y: auto; box-sizing: border-box; }
         .target-hl { color: #d32f2f; font-weight: bold; background: #ffeba0; padding: 0 4px; border-radius: 4px; }
         .btn-mini { padding: 4px 8px; font-size: 10px; border-radius: 4px; margin-left: 5px; cursor: pointer; border: none; font-weight: bold; }
         .shake { animation: shake 0.5s infinite; }
         @keyframes shake { 0%,100%{transform:rotate(0)} 25%{transform:rotate(3deg)} 75%{transform:rotate(-3deg)} }
-        @keyframes pulse { 0%{opacity:1} 50%{opacity:0.6} 100%{opacity:1} }
         .locked { filter: grayscale(1); opacity: 0.5; pointer-events: none; }
+        
+        /* Upload UI */
+        .upload-area { border: 2px dashed #aaa; padding: 15px; border-radius: 10px; margin: 10px 0; background: #f9f9f9; color: #555; font-size: 12px; }
+        .upload-preview { width: 100%; max-height: 200px; object-fit: contain; margin-top: 10px; border-radius: 8px; display: none; }
+        .admin-img-preview { width: 60px; height: 60px; object-fit: cover; border-radius: 5px; border: 1px solid #fff; cursor: pointer; }
+        .loading-spin { border: 3px solid #f3f3f3; border-top: 3px solid #3498db; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; margin-left: 5px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-<div id="snowContainer"></div>
-
 <div class="app-container">
     <div id="viewLogin">
         <div style="text-align:center; margin-bottom:30px;">
-            <div style="font-size:60px; margin-bottom:10px; filter: drop-shadow(0 0 10px gold);">🎄</div>
+            <div style="font-size:60px; margin-bottom:10px;">🎄</div>
             <h1>TRẠM 3</h1>
-            <h1 style="font-size: 20px; margin-top:5px; color:#fff;">ONLINE EDITION</h1>
-            <div class="subtitle">Đồng bộ dữ liệu thời gian thực</div>
+            <div class="subtitle">Hệ thống nhiệm vụ Online</div>
         </div>
         <label>CHỌN KHỐI</label>
-        <select id="selBlock" onchange="renderTeams()"><option>Đang kết nối Server...</option></select>
+        <select id="selBlock" onchange="renderTeams()"><option>Đang kết nối...</option></select>
         <div id="teamArea" style="display:none;">
             <label>CHỌN TEAM</label>
             <select id="selTeam"></select>
@@ -69,77 +70,81 @@
         </div>
         <button class="btn btn-primary" onclick="handleLogin()">BẮT ĐẦU</button>
         <div style="text-align:center; margin-top:20px;">
-            <span style="font-size:10px; color:#aaa; cursor:pointer; font-family:'Montserrat';" onclick="openAdminLogin()">[ BTC LOGIN ]</span>
+            <span style="font-size:10px; color:#aaa; cursor:pointer;" onclick="openAdminLogin()">[ BTC LOGIN ]</span>
         </div>
     </div>
 
     <div id="viewGame" style="display:none;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
             <div>
-                <div id="lblBlockName" style="font-size:11px; color:var(--gold); font-weight:bold; opacity:0.8; text-transform: uppercase;">KHỐI...</div>
-                <div id="lblTeamName" style="font-size:16px; font-weight:800; font-family:'Montserrat'; text-transform: uppercase;">TEAM...</div>
+                <div id="lblBlockName" style="font-size:11px; color:var(--gold); font-weight:bold;">KHỐI...</div>
+                <div id="lblTeamName" style="font-size:16px; font-weight:800;">TEAM...</div>
             </div>
-            <button onclick="logout()" style="background:#333; border:1px solid #555; color:#fff; width:36px; height:36px; border-radius:50%; cursor:pointer; font-weight:bold;">✕</button>
+            <button onclick="logout()" style="background:#333; color:#fff; width:36px; height:36px; border-radius:50%;">✕</button>
         </div>
         <div style="text-align:center;"><span id="statusBadge" class="badge st-ready">SẴN SÀNG</span></div>
         <div class="dashboard">
-            <div style="font-size:10px; color:#aaa; font-family:'Montserrat'; font-weight:bold;">SỐ DƯ TEAM</div>
+            <div style="font-size:10px; color:#aaa;">SỐ DƯ TEAM</div>
             <div class="balance" id="lblBalance">0</div>
-            <div style="font-size:11px; color:#ccc; margin-top:5px;">MỤC TIÊU: <span id="lblCap" style="color:#fff;">0</span></div>
+            <div style="font-size:11px; color:#ccc;">MỤC TIÊU: <span id="lblCap">0</span></div>
             <div class="progress-bar"><div id="progBar" class="progress-fill"></div></div>
         </div>
         <div class="gacha-container" onclick="spinGacha()">
             <div class="card-inner" id="cardInner">
                 <div class="card-face card-front">
-                    <div style="font-size:80px; filter:drop-shadow(0 5px 5px rgba(0,0,0,0.5));">🎅</div>
-                    <div style="font-family:'Montserrat'; font-weight:800; font-size:14px; margin-top:20px; color:var(--gold); text-shadow: 0 1px 2px black;">RÚT THẺ ONLINE</div>
-                    <div style="font-size:10px; color:#ccc; margin-top:5px;">Kết nối an toàn (Supabase)</div>
+                    <div style="font-size:80px;">🎅</div>
+                    <div style="font-weight:800; color:var(--gold);">RÚT NHIỆM VỤ</div>
                 </div>
                 <div class="card-face card-back" id="cardResult">
                     <div id="resRarity" class="rarity-tag" style="background:#555;">COMMON</div>
-                    <div id="resName" style="font-family:'Montserrat'; font-weight:800; font-size:16px; margin:15px 0; line-height:1.4; color:#d32f2f;">TASK</div>
+                    <div id="resName" style="font-weight:800; font-size:16px; color:#d32f2f;">TASK</div>
                     <div id="resVal" style="font-size:32px; font-weight:800; color:#f57f17;">+0</div>
                     <button class="btn btn-primary" style="margin-top:auto; font-size:12px; padding:10px;" onclick="openFullTask(event)">XEM CHI TIẾT</button>
                 </div>
             </div>
         </div>
-        <div id="msgStatus" style="text-align:center; font-size:13px; color:#ddd; min-height:40px; margin-bottom:20px; font-style: italic;">...</div>
-        <div style="background:rgba(0,0,0,0.3); padding:15px; border-radius:15px; border:1px solid rgba(255,255,255,0.1);">
-            <div style="font-size:11px; font-family:'Montserrat'; color:var(--gold); font-weight:bold; margin-bottom:10px; text-transform: uppercase;">TIẾN ĐỘ KHỐI (LIVE)</div>
+        <div id="msgStatus" style="text-align:center; font-size:13px; color:#ddd; min-height:40px; font-style: italic;">...</div>
+        <div style="background:rgba(0,0,0,0.3); padding:15px; border-radius:15px;">
             <div id="statusList"></div>
         </div>
     </div>
 
     <div id="adminPanel">
         <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #444; padding-bottom:15px; margin-bottom:20px;">
-            <h2 style="font-family:'Montserrat'; font-size:18px; color:var(--gold); margin:0;">BTC PANEL</h2>
-            <button onclick="closeAdmin()" style="background:#444; color:#fff; border:none; padding:8px 16px; border-radius:8px; font-weight:bold;">ĐÓNG</button>
+            <h2 style="font-size:18px; color:var(--gold);">BTC PANEL</h2>
+            <button onclick="closeAdmin()" style="background:#444; color:#fff; border:none; padding:8px;">ĐÓNG</button>
         </div>
-        <div style="font-size:12px; color:#aaa; margin-bottom:10px;">BÀI CHỜ DUYỆT (TỰ ĐỘNG CẬP NHẬT):</div>
         <div id="pendingList"></div>
-        <div style="margin-top:40px; border-top:1px dashed #444; padding-top:20px;">
-            <h3 style="font-family:'Montserrat'; font-size:14px; color:#fff;">TỔNG QUÁT</h3>
-            <div id="adminOverviewList"></div>
-        </div>
-        <button class="btn" style="margin-top:40px; background:#500; color:#ffaaaa; border:1px solid #800;" onclick="resetServerData()">⚠️ RESET TOÀN BỘ SERVER</button>
+        <div id="adminOverviewList" style="margin-top:20px;"></div>
+        <button class="btn" style="margin-top:40px; background:#500;" onclick="resetServerData()">RESET SERVER</button>
     </div>
 </div>
 
 <div id="overlay">
     <div class="modal-card">
-        <div style="font-size:40px; margin-bottom:10px;">📜</div>
-        <div id="modalVal" style="font-family:'Montserrat'; background:var(--gold); color:#2b0a0a; display:inline-block; padding:4px 15px; border-radius:20px; font-weight:800;">+0</div>
-        <h2 id="modalName" style="font-family:'Montserrat'; font-size:20px; margin:15px 0; line-height:1.4; color:#1a4c1a; font-weight: 800;">MISSION</h2>
-        <div style="text-align:left; font-size:14px; color:#333; line-height:1.6; background:#f5f5f5; padding:15px; border-radius:10px; border:1px solid #ddd;">
-            <div style="font-size:11px; color:#d32f2f; font-weight:bold; font-family:'Montserrat'; margin-bottom:5px;">YÊU CẦU: <span id="modalReq" style="color:#333">...</span></div>
+        <div style="font-size:40px;">📜</div>
+        <div id="modalVal" style="background:var(--gold); color:#2b0a0a; display:inline-block; padding:4px 15px; border-radius:20px; font-weight:800;">+0</div>
+        <h2 id="modalName" style="font-size:18px; color:#1a4c1a; font-weight:800; margin:10px 0;">MISSION</h2>
+        <div style="text-align:left; background:#f5f5f5; padding:10px; border-radius:10px; color:#333; font-size:13px;">
+            <div style="color:#d32f2f; font-weight:bold;">YÊU CẦU: <span id="modalReq">...</span></div>
             <span id="modalDesc">...</span>
         </div>
-        <div style="font-size:11px; color:#155724; margin:20px 0; text-align:left; border:1px solid #c3e6cb; padding:10px; border-radius:8px; background:#d4edda;">
-            <b>📸 LƯU Ý:</b> Nhớ chụp ảnh/video minh chứng. Khi bấm Nộp bài, dữ liệu sẽ gửi thẳng về máy BTC.
+        
+        <div class="upload-area">
+            <label for="evidenceFile" style="cursor:pointer; display:block;">
+                📸 <b>CHỤP ẢNH / TẢI ẢNH LÊN</b><br>(Bắt buộc - Tối đa 5MB)
+            </label>
+            <input type="file" id="evidenceFile" accept="image/*" style="display:none;" onchange="previewImage(this)">
+            <img id="imgPreview" class="upload-preview">
         </div>
-        <button class="btn btn-primary" onclick="submitTask()">NỘP BÀI</button>
+
+        <button class="btn btn-primary" id="btnSubmit" onclick="submitTask()">NỘP BÀI</button>
         <div style="margin-top:15px; font-size:12px; color:#777; cursor:pointer; text-decoration: underline;" onclick="closeTask()">Để sau làm</div>
     </div>
+</div>
+
+<div id="imgModal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:300; display:none; justify-content:center; align-items:center;" onclick="this.style.display='none'">
+    <img id="imgFullView" style="max-width:95%; max-height:95%; border-radius:10px;">
 </div>
 
 <script>
@@ -152,24 +157,18 @@
     let serverData = { teams:{}, requests:{}, boss:{} }; 
     let syncInterval = null;
 
-    // --- CẬP NHẬT CƠ CẤU KHỐI THƯƠNG MẠI (TM) ---
     const ORG_CHART = {
-        "TM": { name: "KHỐI THƯƠNG MẠI", subs: [ 
-            {name:"MICE Team 01", pass:"mice1"}, 
-            {name:"MICE Team 02", pass:"mice2"}, 
-            {name:"Core Team", pass:"core"}, 
-            {name:"BD Team", pass:"bd"},
-            {name:"Team TC", pass:"tc"},  // MỚI
-            {name:"Team B2B", pass:"b2b"}   // MỚI: B2 -> B2B, pass: b2b
-        ]},
+        "TM": { name: "KHỐI THƯƠNG MẠI", subs: [ {name:"MICE Team 01", pass:"mice1"}, {name:"MICE Team 02", pass:"mice2"}, {name:"Core Team", pass:"core"}, {name:"BD Team", pass:"bd"}, {name:"Team TC", pass:"tc"}, {name:"Team B2B", pass:"b2b"} ]},
         "KD": { name: "KHỐI KD & TIẾP THỊ", subs: [ {name:"Tư vấn Khách lẻ", pass:"fit"}, {name:"Tiếp thị (MKT)", pass:"mkt"}, {name:"Sản phẩm (Product)", pass:"prod"}, {name:"Đối tác (Partner)", pass:"partner"}, {name:"Thương hiệu (Brand)", pass:"brand"} ]},
         "DH": { name: "KHỐI ĐIỀU HÀNH", subs: [ {name:"Điều hành Tour & Visa", pass:"ops"}, {name:"Vé máy bay", pass:"ticket"}, {name:"Hướng dẫn viên", pass:"guide"} ]},
         "TCHC": { name: "KHỐI TCHC & IT", subs: [ {name:"Tài chính - KT", pass:"acc"}, {name:"Hành chính - NS", pass:"hr"}, {name:"Công nghệ (IT)", pass:"it"} ]}
     };
     
-    // FULL 50 NHÂN SỰ
-    const STAFF_DB = [ {name:"Lại Minh Duy", role:"CT.HĐQT", block:"BOD"}, {name:"Mai Hữu Minh Phúc", role:"CEO", block:"BOD"}, {name:"Nguyễn Thị Thu Hương", role:"GĐ QL Rủi Ro", block:"BOD"}, {name:"Thái Hồng Quang", role:"TP CNTT", block:"TCHC"}, {name:"Trần Lê Nhật Tuấn", role:"PP CNTT", block:"TCHC"}, {name:"Nguyễn Thị Thu Hương", role:"GĐ Tài chính", block:"TCHC"}, {name:"Lê Thị Như Cát Tiên", role:"Kế toán thuế", block:"TCHC"}, {name:"Võ Thùy Phương Thảo", role:"Nhân sự", block:"TCHC"}, {name:"Nguyễn Phan Phục An", role:"Pháp chế", block:"TCHC"}, {name:"Nguyễn Thị Tuyết Hạnh", role:"Kế toán", block:"TCHC"}, {name:"Trần Thị Hồng Gấm", role:"Kế toán", block:"TCHC"}, {name:"Lê Văn Tám", role:"Bảo vệ", block:"TCHC"}, {name:"Nguyễn Văn Bình", role:"Tài xế", block:"TCHC"}, {name:"Phạm Thị Lan", role:"Tạp vụ", block:"TCHC"}, {name:"Lê Tuấn Anh", role:"IT Helpdesk", block:"TCHC"}, {name:"Trần Ngọc Quỳnh Hương", role:"Sản phẩm", block:"KD"}, {name:"Huỳnh Ngọc Quý", role:"Sản phẩm", block:"KD"}, {name:"Võ Khánh Tường", role:"Sản phẩm", block:"KD"}, {name:"Bùi Thanh Sang", role:"Sản phẩm", block:"KD"}, {name:"Lại Thị Ngọc Bích", role:"GĐ Tiếp thị", block:"KD"}, {name:"Nguyễn Thị Mỹ Nhung", role:"Trợ lý GĐ MKT", block:"KD"}, {name:"Nguyễn Hồng Anh", role:"Q.TP FIT", block:"KD"}, {name:"Đỗ Thị Uyên Nhi", role:"Sales FIT", block:"KD"}, {name:"Nguyễn Thị Thanh", role:"TP Đối tác", block:"KD"}, {name:"Phạm Hoàng Yến", role:"Content MKT", block:"KD"}, {name:"Lê Quang Huy", role:"Designer", block:"KD"}, {name:"Trần Thị Bích Ngọc", role:"Tư vấn viên", block:"KD"}, {name:"Nguyễn Mai Hương", role:"CSKH", block:"KD"}, {name:"Nguyễn Ngọc Diễm Quỳnh", role:"TP MICE", block:"TM"}, {name:"Nguyễn Lê Nhật Tân", role:"TN MICE", block:"TM"}, {name:"Vũ Ngọc Tân", role:"TP GIT", block:"TM"}, {name:"Trần Anh Khoa", role:"Q.TP GIT", block:"TM"}, {name:"Nguyễn Đình Tấn Kiệt", role:"TN Sales", block:"TM"}, {name:"Phạm Văn Hùng", role:"BD Team", block:"TM"}, {name:"Lê Thị Mai", role:"Sales MICE", block:"TM"}, {name:"Trần Quốc Bảo", role:"Sales MICE", block:"TM"}, {name:"Nguyễn Thu Trang", role:"Core Team", block:"TM"}, {name:"Hoàng Văn Minh", role:"Core Team", block:"TM"}, {name:"Võ Thị Ánh", role:"Sales Admin", block:"TM"}, {name:"Huỳnh Việt Trung", role:"TP Vé", block:"DH"}, {name:"Nguyễn Tấn Mạnh", role:"TN Visa", block:"DH"}, {name:"Diệp Thụy Oanh", role:"GĐ Tour", block:"DH"}, {name:"Hồ Đăng Khoa", role:"HDV", block:"DH"}, {name:"Lê Thành Tài", role:"HDV", block:"DH"}, {name:"Trịnh Thế Cường", role:"HDV", block:"DH"}, {name:"Nguyễn Phương Tiên", role:"HDV", block:"DH"}, {name:"Phạm Thu Thủy", role:"Điều hành", block:"DH"}, {name:"Trần Văn Nam", role:"Điều hành xe", block:"DH"}, {name:"Lý Thị Hoa", role:"Ticketing", block:"DH"}, {name:"Nguyễn Văn Dũng", role:"Visa", block:"DH"} ];
-    // FULL 50 TASKS
+    // STAFF MOI
+    const STAFF_DB = [
+        {name:"Lại Minh Duy", role:"Chủ tịch HĐQT", block:"BOD"}, {name:"Mai Hữu Minh Phúc", role:"CEO", block:"BOD"}, {name:"Thái Hồng Quang", role:"Trưởng phòng Giải pháp Công nghệ", block:"TCHC"}, {name:"Trần Lê Nhật Tuấn", role:"Phó phòng Giải pháp Công nghệ", block:"TCHC"}, {name:"Nguyễn Thị Thu Hương", role:"Giám đốc Tài chính", block:"TCHC"}, {name:"Lê Thị Như Cát Tiên", role:"Trưởng phòng Kế toán", block:"TCHC"}, {name:"Phạm Thị Minh Châu", role:"Kế toán", block:"TCHC"}, {name:"Võ Thùy Phương Thảo", role:"Nhân sự", block:"TCHC"}, {name:"Nguyễn Phan Phúc An", role:"Pháp chế", block:"TCHC"}, {name:"Nguyễn Thị Tuyết Nhung", role:"Lễ Tân", block:"TCHC"}, {name:"Nguyễn Thị Tuyết Hạnh", role:"Kế toán", block:"TCHC"}, {name:"Bùi Ngọc Dung", role:"Tạp vụ", block:"TCHC"}, {name:"Nguyễn Anh Tú", role:"Kế Toán", block:"TCHC"}, {name:"Trần Ngọc Quỳnh Hương", role:"Sản phẩm", block:"KD"}, {name:"Huỳnh Ngọc Quý", role:"Sản phẩm", block:"KD"}, {name:"Võ Khánh Tường", role:"Sản phẩm", block:"KD"}, {name:"Bùi Thanh Sang", role:"Sản phẩm", block:"KD"}, {name:"Lại Thị Ngọc Bích", role:"GĐ Tiếp thị", block:"KD"}, {name:"Nguyễn Thị Hoài Thương", role:"B2C", block:"KD"}, {name:"Tăng Bửu Oanh", role:"B2C", block:"KD"}, {name:"Lê Xuân Yến Ngọc", role:"B2C", block:"KD"}, {name:"Chung Cát Tiên", role:"B2C", block:"KD"}, {name:"Nguyễn Thùy Trang", role:"MKT", block:"KD"}, {name:"Nguyễn Lê Trung", role:"MKT", block:"KD"}, {name:"Nguyễn Huy Khôi", role:"MKT", block:"KD"}, {name:"Nguyễn Thị Mỹ Nhung", role:"Trợ lý GĐ Khối", block:"KD"}, {name:"Đỗ Thị Uyển Nhi", role:"Core Team", block:"KD"}, {name:"Lê Đinh Quang Huy", role:"TL CTHĐQT", block:"KD"}, {name:"Nguyễn Thanh Tuấn", role:"Sales Mice1", block:"KD"}, {name:"Hồ Chí Khang", role:"Sales Mice1", block:"KD"}, {name:"Nguyễn Ngọc Diễm Quỳnh", role:"TP MICE1", block:"TM"}, {name:"Nguyễn Lê Nhật Tân", role:"TN MICE1", block:"TM"}, {name:"Vũ Ngọc Phương Linh", role:"Phó Giám đốc BD", block:"TM"}, {name:"Hoàng Thị Lan Anh", role:"BD 02", block:"TM"}, {name:"Vũ Ngọc Tân", role:"TP MICE2", block:"TM"}, {name:"Trần Anh Khoa", role:"Core Team", block:"TM"}, {name:"Nguyễn Như Mai Hân", role:"Trợ Lý GĐTM", block:"TM"}, {name:"Nguyễn Hoàng Thụy Diệp My", role:"Core Team", block:"TM"}, {name:"Huỳnh Viết Trung", role:"TP Vé", block:"DH"}, {name:"Nguyễn Tấn Mạnh", role:"TN Visa", block:"DH"}, {name:"Diệp Thúy Oanh", role:"GĐ Tour", block:"DH"}, {name:"Hồ Đăng Khoa", role:"HDV", block:"DH"}, {name:"Lê Thành Tài", role:"HDV", block:"DH"}, {name:"Lâm Sanyo", role:"HDV", block:"DH"}, {name:"Nguyễn Phương Tiến", role:"HDV", block:"DH"}, {name:"Nguyễn Mạnh Dũng", role:"GĐTM", block:"KD"}, {name:"Phan Tuấn Nguyên", role:"TPDH", block:"DH"}, {name:"Hồ Ngọc Hoàn Nhi", role:"visa", block:"DH"}, {name:"Hồng Ân", role:"ĐH", block:"DH"}, {name:"Hoàng Nhân", role:"HDV", block:"DH"}
+    ];
+
     const TASKS = [ {val:2000, req:"1 Đại diện", name:"XIN NƯỚC", desc:"Tìm <span class='target-hl'>{target} - {block}</span> xin 1 ngụm nước uống. Phải xin cho bằng được!"}, {val:2000, req:"1 Đại diện", name:"XIN KẸO", desc:"Tìm <span class='target-hl'>{target} ({role})</span> xin 1 cái kẹo hoặc bánh."}, {val:5000, req:"1 Đại diện", name:"KHEN NGỢI", desc:"Tìm gặp <span class='target-hl'>{target}</span> và khen 1 câu thật lòng (áo đẹp, tóc xinh...)."}, {val:2000, req:"1 Đại diện", name:"ĐẬP TAY", desc:"Tìm <span class='target-hl'>{target}</span> và đập tay High-five thật to."}, {val:5000, req:"1 Đại diện", name:"CHÚC MỪNG", desc:"Gửi lời chúc Giáng sinh ấm áp đến <span class='target-hl'>{target}</span>."}, {val:2000, req:"1 Đại diện", name:"HỎI THĂM", desc:"Hỏi <span class='target-hl'>{target}</span>: 'Hôm nay bạn thế nào?'."}, {val:5000, req:"1 Đại diện", name:"BÓP VAI", desc:"Đến bóp vai cho <span class='target-hl'>{target}</span> trong 10 giây."}, {val:2000, req:"1 Đại diện", name:"MỜI NƯỚC", desc:"Rót 1 ly nước mời <span class='target-hl'>{target}</span>."}, {val:5000, req:"1 Đại diện", name:"CƯỜI TƯƠI", desc:"Đến trước mặt <span class='target-hl'>{target}</span> và cười thật tươi trong 5 giây."}, {val:2000, req:"1 Đại diện", name:"CẢM ƠN", desc:"Tìm <span class='target-hl'>{target}</span> và nói 'Cảm ơn vì đã là đồng nghiệp của tôi'."}, {val:5000, req:"2 Đại diện", name:"SELFIE NHÓM", desc:"Rủ <span class='target-hl'>{target}</span> chụp chung 1 tấm hình selfie nhóm 3 người."}, {val:5000, req:"3 Đại diện", name:"TẠO DÁNG", desc:"Cùng <span class='target-hl'>{target}</span> tạo dáng 'Trái Tim' và chụp lại."}, {val:5000, req:"2 Đại diện", name:"CHECK-IN CÂY THÔNG", desc:"Rủ <span class='target-hl'>{target}</span> ra cây thông công ty check-in."}, {val:5000, req:"2 Đại diện", name:"CHỤP LÉN", desc:"Chụp 1 bức ảnh <span class='target-hl'>{target}</span> đang làm việc chăm chỉ (Góc đẹp)."}, {val:5000, req:"Cả Team", name:"ẢNH GIA ĐÌNH", desc:"Cả Team chụp 1 bức ảnh tập thể tại chỗ ngồi."}, {val:5000, req:"2 Đại diện", name:"MẶT NGẦU", desc:"Rủ <span class='target-hl'>{target}</span> chụp kiểu ảnh 'Thanh niên nghiêm túc'."}, {val:5000, req:"2 Đại diện", name:"STYLE HÀN QUỐC", desc:"Rủ <span class='target-hl'>{target}</span> bắn tim kiểu Hàn Quốc."}, {val:5000, req:"1 Đại diện", name:"SELFIE GƯƠNG", desc:"Chụp ảnh selfie trước gương cùng <span class='target-hl'>{target}</span>."}, {val:5000, req:"2 Đại diện", name:"CHỤP GIÀY", desc:"Chụp ảnh check-in giày của bạn và <span class='target-hl'>{target}</span> chụm lại nhau."}, {val:5000, req:"2 Đại diện", name:"QUAY BOOMERANG", desc:"Quay 1 đoạn Boomerang nhún nhảy cùng <span class='target-hl'>{target}</span>."}, {val:5000, req:"1 Đại diện", name:"HÁT TẶNG", desc:"Hát tặng <span class='target-hl'>{target}</span> một câu 'Last Christmas'."}, {val:5000, req:"2 Đại diện", name:"MÚA QUẠT", desc:"Múa quạt 10 giây trước mặt <span class='target-hl'>{target}</span> để giải trí."}, {val:5000, req:"1 Đại diện", name:"KỂ CHUYỆN CƯỜI", desc:"Kể cho <span class='target-hl'>{target}</span> nghe 1 câu chuyện cười. Phải làm họ cười mới tính."}, {val:2000, req:"1 Đại diện", name:"OẲN TÙ TÌ", desc:"Rủ <span class='target-hl'>{target}</span> chơi Oẳn tù tì 3 ván. Thắng hay thua đều được."}, {val:5000, req:"1 Đại diện", name:"ĐỐ VUI", desc:"Đố <span class='target-hl'>{target}</span> một câu đố mẹo. Quay lại cảnh trả lời."}, {val:5000, req:"2 Đại diện", name:"NHẢY TỰ DO", desc:"Nhảy một điệu tự do bất kỳ cùng <span class='target-hl'>{target}</span>."}, {val:5000, req:"1 Đại diện", name:"ĐỌC THƠ", desc:"Đọc tặng <span class='target-hl'>{target}</span> 2 câu thơ chế vui vẻ."}, {val:5000, req:"1 Đại diện", name:"LÀM ẢO THUẬT", desc:"Biểu diễn 1 trò ảo thuật nhỏ cho <span class='target-hl'>{target}</span> xem."}, {val:2000, req:"2 Đại diện", name:"VẬT TAY", desc:"Thử vật tay giao hữu với <span class='target-hl'>{target}</span>."}, {val:5000, req:"1 Đại diện", name:"XEM BÓI", desc:"Xem chỉ tay phán bừa cho <span class='target-hl'>{target}</span> (Vui là chính)."}, {val:5000, req:"2 Đại diện", name:"PHỎNG VẤN", desc:"Hỏi <span class='target-hl'>{target}</span>: 'Món quà Noel thích nhất là gì?'."}, {val:5000, req:"1 Đại diện", name:"ĐIỀU TRA", desc:"Hỏi <span class='target-hl'>{target}</span>: 'Cung hoàng đạo của bạn là gì?'."}, {val:5000, req:"1 Đại diện", name:"SỞ THÍCH", desc:"Hỏi <span class='target-hl'>{target}</span> xem họ thích ăn món gì nhất."}, {val:5000, req:"1 Đại diện", name:"DỰ ĐỊNH", desc:"Hỏi <span class='target-hl'>{target}</span>: 'Tết này đi đâu chơi?'."}, {val:5000, req:"1 Đại diện", name:"THẦN TƯỢNG", desc:"Hỏi <span class='target-hl'>{target}</span> xem thần tượng của họ là ai."}, {val:5000, req:"1 Đại diện", name:"BÀI HÁT", desc:"Hỏi <span class='target-hl'>{target}</span> bài hát họ nghe gần đây nhất."}, {val:5000, req:"1 Đại diện", name:"REVIEW", desc:"Nhờ <span class='target-hl'>{target}</span> review bữa trưa hôm nay của họ."}, {val:5000, req:"1 Đại diện", name:"THÚ CƯNG", desc:"Hỏi xem <span class='target-hl'>{target}</span> có nuôi chó mèo không."}, {val:5000, req:"1 Đại diện", name:"MÀU SẮC", desc:"Hỏi xem <span class='target-hl'>{target}</span> thích màu gì nhất."}, {val:5000, req:"1 Đại diện", name:"KỶ NIỆM", desc:"Hỏi <span class='target-hl'>{target}</span> về kỷ niệm vui nhất tại TST."}, {val:2000, req:"Cả Team", name:"DỌN DẸP", desc:"Cả team cùng sắp xếp lại bàn ghế trong 1 phút."}, {val:2000, req:"Cả Team", name:"THỂ DỤC", desc:"Cả team đứng dậy vươn vai 5 lần cho khỏe."}, {val:5000, req:"3 Đại diện", name:"TÌM MÀU ĐỎ", desc:"Tìm 1 người mặc áo ĐỎ (khác Team) và chúc họ Giáng sinh vui vẻ."}, {val:5000, req:"3 Đại diện", name:"TÌM MÀU XANH", desc:"Tìm 1 người mặc áo XANH (khác Team) và High-five."}, {val:5000, req:"2 Đại diện", name:"TÌM KÍNH CẬN", desc:"Tìm 1 người đeo kính (khác Team) để chụp ảnh chung."}, {val:2000, req:"1 Đại diện", name:"BẢO VỆ", desc:"Ra cổng bắt tay chú Bảo vệ và cảm ơn chú."}, {val:2000, req:"1 Đại diện", name:"TẠP VỤ", desc:"Tìm cô Tạp vụ và chúc cô một ngày vui vẻ."}, {val:2000, req:"2 Đại diện", name:"BÃO LIKE", desc:"Vào Page công ty thả tim 5 bài mới nhất."}, {val:5000, req:"Cả Team", name:"UỐNG NƯỚC", desc:"Cả team cùng nâng ly nước hô 'Dô' thật to."}, {val:5000, req:"2 Đại diện", name:"TÌM TRAI ĐẸP", desc:"Tìm bạn nam đẹp trai nhất khối khác để chụp ảnh."} ];
     const BOSS_CEO = { val:50000, req:"TOÀN KHỐI", name:"VỆ SĨ CEO", desc:"Tìm <b>CEO Mai Hữu Minh Phúc</b>. Cả Khối vây quanh, khoanh tay đeo kính ngầu chụp ảnh 'Biệt đội bảo vệ Sếp'." };
     const BOSS_CHAIRMAN = { val:50000, req:"TOÀN KHỐI", name:"TIM CHỦ TỊCH", desc:"Tìm <b>Chủ tịch Lại Minh Duy</b>. Cả Khối cùng đứng xung quanh và tạo dáng 'Bắn Tim' chụp ảnh." };
@@ -187,12 +186,13 @@
     window.adminApprove = adminApprove;
     window.adminReject = adminReject;
     window.resetServerData = resetServerData;
+    window.previewImage = previewImage;
+    window.showImage = showImage;
 
-    function startPolling() { fetchData(); syncInterval = setInterval(fetchData, 2000); }
+    function startPolling() { fetchData(); syncInterval = setInterval(fetchData, 3000); }
     async function fetchData() {
         try {
-            const { data, error } = await db.from('gamestate').select('data').eq('id', 'main').single();
-            if(error) throw error;
+            const { data } = await db.from('gamestate').select('data').eq('id', 'main').single();
             if(data && data.data) {
                 serverData = data.data;
                 if(!serverData.teams) serverData.teams = {};
@@ -201,9 +201,9 @@
                 if(curBlock) updateUI();
                 if(document.getElementById('adminPanel').style.display === 'block') renderAdmin();
             }
-        } catch(err) { console.error("Sync error:", err); }
+        } catch(err) { console.error(err); }
     }
-    async function saveData() { const { error } = await db.from('gamestate').update({ data: serverData }).eq('id', 'main'); if(error) alert("Save error: " + error.message); }
+    async function saveData() { await db.from('gamestate').update({ data: serverData }).eq('id', 'main'); }
 
     function initLogin() { const s = document.getElementById('selBlock'); s.innerHTML='<option value="">-- CHỌN KHỐI --</option>'; for(let k in ORG_CHART) s.innerHTML+=`<option value="${k}">${ORG_CHART[k].name}</option>`; }
     function renderTeams() { curBlock = document.getElementById('selBlock').value; const s = document.getElementById('selTeam'); document.getElementById('teamArea').style.display = curBlock ? 'block' : 'none'; s.innerHTML='<option value="">-- CHỌN TEAM --</option>'; if(curBlock) ORG_CHART[curBlock].subs.forEach((t,i)=>s.innerHTML+=`<option value="${i}">${t.name}</option>`); }
@@ -212,17 +212,153 @@
     function calcBudget() { const d = new Date().getDate(); const BLOCK_CAPS = { 18:200000, 19:400000, 20:600000, 21:800000, 22:1000000, 23:1250000 }; let k = d < 18 ? 18 : (d > 23 ? 23 : d); subCap = Math.floor((BLOCK_CAPS[k] || 200000) / ORG_CHART[curBlock].subs.length / 1000) * 1000; }
     function getTeamData(b, i) { if(serverData.teams && serverData.teams[b] && serverData.teams[b][i]) { return serverData.teams[b][i]; } return { bal: 0, st: 0, msg: "" }; }
     function checkBlockSync() { let allDone = true; ORG_CHART[curBlock].subs.forEach((s,i) => { const t = getTeamData(curBlock, i); if(t.bal < subCap) allDone = false; }); return allDone; }
-    function updateUI() { if(!curBlock || curSubIdx === -1) return; const myData = getTeamData(curBlock, curSubIdx); document.getElementById('lblBalance').innerText = myData.bal.toLocaleString(); document.getElementById('lblCap').innerText = subCap.toLocaleString(); document.getElementById('progBar').style.width = Math.min((myData.bal/subCap)*100, 100) + "%"; const gBtn = document.getElementById('cardInner'); const msg = document.getElementById('msgStatus'); const badge = document.getElementById('statusBadge'); gBtn.classList.remove('locked'); badge.className = "badge st-ready"; badge.innerText = "SẴN SÀNG"; msg.innerText = "👇 Bấm vào túi quà ông già Noel để nhận nhiệm vụ!"; if(myData.st === 1) { gBtn.classList.add('locked'); badge.className = "badge st-pending"; badge.innerText = "CHỜ DUYỆT"; msg.innerText = "Đã gửi. Đang chờ BTC..."; } else if(myData.st === 2) { badge.className = "badge st-reject"; badge.innerText = "TỪ CHỐI"; msg.innerHTML = "<span style='color:#f44336'>BTC: " + (myData.msg || "Làm lại") + "</span>"; } else if(myData.bal >= subCap) { if(checkBlockSync()) { if(serverData.boss && serverData.boss[curBlock]) { msg.innerHTML = "<span style='color:#4caf50; font-weight:bold;'>🏆 TUYỆT VỜI! ĐÃ HOÀN THÀNH.</span>"; gBtn.classList.add('locked'); } else { msg.innerHTML = "<span style='color:var(--gold); font-weight:bold;'>🔥 BOSS XUẤT HIỆN! MỞ QUÀ NGAY!</span>"; } } else { gBtn.classList.add('locked'); badge.className = "badge st-pending"; badge.innerText = "ĐỢI ĐỒNG ĐỘI"; msg.innerText = "Team bạn đã xong. Hãy giúp team khác cùng Khối!"; } } let html = ""; ORG_CHART[curBlock].subs.forEach((s,i) => { const t = getTeamData(curBlock, i); let txt = t.bal >= subCap ? "XONG" : (t.st===1 ? "CHỜ..." : "..."); let color = t.bal >= subCap ? "#4caf50" : (t.st===1 ? "var(--gold)" : "#aaa"); html += `<div class="list-item" style="opacity:${i==curSubIdx?1:0.5}"> <span>${s.name}</span> <span style="color:${color}; font-family:'Montserrat'; font-size:10px; font-weight:bold;">${txt} [${t.bal.toLocaleString()}]</span> </div>`; }); document.getElementById('statusList').innerHTML = html; }
+    
+    function updateUI() { 
+        if(!curBlock || curSubIdx === -1) return; 
+        const myData = getTeamData(curBlock, curSubIdx); 
+        document.getElementById('lblBalance').innerText = myData.bal.toLocaleString(); 
+        document.getElementById('lblCap').innerText = subCap.toLocaleString(); 
+        document.getElementById('progBar').style.width = Math.min((myData.bal/subCap)*100, 100) + "%"; 
+        const gBtn = document.getElementById('cardInner'); const msg = document.getElementById('msgStatus'); const badge = document.getElementById('statusBadge'); 
+        gBtn.classList.remove('locked'); badge.className = "badge st-ready"; badge.innerText = "SẴN SÀNG"; msg.innerText = "👇 Bấm vào túi quà ông già Noel để nhận nhiệm vụ!"; 
+        if(myData.st === 1) { gBtn.classList.add('locked'); badge.className = "badge st-pending"; badge.innerText = "CHỜ DUYỆT"; msg.innerText = "Đã gửi. Đang chờ BTC..."; } 
+        else if(myData.st === 2) { badge.className = "badge st-reject"; badge.innerText = "TỪ CHỐI"; msg.innerHTML = "<span style='color:#f44336'>BTC: " + (myData.msg || "Làm lại") + "</span>"; } 
+        else if(myData.bal >= subCap) { 
+            if(checkBlockSync()) { 
+                if(serverData.boss && serverData.boss[curBlock]) { msg.innerHTML = "<span style='color:#4caf50; font-weight:bold;'>🏆 TUYỆT VỜI! ĐÃ HOÀN THÀNH.</span>"; gBtn.classList.add('locked'); } 
+                else { msg.innerHTML = "<span style='color:var(--gold); font-weight:bold;'>🔥 BOSS XUẤT HIỆN! MỞ QUÀ NGAY!</span>"; } 
+            } else { gBtn.classList.add('locked'); badge.className = "badge st-pending"; badge.innerText = "ĐỢI ĐỒNG ĐỘI"; msg.innerText = "Team bạn đã xong. Hãy giúp team khác cùng Khối!"; } 
+        } 
+        let html = ""; 
+        ORG_CHART[curBlock].subs.forEach((s,i) => { const t = getTeamData(curBlock, i); let txt = t.bal >= subCap ? "XONG" : (t.st===1 ? "CHỜ..." : "..."); let color = t.bal >= subCap ? "#4caf50" : (t.st===1 ? "var(--gold)" : "#aaa"); html += `<div class="list-item" style="opacity:${i==curSubIdx?1:0.5}"> <span>${s.name}</span> <span style="color:${color}; font-family:'Montserrat'; font-size:10px; font-weight:bold;">${txt} [${t.bal.toLocaleString()}]</span> </div>`; }); 
+        document.getElementById('statusList').innerHTML = html; 
+    }
+
     function createSnow() { const c = document.getElementById('snowContainer'); setInterval(()=>{ const d=document.createElement('div'); d.classList.add('snowflake'); d.innerText='❄'; d.style.left=Math.random()*100+'vw'; d.style.animationDuration=Math.random()*3+2+'s'; c.appendChild(d); setTimeout(()=>d.remove(),5000); },200); }
     function getSmartStaff() { let candidates = STAFF_DB.filter(s => s.block !== curBlock && s.block !== "BOD"); if(!candidates.length) return STAFF_DB[0]; return candidates[Math.floor(Math.random() * candidates.length)]; }
     function spinGacha() { const myData = getTeamData(curBlock, curSubIdx); if(document.getElementById('cardInner').classList.contains('is-flipped')) return; if(myData.bal >= subCap && checkBlockSync()) { pendingTask = (curBlock==='TM'||curBlock==='KD') ? BOSS_CEO : BOSS_CHAIRMAN; showQuestResult("LEGENDARY", pendingTask); return; } document.getElementById('cardInner').classList.add('shake'); setTimeout(() => { document.getElementById('cardInner').classList.remove('shake'); let r = Math.random()*100; let rarity = r > 90 ? "EPIC" : (r > 65 ? "RARE" : "COMMON"); let task = JSON.parse(JSON.stringify(TASKS[Math.floor(Math.random()*TASKS.length)])); if(task.desc.includes("{target}")) { let s = getSmartStaff(); task.desc = task.desc.replace(/{target}/g, `${s.name} (${s.role})`).replace(/{block}/g, s.block).replace(/{role}/g, s.role); } if(myData.bal + task.val > subCap) task.val = subCap - myData.bal; pendingTask = task; showQuestResult(rarity, task); }, 600); }
     function showQuestResult(rarity, task) { const res = document.getElementById('cardResult'); const tag = document.getElementById('resRarity'); let color = "#7f8c8d"; if(rarity==="RARE") color = "#00796b"; if(rarity==="EPIC") color = "#d32f2f"; if(rarity==="LEGENDARY") color = "var(--gold)"; res.className = `card-face card-back rare-${rarity}`; tag.innerText = rarity; tag.style.background = color; document.getElementById('resName').innerText = task.name; document.getElementById('resName').style.color = rarity==="EPIC"?"#d32f2f":"#333"; document.getElementById('resVal').innerText = "+" + task.val.toLocaleString(); document.getElementById('resVal').style.color = color; document.getElementById('cardInner').classList.add('is-flipped'); }
-    function openFullTask(e) { e.stopPropagation(); document.getElementById('modalName').innerText = pendingTask.name; document.getElementById('modalVal').innerText = "+" + pendingTask.val.toLocaleString(); document.getElementById('modalReq').innerText = pendingTask.req || "Cả Team"; document.getElementById('modalDesc').innerHTML = pendingTask.desc; document.getElementById('overlay').style.display = 'flex'; setTimeout(() => { document.getElementById('cardInner').classList.remove('is-flipped'); }, 500); }
+    function openFullTask(e) { 
+        e.stopPropagation(); 
+        document.getElementById('modalName').innerText = pendingTask.name; 
+        document.getElementById('modalVal').innerText = "+" + pendingTask.val.toLocaleString(); 
+        document.getElementById('modalReq').innerText = pendingTask.req || "Cả Team"; 
+        document.getElementById('modalDesc').innerHTML = pendingTask.desc; 
+        
+        // Reset file input
+        document.getElementById('evidenceFile').value = "";
+        document.getElementById('imgPreview').src = "";
+        document.getElementById('imgPreview').style.display = "none";
+        
+        document.getElementById('overlay').style.display = 'flex'; 
+        setTimeout(() => { document.getElementById('cardInner').classList.remove('is-flipped'); }, 500); 
+    }
     function closeTask() { document.getElementById('overlay').style.display = 'none'; }
-    async function submitTask() { await fetchData(); const reqId = Date.now() + "_" + Math.floor(Math.random()*1000); serverData.requests = serverData.requests || []; serverData.requests.push({ id: reqId, block: curBlock, idx: curSubIdx, team: ORG_CHART[curBlock].subs[curSubIdx].name, task: pendingTask.name, val: pendingTask.val, isBoss: (pendingTask.val === 50000), timestamp: Date.now() }); if(!serverData.teams[curBlock]) serverData.teams[curBlock] = {}; if(!serverData.teams[curBlock][curSubIdx]) serverData.teams[curBlock][curSubIdx] = {bal:0, st:0, msg:""}; serverData.teams[curBlock][curSubIdx].st = 1; await saveData(); closeTask(); alert("Đã gửi! BTC sẽ thấy ngay."); }
+
+    // --- UPLOAD LOGIC ---
+    function previewImage(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('imgPreview').src = e.target.result;
+                document.getElementById('imgPreview').style.display = 'block';
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    async function submitTask() {
+        const fileInput = document.getElementById('evidenceFile');
+        if(!fileInput.files || fileInput.files.length === 0) return alert("⚠️ BẠN CHƯA TẢI ẢNH MINH CHỨNG!");
+        
+        const btn = document.getElementById('btnSubmit');
+        btn.innerText = "ĐANG TẢI ẢNH LÊN..."; btn.disabled = true;
+
+        try {
+            await fetchData();
+            const file = fileInput.files[0];
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${curBlock}_${curSubIdx}_${Date.now()}.${fileExt}`;
+            
+            // Upload to Supabase Storage
+            const { data, error } = await db.storage.from('evidence').upload(fileName, file);
+            if(error) throw error;
+
+            // Get Public URL
+            const { data: urlData } = db.storage.from('evidence').getPublicUrl(fileName);
+            const publicUrl = urlData.publicUrl;
+
+            // Add Request to DB
+            const reqId = Date.now() + "_" + Math.floor(Math.random()*1000);
+            serverData.requests = serverData.requests || [];
+            serverData.requests.push({ 
+                id: reqId, 
+                block: curBlock, idx: curSubIdx, 
+                team: ORG_CHART[curBlock].subs[curSubIdx].name, 
+                task: pendingTask.name, 
+                val: pendingTask.val, 
+                isBoss: (pendingTask.val === 50000), 
+                img: publicUrl, // Save image URL
+                timestamp: Date.now() 
+            });
+
+            if(!serverData.teams[curBlock]) serverData.teams[curBlock] = {};
+            if(!serverData.teams[curBlock][curSubIdx]) serverData.teams[curBlock][curSubIdx] = {bal:0, st:0, msg:""};
+            serverData.teams[curBlock][curSubIdx].st = 1;
+
+            await saveData();
+            closeTask(); 
+            alert("✅ Đã nộp bài thành công!");
+        } catch(err) {
+            alert("Lỗi upload: " + err.message);
+        } finally {
+            btn.innerText = "NỘP BÀI"; btn.disabled = false;
+        }
+    }
+
+    // --- ADMIN ---
     function openAdminLogin() { if(prompt("Mật mã BTC:")==="admin123") { document.getElementById('adminPanel').style.display='block'; renderAdmin(); } }
     function closeAdmin() { document.getElementById('adminPanel').style.display='none'; }
-    function renderAdmin() { const list = document.getElementById('pendingList'); if(!serverData.requests || serverData.requests.length === 0) { list.innerHTML = "<div style='text-align:center;padding:20px;color:#777;'>Không có bài chờ duyệt.</div>"; } else { let html = ""; serverData.requests.forEach((p, index) => { html += `<div style="background:#222; padding:15px; border-radius:12px; margin-bottom:10px; border:1px solid #444; display:flex; justify-content:space-between; align-items:center;"> <div> <div style="font-weight:bold; color:var(--gold); font-size:12px;">${p.team}</div> <div style="font-size:11px; color:#ccc;">${p.task} (+${p.val.toLocaleString()})</div> </div> <div> <button class="btn-mini" style="background:#4caf50; color:#fff;" onclick="adminApprove(${index})">✓</button> <button class="btn-mini" style="background:#f44336; color:#fff;" onclick="adminReject(${index})">✕</button> </div> </div>`; }); list.innerHTML = html; } const ov = document.getElementById('adminOverviewList'); let htmlOv = ""; for(let b in ORG_CHART) { htmlOv += `<div style='color:var(--gold); margin-top:15px; font-family:"Montserrat"; font-size:12px; font-weight:bold;'>${ORG_CHART[b].name}</div>`; ORG_CHART[b].subs.forEach((s,i) => { const t = getTeamData(b, i); htmlOv += `<div style='font-size:11px; display:flex; justify-content:space-between; color:#aaa; border-bottom:1px solid #333; padding:4px 0;'><span>${s.name}</span><span>${t.bal.toLocaleString()}</span></div>`; }); } ov.innerHTML = htmlOv; }
+    
+    function showImage(url) {
+        document.getElementById('imgFullView').src = url;
+        document.getElementById('imgModal').style.display = 'flex';
+    }
+
+    function renderAdmin() { 
+        const list = document.getElementById('pendingList'); 
+        if(!serverData.requests || serverData.requests.length === 0) { 
+            list.innerHTML = "<div style='text-align:center;padding:20px;color:#777;'>Không có bài chờ duyệt.</div>"; 
+        } else { 
+            let html = ""; 
+            serverData.requests.forEach((p, index) => { 
+                html += `<div style="background:#222; padding:15px; border-radius:12px; margin-bottom:10px; border:1px solid #444; display:flex; align-items:center; gap:10px;"> 
+                    <img src="${p.img}" class="admin-img-preview" onclick="showImage('${p.img}')">
+                    <div style="flex:1;"> 
+                        <div style="font-weight:bold; color:var(--gold); font-size:12px;">${p.team}</div> 
+                        <div style="font-size:11px; color:#ccc;">${p.task} (+${p.val.toLocaleString()})</div> 
+                    </div> 
+                    <div> 
+                        <button class="btn-mini" style="background:#4caf50; color:#fff;" onclick="adminApprove(${index})">✓</button> 
+                        <button class="btn-mini" style="background:#f44336; color:#fff;" onclick="adminReject(${index})">✕</button> 
+                    </div> 
+                </div>`; 
+            }); 
+            list.innerHTML = html; 
+        } 
+        
+        const ov = document.getElementById('adminOverviewList'); 
+        let htmlOv = ""; 
+        for(let b in ORG_CHART) { 
+            htmlOv += `<div style='color:var(--gold); margin-top:15px; font-family:"Montserrat"; font-size:12px; font-weight:bold;'>${ORG_CHART[b].name}</div>`; 
+            ORG_CHART[b].subs.forEach((s,i) => { 
+                const t = getTeamData(b, i); 
+                htmlOv += `<div style='font-size:11px; display:flex; justify-content:space-between; color:#aaa; border-bottom:1px solid #333; padding:4px 0;'><span>${s.name}</span><span>${t.bal.toLocaleString()}</span></div>`; 
+            }); 
+        } 
+        ov.innerHTML = htmlOv; 
+    }
+
     async function adminApprove(arrIndex) { await fetchData(); const p = serverData.requests[arrIndex]; if(!serverData.teams[p.block]) serverData.teams[p.block] = {}; if(!serverData.teams[p.block][p.idx]) serverData.teams[p.block][p.idx] = {bal:0}; const curBal = serverData.teams[p.block][p.idx].bal || 0; serverData.teams[p.block][p.idx].bal = curBal + p.val; serverData.teams[p.block][p.idx].st = 0; if(p.isBoss) { serverData.boss = serverData.boss || {}; serverData.boss[p.block] = true; } serverData.requests.splice(arrIndex, 1); await saveData(); }
     async function adminReject(arrIndex) { const reason = prompt("Lý do từ chối:", "Ảnh chưa đạt"); if(!reason) return; await fetchData(); const p = serverData.requests[arrIndex]; serverData.teams[p.block][p.idx].st = 2; serverData.teams[p.block][p.idx].msg = reason; serverData.requests.splice(arrIndex, 1); await saveData(); }
     async function resetServerData() { if(confirm("CẢNH BÁO: Xóa sạch dữ liệu máy chủ?")) { serverData = { teams:{}, requests:[], boss:{} }; await saveData(); location.reload(); } }
