@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TRẠM 3: OFFLINE GAMEFI</title>
+    <title>TRẠM 3: ONLINE GAMEFI</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&family=Mali:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         /* --- THEME: PREMIUM CHRISTMAS GAMEFI --- */
         :root {
@@ -73,11 +74,10 @@
         <div style="text-align:center; margin-bottom:30px;">
             <div style="font-size:60px; margin-bottom:10px;">🎄</div>
             <h1>TRẠM 3</h1>
-            <h1 style="font-size: 18px; margin-top:5px; color:#fff;">OFFLINE VERSION</h1>
-            <div style="font-size:10px; color:#aaa; margin-top:10px;">(Dữ liệu lưu trên máy - Nhân phẩm cực mạnh)</div>
+            <h1 style="font-size: 18px; margin-top:5px; color:#fff;">ONLINE EDITION</h1>
         </div>
         <label>CHỌN KHỐI</label>
-        <select id="selBlock" onchange="renderTeams()"><option>Đang tải...</option></select>
+        <select id="selBlock" onchange="renderTeams()"><option>Đang tải dữ liệu...</option></select>
         <div id="teamArea" style="display:none;">
             <label>CHỌN TEAM</label>
             <select id="selTeam"></select>
@@ -85,9 +85,6 @@
             <input type="password" id="inpPass" placeholder="******">
         </div>
         <button class="btn btn-primary" onclick="handleLogin()">BẮT ĐẦU</button>
-        <div style="text-align:center; margin-top:20px;">
-            <span style="font-size:12px; color:#f44336; cursor:pointer; text-decoration:underline;" onclick="clearData()">[ Reset Dữ Liệu Máy ]</span>
-        </div>
     </div>
 
     <div id="viewGame" style="display:none;">
@@ -110,7 +107,6 @@
                 <div class="card-face card-front">
                     <div style="font-size:80px;">🎅</div>
                     <div style="font-family:'Montserrat'; font-weight:800; font-size:14px; margin-top:20px; color:var(--gold);">RÚT THẺ</div>
-                    <div style="font-size:10px; color:#aaa; margin-top:5px;">(Không cần mạng)</div>
                 </div>
                 <div class="card-face card-back" id="cardResult">
                     <div id="resRarity" class="rarity-tag" style="background:#555;">COMMON</div>
@@ -122,7 +118,7 @@
         </div>
         <div id="msgStatus" style="text-align:center; font-size:13px; color:#ddd; min-height:40px; margin-bottom:20px; font-style: italic;">...</div>
         <div style="background:rgba(0,0,0,0.3); padding:15px; border-radius:15px; border:1px solid rgba(255,255,255,0.1);">
-            <div style="font-size:11px; font-family:'Montserrat'; color:var(--gold); font-weight:bold; margin-bottom:10px; text-transform: uppercase;">TIẾN ĐỘ KHỐI (OFFLINE)</div>
+            <div style="font-size:11px; font-family:'Montserrat'; color:var(--gold); font-weight:bold; margin-bottom:10px; text-transform: uppercase;">TIẾN ĐỘ KHỐI (LIVE)</div>
             <div id="statusList"></div>
         </div>
     </div>
@@ -138,14 +134,20 @@
             <span id="modalDesc">...</span>
         </div>
         <div style="font-size:11px; color:#155724; margin:20px 0; text-align:left; border:1px solid #c3e6cb; padding:10px; border-radius:8px; background:#d4edda;">
-            <b>📸 LƯU Ý:</b> Chụp ảnh minh chứng lưu điện thoại. Hệ thống sẽ tự động duyệt!
+            <b>📸 LƯU Ý:</b> Chụp ảnh minh chứng. Dữ liệu sẽ gửi về BTC.
         </div>
-        <button class="btn btn-primary" onclick="submitTask()">ĐÃ LÀM XONG (CỘNG ĐIỂM)</button>
+        <button class="btn btn-primary" onclick="submitTask()">NỘP BÀI</button>
         <div style="margin-top:15px; font-size:12px; color:#777; cursor:pointer; text-decoration: underline;" onclick="closeTask()">Để sau làm</div>
     </div>
 </div>
 
 <script>
+    // --- KEY TỪ ẢNH CỦA ANH ---
+    const SUPABASE_URL = "https://rkbppzpkvvjmffjjoskh.supabase.co"; 
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrYnBwenBrdnZqbWZmampvc2toIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYwMTEyMTksImV4cCI6MjA4MTU4NzIxOX0.JIdz_ISyANJG53Ef2YNW3oV_a_mFPpAKiglXs2jEIPI";
+    
+    const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    
     // --- DỮ LIỆU CỨNG (ĐÃ FIX LỖI CÚ PHÁP) ---
     const ORG_CHART = {
         "TM": { name: "KHỐI THƯƠNG MẠI", subs: [ {name:"MICE Team 01", pass:"mice1"}, {name:"MICE Team 02", pass:"mice2"}, {name:"Core Team", pass:"core"}, {name:"BD Team", pass:"bd"} ]},
@@ -198,31 +200,11 @@
     const BOSS_CHAIRMAN = { val:50000, req:"TOÀN KHỐI", name:"TIM CHỦ TỊCH", desc:"Tìm <b>Chủ tịch Lại Minh Duy</b>. Cả Khối cùng đứng xung quanh và tạo dáng 'Bắn Tim'." };
 
     let curBlock="", curSubIdx=-1, subCap=0, pendingTask=null;
-    // Dữ liệu sẽ lưu vào LocalStorage
-    let localData = { teams:{} }; 
+    let serverData = { teams:{}, requests:[], boss:{} }; 
+    let syncInterval = null;
 
-    // --- LOGIC OFFLINE ---
-    window.onload = () => { initLogin(); loadData(); };
-
-    function loadData() {
-        const saved = localStorage.getItem('tst_game_data');
-        if(saved) {
-            localData = JSON.parse(saved);
-        } else {
-            localData = { teams:{} };
-        }
-    }
-
-    function saveData() {
-        localStorage.setItem('tst_game_data', JSON.stringify(localData));
-    }
-    
-    function clearData() {
-        if(confirm("Bạn có chắc muốn xóa hết điểm đã lưu trên máy này?")) {
-            localStorage.removeItem('tst_game_data');
-            location.reload();
-        }
-    }
+    // --- LOGIC AN TOÀN ---
+    window.onload = () => { initLogin(); startPolling(); };
 
     function initLogin() { 
         const s = document.getElementById('selBlock'); 
@@ -254,9 +236,31 @@
         updateUI(); 
     }
 
+    function startPolling() { fetchData(); setInterval(fetchData, 3000); }
+
+    async function fetchData() {
+        try {
+            const { data, error } = await db.from('gamestate').select('data').eq('id', 'main').single();
+            if(data && data.data) {
+                serverData = data.data; // Sync thành công
+            }
+        } catch(err) { 
+            console.log("Offline mode: Không kết nối được DB, dùng bộ nhớ tạm.");
+        }
+        if(curBlock) updateUI();
+    }
+
+    async function saveData() { 
+        try {
+            await db.from('gamestate').update({ data: serverData }).eq('id', 'main'); 
+        } catch(err) {
+            console.log("Không lưu được lên mây.");
+        }
+    }
+
     function getTeamData(b, i) { 
-        if(localData.teams && localData.teams[b] && localData.teams[b][i]) return localData.teams[b][i]; 
-        return { bal: 0 }; 
+        if(serverData.teams && serverData.teams[b] && serverData.teams[b][i]) return serverData.teams[b][i]; 
+        return { bal: 0, st: 0, msg: "" }; 
     }
 
     function updateUI() { 
@@ -273,9 +277,12 @@
         badge.className = "badge st-ready"; badge.innerText = "SẴN SÀNG"; 
         msg.innerText = "👇 Rút thẻ ngay!"; 
         
-        if(myData.bal >= subCap) { 
-            msg.innerHTML = "<span style='color:#4caf50; font-weight:bold;'>🏆 TEAM ĐÃ HOÀN THÀNH!</span>"; 
-            badge.className = "badge st-ready"; badge.innerText = "VỀ ĐÍCH";
+        if(myData.st === 1) { 
+            gBtn.classList.add('locked'); badge.className = "badge st-pending"; badge.innerText = "ĐANG GỬI..."; msg.innerText = "Đang chờ duyệt..."; 
+        } else if(myData.st === 2) { 
+            badge.className = "badge st-reject"; badge.innerText = "TỪ CHỐI"; msg.innerHTML = "<span style='color:#f44336'>BTC từ chối. Làm lại!</span>"; 
+        } else if(myData.bal >= subCap) { 
+            msg.innerHTML = "<span style='color:#4caf50; font-weight:bold;'>🏆 HOÀN THÀNH!</span>"; 
         }
         
         let html = ""; 
@@ -328,19 +335,18 @@
     
     function closeTask() { document.getElementById('overlay').style.display = 'none'; document.getElementById('cardInner').classList.remove('is-flipped');}
 
-    function submitTask() { 
-        if(!localData.teams[curBlock]) localData.teams[curBlock] = {}; 
-        if(!localData.teams[curBlock][curSubIdx]) localData.teams[curBlock][curSubIdx] = {bal:0}; 
+    async function submitTask() { 
+        const reqId = Date.now() + "_" + Math.floor(Math.random()*1000); 
+        if(!serverData.teams[curBlock]) serverData.teams[curBlock] = {}; 
+        if(!serverData.teams[curBlock][curSubIdx]) serverData.teams[curBlock][curSubIdx] = {bal:0, st:0}; 
         
-        // TỰ ĐỘNG CỘNG ĐIỂM LUÔN (OFFLINE)
-        localData.teams[curBlock][curSubIdx].bal += pendingTask.val;
+        // TỰ ĐỘNG CỘNG ĐIỂM LUÔN (CHO GAME CHẠY NHANH)
+        serverData.teams[curBlock][curSubIdx].bal += pendingTask.val;
+        serverData.teams[curBlock][curSubIdx].st = 0; // 0 là xong luôn, không cần duyệt nữa cho lẹ
         
-        saveData(); // Lưu vào trình duyệt
+        await saveData(); 
         closeTask(); 
-        updateUI();
-        
-        // Hiệu ứng ăn mừng nhẹ
-        alert(`Chúc mừng! Đã cộng ${pendingTask.val.toLocaleString()} điểm vào hệ thống!`);
+        alert("Đã cộng điểm thành công!");
     }
 </script>
 </body>
