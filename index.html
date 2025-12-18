@@ -4,89 +4,123 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TRẠM 3: CÂY THÔNG NHIỆM VỤ</title>
-    <link href="https://fonts.googleapis.com/css2?family=Mali:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&family=Mali:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --red: #d32f2f; --green: #2e7d32; --gold: #fbc02d; --cream: #fffde7; --dark: #3e2723; }
-        
+        /* --- THEME: PREMIUM CHRISTMAS GAMEFI --- */
+        :root {
+            --bg-dark: #2b0a0a; /* Đỏ rượu vang đậm */
+            --card-bg: #1a4c1a; /* Xanh thông đậm */
+            --gold: #ffd700;    /* Vàng kim loại */
+            --glass: rgba(20, 40, 20, 0.75); 
+            --glass-border: rgba(255, 215, 0, 0.3);
+        }
+
         body {
             font-family: 'Mali', cursive;
-            background: radial-gradient(circle, #b71c1c, #5d1010);
-            color: var(--dark); margin: 0; min-height: 100vh;
+            background-color: var(--bg-dark);
+            background-image: 
+                linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+                repeating-linear-gradient(45deg, #3e0e0e 0, #3e0e0e 10px, #2b0a0a 10px, #2b0a0a 20px);
+            color: #fff; margin: 0; min-height: 100vh;
             display: flex; justify-content: center; align-items: center; overflow-x: hidden;
             user-select: none;
         }
-        .snowflake { position: fixed; top: -10px; color: rgba(255,255,255,0.7); font-size: 1em; animation: snowfall linear infinite; pointer-events: none; }
-        @keyframes snowfall { to { transform: translateY(100vh) rotate(360deg); } }
 
+        .snowflake { position: fixed; top: -10px; color: #fff; font-size: 8px; animation: snowfall linear infinite; pointer-events: none; opacity: 0.6; text-shadow: 0 0 5px white; }
+        @keyframes snowfall { to { transform: translateY(100vh) rotate(360deg); opacity: 0; } }
+
+        /* Container kính cường lực */
         .app-container {
-            width: 95%; max-width: 450px;
-            background: var(--cream);
-            border: 5px solid var(--gold);
-            border-radius: 20px; padding: 20px;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.9);
-            position: relative; z-index: 10;
-            background-image: radial-gradient(#d32f2f 1px, transparent 1px);
-            background-size: 20px 20px;
-            box-sizing: border-box;
+            width: 95%; max-width: 420px;
+            background: var(--glass);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border: 2px solid var(--glass-border);
+            border-radius: 24px; padding: 24px;
+            box-shadow: 0 0 60px rgba(0, 0, 0, 0.9), inset 0 0 30px rgba(0,0,0,0.5);
+            position: relative; z-index: 10; box-sizing: border-box;
             max-height: 98vh; overflow-y: auto;
         }
 
-        h1 { margin: 0; font-weight: 700; font-size: 24px; text-transform: uppercase; text-align: center; color: var(--red); text-shadow: 1px 1px 0 #fff; line-height: 1.2; }
-        .subtitle { font-size: 13px; text-align: center; color: var(--green); margin-bottom: 15px; font-weight: 700; border-bottom: 2px dashed var(--green); padding-bottom: 10px; }
+        h1 { 
+            font-family: 'Montserrat', sans-serif; font-weight: 800;
+            font-size: 26px; text-align: center; margin: 0 0 5px 0;
+            background: linear-gradient(to bottom, #fff, #ffd700);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-transform: uppercase; letter-spacing: 1px; 
+            filter: drop-shadow(0 2px 0 rgba(0,0,0,0.5));
+        }
+        .subtitle { font-size: 12px; text-align: center; color: #aaa; margin-bottom: 25px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
 
-        /* UI */
-        select, input { width: 100%; padding: 12px; margin-top: 5px; background: #fff; border: 2px solid #ccc; border-radius: 10px; font-family: 'Mali', cursive; box-sizing: border-box; font-size: 16px; color:#333; }
-        .btn { width: 100%; padding: 12px; border: none; border-radius: 50px; font-size: 16px; font-family: 'Mali', cursive; font-weight: 700; cursor: pointer; margin-top: 15px; text-transform: uppercase; box-shadow: 0 4px 0 rgba(0,0,0,0.2); color: #fff; transition: 0.1s; }
+        /* Inputs & Buttons */
+        label { font-family: 'Montserrat', sans-serif; font-size: 11px; color: var(--gold); font-weight: bold; margin-left: 5px; text-transform: uppercase; }
+        select, input { 
+            width: 100%; padding: 14px; margin-top: 6px; margin-bottom: 15px;
+            background: rgba(0,0,0,0.5); border: 1px solid #555; 
+            border-radius: 12px; color: #fff; font-family: 'Mali'; font-size: 15px;
+        }
+        .btn { 
+            width: 100%; padding: 16px; border: none; border-radius: 14px; 
+            font-family: 'Montserrat', sans-serif; font-weight: 700; cursor: pointer; 
+            margin-top: 10px; text-transform: uppercase; letter-spacing: 1px;
+            transition: 0.2s; box-shadow: 0 4px 0 rgba(0,0,0,0.5);
+        }
         .btn:active { transform: translateY(3px); box-shadow: none; }
-        .btn-primary { background: linear-gradient(to bottom, #d32f2f, #b71c1c); }
-        .btn-success { background: var(--green); }
-        .btn-danger { background: #c62828; }
-        .btn-admin { background: #5d4037; font-size: 12px; padding: 8px; margin-top: 20px; width: auto; border: 1px solid #aaa; }
-        .btn-mini { width: auto; padding: 5px 10px; font-size: 12px; border-radius: 5px; color: white; border: none; cursor: pointer; }
+        .btn-primary { background: linear-gradient(180deg, #d32f2f, #8e0000); color: #fff; border: 1px solid #ff5252; }
+        .btn-mini { padding: 6px 12px; font-size: 10px; width: auto; border-radius: 8px; margin: 0 2px; }
 
-        /* DASHBOARD */
-        .dashboard { background: #fff; border: 3px solid var(--red); border-radius: 15px; padding: 15px; margin-bottom: 15px; text-align: center; }
-        .balance { font-size: 32px; font-weight: 700; color: #f57f17; line-height: 1.2; }
-        .progress-bar { height: 12px; background: #eee; border-radius: 6px; margin-top: 5px; overflow: hidden; border: 1px solid #ccc; }
-        .progress-fill { height: 100%; width: 0%; background: repeating-linear-gradient(45deg, #fbc02d, #fbc02d 10px, #fdd835 10px, #fdd835 20px); transition: width 0.5s; }
+        /* Dashboard */
+        .dashboard { 
+            background: linear-gradient(180deg, rgba(0,0,0,0.3), rgba(0,0,0,0.5)); 
+            border: 1px solid var(--glass-border); 
+            border-radius: 20px; padding: 20px; margin-bottom: 20px; text-align: center;
+            position: relative;
+        }
+        .balance { font-size: 42px; font-weight: 800; font-family: 'Montserrat'; color: var(--gold); text-shadow: 0 0 15px rgba(255, 215, 0, 0.6); margin: 5px 0; }
+        .progress-bar { height: 8px; background: #222; border-radius: 10px; overflow: hidden; margin-top: 10px; border: 1px solid #444; }
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #d32f2f, #ffcc00); box-shadow: 0 0 10px #d32f2f; transition: width 0.5s ease; }
 
-        .status-badge { display: inline-block; padding: 5px 12px; border-radius: 15px; font-size: 12px; font-weight: bold; margin-bottom: 10px; }
-        .st-idle { background: #e8f5e9; color: var(--green); border: 1px solid var(--green); }
-        .st-pending { background: #fff3e0; color: #f57f17; border: 1px solid #f57f17; animation: pulse 1s infinite; }
-        .st-reject { background: #ffebee; color: var(--red); border: 1px solid var(--red); }
-        .st-waiting { background: #e3f2fd; color: #0277bd; border: 1px solid #0277bd; }
-        @keyframes pulse { 0%{opacity:1} 50%{opacity:0.6} 100%{opacity:1} }
-
-        /* GAMEFI CARD SYSTEM */
-        .gacha-box { perspective: 1000px; width: 170px; height: 230px; margin: 20px auto; cursor: pointer; }
-        .card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-style: preserve-3d; }
+        /* GACHA CARD (GameFi Style) */
+        .gacha-container { perspective: 1000px; width: 200px; height: 280px; margin: 30px auto; cursor: pointer; }
+        .card-inner { 
+            position: relative; width: 100%; height: 100%; text-align: center; 
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            transform-style: preserve-3d; 
+        }
         .card-inner.is-flipped { transform: rotateY(180deg); }
+        .card-face { 
+            position: absolute; width: 100%; height: 100%; backface-visibility: hidden; 
+            border-radius: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            border: 2px solid var(--gold); box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .card-front { 
+            background: linear-gradient(135deg, #1e3c1e, #0f260f); /* Green Luxury */
+            background-image: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px); background-size: 20px 20px;
+        }
+        .card-back { transform: rotateY(180deg); padding: 15px; box-sizing: border-box; background: #fffde7; color: #333; border: 4px solid #333; }
         
-        .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 15px; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 4px solid var(--gold); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
-        .card-front { background: linear-gradient(135deg, #d32f2f, #b71c1c); color: white; }
-        .card-back { background: #fff; transform: rotateY(180deg); padding: 10px; box-sizing: border-box; }
+        .rarity-tag { font-family: 'Montserrat'; font-size: 11px; padding: 4px 12px; border-radius: 20px; font-weight: 800; margin-bottom: 10px; text-transform: uppercase; color: #fff; }
+        .rare-COMMON { background: #7f8c8d; box-shadow: 0 0 10px #7f8c8d; }
+        .rare-RARE { background: #00796b; box-shadow: 0 0 15px #00796b; }
+        .rare-EPIC { background: #d32f2f; box-shadow: 0 0 20px #d32f2f; }
+        .rare-LEGENDARY { background: var(--gold); box-shadow: 0 0 25px var(--gold); animation: glow 1s infinite alternate; }
+        @keyframes glow { from { box-shadow: 0 0 10px var(--gold); } to { box-shadow: 0 0 30px var(--gold); } }
 
-        .rare-common { border-color: #90a4ae; background: #fafafa; }
-        .rare-rare { border-color: #2196f3; background: #e3f2fd; animation: glow-blue 2s infinite; }
-        .rare-epic { border-color: #9c27b0; background: #f3e5f5; animation: glow-purple 1s infinite; }
-        
-        @keyframes glow-blue { 0%,100%{box-shadow: 0 0 5px #2196f3;} 50%{box-shadow: 0 0 15px #2196f3;} }
-        @keyframes glow-purple { 0%,100%{box-shadow: 0 0 10px #9c27b0;} 50%{box-shadow: 0 0 25px #ff00ff;} }
+        /* Status Badges */
+        .badge { display: inline-block; padding: 5px 10px; border-radius: 5px; font-size: 10px; font-weight: bold; }
+        .st-ready { color: #4caf50; background: rgba(76, 175, 80, 0.1); border: 1px solid #4caf50; }
+        .st-pending { color: var(--gold); background: rgba(255, 215, 0, 0.1); border: 1px solid var(--gold); animation: pulse 1s infinite; }
+        .st-reject { color: #f44336; background: rgba(244, 67, 54, 0.1); border: 1px solid #f44336; }
+        .list-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px dashed rgba(255,255,255,0.2); font-size: 13px; color: #eee; }
 
-        .rarity-tag { font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 10px; color: white; text-transform: uppercase; margin-bottom: 5px; }
-
-        /* MODAL */
+        /* Modal & Admin */
         #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 100; display: none; justify-content: center; align-items: center; }
-        .card-modal { background: #fff; width: 90%; max-width: 400px; padding: 20px; border-radius: 20px; text-align: center; border: 4px solid var(--green); position: relative; box-sizing: border-box; }
+        .modal-card { background: #fff; width: 90%; max-width: 400px; padding: 25px; border-radius: 20px; border: 5px solid #1a4c1a; text-align: center; position: relative; }
+        #adminPanel { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1a1a1a; z-index: 200; padding: 20px; overflow-y: auto; box-sizing: border-box; }
         
-        #adminPanel { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--dark); z-index: 200; padding: 15px; overflow-y: auto; color: #fff; box-sizing: border-box; }
-        .admin-card { background: #fff; color: #333; padding: 12px; border-radius: 10px; margin-bottom: 10px; text-align: left; border-left: 5px solid var(--gold); }
-        
-        .target-box { background: #fff3e0; border: 1px dashed #e65100; padding: 4px 8px; border-radius: 6px; margin: 5px 0; color: #e65100; font-weight: bold; font-size: 14px; display: inline-block;}
-        .req-box { background: #e8f5e9; border: 1px dashed #2e7d32; padding: 3px 8px; border-radius: 15px; display: inline-block; font-size: 12px; color: #1b5e20; font-weight: bold; margin-bottom: 10px; }
-
+        .target-hl { color: #d32f2f; font-weight: bold; background: #ffeba0; padding: 0 4px; border-radius: 4px; }
         .shake { animation: shake 0.5s infinite; }
-        @keyframes shake { 0%,100%{transform:rotate(0)} 25%{transform:rotate(5deg)} 75%{transform:rotate(-5deg)} }
+        @keyframes shake { 0%,100%{transform:rotate(0)} 25%{transform:rotate(3deg)} 75%{transform:rotate(-3deg)} }
+        @keyframes pulse { 0%{opacity:1} 50%{opacity:0.6} 100%{opacity:1} }
         .locked { filter: grayscale(1); opacity: 0.5; pointer-events: none; }
     </style>
 </head>
@@ -97,103 +131,109 @@
 <div class="app-container">
     
     <div id="viewLogin">
-        <h1>TRẠM 3: NHIỆM VỤ</h1>
-        <p class="subtitle">Triệu Bước Chân - Một Tấm Lòng</p>
-        <label style="font-size:13px; font-weight:bold; color:var(--red);">► KHỐI:</label>
-        <select id="selBlock" onchange="renderTeams()"><option value="">Loading...</option></select>
+        <div style="text-align:center; margin-bottom:30px;">
+            <div style="font-size:60px; margin-bottom:10px; filter: drop-shadow(0 0 10px gold);">🎄</div>
+            <h1>TRẠM 3</h1>
+            <h1 style="font-size: 20px; margin-top:5px; color:#fff;">CÂY THÔNG NHIỆM VỤ</h1>
+            <div class="subtitle">Triệu Bước Chân - Một Tấm Lòng</div>
+        </div>
+        
+        <label>CHỌN KHỐI</label>
+        <select id="selBlock" onchange="renderTeams()"><option>Đang tải dữ liệu...</option></select>
+        
         <div id="teamArea" style="display:none;">
-            <label style="font-size:13px; font-weight:bold; color:var(--red);">► TEAM:</label>
-            <select id="selTeam"><option value="">-- Chọn Team --</option></select>
-            <label style="font-size:13px; font-weight:bold; color:var(--red);">► MẬT KHẨU:</label>
+            <label>CHỌN TEAM</label>
+            <select id="selTeam"></select>
+            <label>MẬT KHẨU</label>
             <input type="password" id="inpPass" placeholder="******">
         </div>
+        
         <button class="btn btn-primary" onclick="handleLogin()">BẮT ĐẦU</button>
-        <div style="text-align:center;"><button class="btn btn-admin" onclick="openAdminLogin()">🔧 BTC PANEL</button></div>
+        <div style="text-align:center; margin-top:20px;">
+            <span style="font-size:10px; color:#aaa; cursor:pointer; font-family:'Montserrat';" onclick="openAdminLogin()">[ BTC LOGIN ]</span>
+        </div>
     </div>
 
-    <div id="viewGame" style="display: none;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom:10px;">
-            <div style="text-align: left;">
-                <div id="lblBlockName" style="font-size:11px; opacity:0.8;">KHỐI...</div>
-                <div id="lblTeamName" style="font-weight:700; font-size:16px; color:var(--red);">TEAM...</div>
+    <div id="viewGame" style="display:none;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <div>
+                <div id="lblBlockName" style="font-size:11px; color:var(--gold); font-weight:bold; opacity:0.8; text-transform: uppercase;">KHỐI...</div>
+                <div id="lblTeamName" style="font-size:16px; font-weight:800; font-family:'Montserrat'; text-transform: uppercase;">TEAM...</div>
             </div>
-            <button onclick="logout()" style="background:#ddd; border:none; width:30px; height:30px; border-radius:50%; font-weight:bold; cursor:pointer;">🔙</button>
+            <button onclick="logout()" style="background:#333; border:1px solid #555; color:#fff; width:36px; height:36px; border-radius:50%; cursor:pointer; font-weight:bold;">✕</button>
         </div>
 
-        <div style="text-align:center;"><span id="statusBadge" class="status-badge st-idle">SẴN SÀNG</span></div>
+        <div style="text-align:center;"><span id="statusBadge" class="badge st-ready">HỆ THỐNG SẴN SÀNG</span></div>
 
         <div class="dashboard">
-            <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:bold; color:#666;">
-                <span>TIẾN ĐỘ CLAIM</span>
-                <span>MỤC TIÊU: <span id="lblCap">0</span></span>
-            </div>
+            <div style="font-size:10px; color:#aaa; font-family:'Montserrat'; font-weight:bold;">SỐ DƯ HIỆN TẠI</div>
             <div class="balance" id="lblBalance">0</div>
+            <div style="font-size:11px; color:#ccc; margin-top:5px;">MỤC TIÊU: <span id="lblCap" style="color:#fff;">0</span></div>
             <div class="progress-bar"><div id="progBar" class="progress-fill"></div></div>
         </div>
 
-        <div style="text-align:center;">
-            <div class="gacha-box" id="gachaBtn" onclick="spinGacha()">
-                <div class="card-inner" id="cardInner">
-                    <div class="card-front">
-                        <div style="font-size: 70px;">🛍️</div>
-                        <div style="font-weight: bold; margin-top:10px;">TÚI MÙ NHIỆM VỤ</div>
-                        <div style="font-size: 10px; opacity:0.8;">Chạm để lật thẻ Quest</div>
-                    </div>
-                    <div class="card-back" id="cardResult">
-                        <div id="resRarity" class="rarity-tag">COMMON</div>
-                        <div id="resName" style="font-weight: bold; color: var(--red); font-size:14px;">TÊN NV</div>
-                        <div id="resVal" style="font-size: 24px; font-weight: 800; color: #f57f17; margin: 10px 0;">+0</div>
-                        <button class="btn-mini btn-success" onclick="openFullTask(event)">XEM CHI TIẾT</button>
-                    </div>
+        <div class="gacha-container" onclick="spinGacha()">
+            <div class="card-inner" id="cardInner">
+                <div class="card-face card-front">
+                    <div style="font-size:80px; filter:drop-shadow(0 5px 5px rgba(0,0,0,0.5));">🎅</div>
+                    <div style="font-family:'Montserrat'; font-weight:800; font-size:14px; margin-top:20px; color:var(--gold); text-shadow: 0 1px 2px black;">MỞ TÚI QUÀ</div>
+                    <div style="font-size:10px; color:#ccc; margin-top:5px;">Chạm để nhận nhiệm vụ</div>
                 </div>
-            </div>
-            <div id="msgStatus" style="font-size:13px; font-weight:bold; color:var(--red); min-height:40px;">
-                👇 Bấm túi mù để nhận thẻ nhiệm vụ!
+                <div class="card-face card-back" id="cardResult">
+                    <div id="resRarity" class="rarity-tag">COMMON</div>
+                    <div id="resName" style="font-family:'Montserrat'; font-weight:800; font-size:16px; margin:15px 0; line-height:1.4; color:#d32f2f;">TASK NAME</div>
+                    <div id="resVal" style="font-size:32px; font-weight:800; color:#f57f17;">+0</div>
+                    <button class="btn btn-primary" style="margin-top:auto; font-size:12px; padding:10px;" onclick="openFullTask(event)">XEM CHI TIẾT</button>
+                </div>
             </div>
         </div>
 
-        <div style="background:rgba(255,255,255,0.7); padding:10px; border-radius:10px; margin-top:10px; border:1px solid #ccc;">
-            <div style="font-size:11px; font-weight:bold; color:var(--green); margin-bottom:5px;">📡 ĐỒNG ĐỘI TRONG KHỐI:</div>
-            <div id="statusList" style="max-height: 100px; overflow-y: auto;"></div>
+        <div id="msgStatus" style="text-align:center; font-size:13px; color:#ddd; min-height:40px; margin-bottom:20px; font-style: italic;">
+            👇 Bấm vào túi quà ông già Noel để nhận nhiệm vụ!
+        </div>
+
+        <div style="background:rgba(0,0,0,0.3); padding:15px; border-radius:15px; border:1px solid rgba(255,255,255,0.1);">
+            <div style="font-size:11px; font-family:'Montserrat'; color:var(--gold); font-weight:bold; margin-bottom:10px; text-transform: uppercase;">TIẾN ĐỘ ĐỒNG ĐỘI</div>
+            <div id="statusList"></div>
         </div>
     </div>
 
     <div id="adminPanel">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid #aaa; padding-bottom:10px;">
-            <h2 style="margin:0; color:var(--gold);">BTC DUYỆT BÀI</h2>
-            <button onclick="closeAdmin()" style="background:#fff; color:#000; border:none; padding:5px 10px; border-radius:5px; font-weight:bold;">Đóng</button>
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #444; padding-bottom:15px; margin-bottom:20px;">
+            <h2 style="font-family:'Montserrat'; font-size:18px; color:var(--gold); margin:0;">BTC PANEL</h2>
+            <button onclick="closeAdmin()" style="background:#444; color:#fff; border:none; padding:8px 16px; border-radius:8px; font-weight:bold;">ĐÓNG</button>
         </div>
         <div id="pendingList"></div>
-        <div style="margin-top:30px; border-top:1px dashed #777; padding-top:10px;">
-            <h3 style="color:var(--gold); font-size:14px;">TỔNG HỢP CÁC KHỐI</h3>
+        <div style="margin-top:40px; border-top:1px dashed #444; padding-top:20px;">
+            <h3 style="font-family:'Montserrat'; font-size:14px; color:#fff;">TỔNG HỢP 4 KHỐI</h3>
             <div id="adminOverviewList"></div>
         </div>
-        <button class="btn btn-danger" style="margin-top:20px; font-size:12px;" onclick="resetAllData()">⚠️ RESET TOÀN BỘ DATA</button>
+        <button class="btn" style="margin-top:40px; background:#500; color:#ffaaaa; border:1px solid #800;" onclick="resetAllData()">⚠️ RESET TOÀN BỘ DATA</button>
     </div>
 </div>
 
 <div id="overlay">
-    <div class="card-modal">
-        <div style="font-size:40px;">📜</div>
-        <div id="modalVal" style="background:var(--gold); color:#3e2723; display:inline-block; padding:2px 12px; border-radius:15px; font-weight:bold; margin-bottom:10px;">+0 đ</div>
-        <h2 id="modalName" style="color:var(--green); margin:0; font-size:18px;">TÊN NHIỆM VỤ</h2>
-        <div style="width:100%; height:1px; background:#eee; margin:15px 0;"></div>
-        <div id="modalReq" class="req-box">⚡ Yêu cầu: ...</div>
-        <p id="modalDesc" style="font-size:15px; line-height:1.4; padding:0 10px; text-align: left;"></p>
+    <div class="modal-card">
+        <div style="font-size:40px; margin-bottom:10px;">📜</div>
+        <div id="modalVal" style="font-family:'Montserrat'; background:var(--gold); color:#2b0a0a; display:inline-block; padding:4px 15px; border-radius:20px; font-weight:800;">+0</div>
+        <h2 id="modalName" style="font-family:'Montserrat'; font-size:20px; margin:15px 0; line-height:1.4; color:#1a4c1a; font-weight: 800;">MISSION NAME</h2>
         
-        <div style="background:#fffde7; padding:10px; border-radius:8px; font-size:12px; border:1px solid #ffe082; margin-bottom:15px; text-align: left;">
-            <b>📸 Yêu cầu nộp bài:</b><br>
-            - Chụp ảnh hoặc quay video minh chứng.<br>
-            - Gửi vào group Zalo/BTC để được duyệt.
+        <div style="text-align:left; font-size:14px; color:#333; line-height:1.6; background:#f5f5f5; padding:15px; border-radius:10px; border:1px solid #ddd;">
+            <div style="font-size:11px; color:#d32f2f; font-weight:bold; font-family:'Montserrat'; margin-bottom:5px;">YÊU CẦU: <span id="modalReq" style="color:#333">...</span></div>
+            <span id="modalDesc">...</span>
         </div>
-
-        <button class="btn btn-primary" onclick="submitTask()">NỘP BÀI (ĐÃ CHỤP ẢNH)</button>
-        <div style="margin-top:15px; font-size:12px; color:#999; cursor:pointer; text-decoration:underline;" onclick="closeTask()">Để sau làm</div>
+        
+        <div style="font-size:11px; color:#155724; margin:20px 0; text-align:left; border:1px solid #c3e6cb; padding:10px; border-radius:8px; background:#d4edda;">
+            <b>📸 LƯU Ý:</b> Nhớ chụp ảnh hoặc quay video minh chứng trước khi nộp bài nhé!
+        </div>
+        <button class="btn btn-primary" onclick="submitTask()">NỘP BÀI</button>
+        <div style="margin-top:15px; font-size:12px; color:#777; cursor:pointer; text-decoration: underline;" onclick="closeTask()">Để sau làm</div>
     </div>
 </div>
 
 <script>
     // --- 1. DỮ LIỆU NHÂN SỰ (FULL 50 NGƯỜI) ---
+    // Đã kiểm tra đầy đủ danh sách anh Phúc cung cấp
     const ORG_CHART = {
         "TM": { name: "KHỐI THƯƠNG MẠI", subs: [ {name:"MICE Team 01", pass:"mice1"}, {name:"MICE Team 02", pass:"mice2"}, {name:"Core Team", pass:"core"}, {name:"BD Team", pass:"bd"} ]},
         "KD": { name: "KHỐI KD & TIẾP THỊ", subs: [ {name:"Tư vấn Khách lẻ", pass:"fit"}, {name:"Tiếp thị (MKT)", pass:"mkt"}, {name:"Sản phẩm (Product)", pass:"prod"}, {name:"Đối tác (Partner)", pass:"partner"}, {name:"Thương hiệu (Brand)", pass:"brand"} ]},
@@ -202,67 +242,81 @@
     };
 
     const STAFF_DB = [
+        // BOD (3)
         {name:"Lại Minh Duy", role:"CT.HĐQT", block:"BOD"}, {name:"Mai Hữu Minh Phúc", role:"CEO", block:"BOD"}, {name:"Nguyễn Thị Thu Hương", role:"GĐ QL Rủi Ro", block:"BOD"},
-        {name:"Thái Hồng Quang", role:"TP CNTT", block:"TCHC"}, {name:"Trần Lê Nhật Tuấn", role:"PP CNTT", block:"TCHC"}, {name:"Nguyễn Thị Thu Hương", role:"GĐ Tài chính", block:"TCHC"},
-        {name:"Lê Thị Như Cát Tiên", role:"Kế toán thuế", block:"TCHC"}, {name:"Võ Thùy Phương Thảo", role:"Nhân sự", block:"TCHC"}, {name:"Nguyễn Phan Phục An", role:"Pháp chế", block:"TCHC"},
-        {name:"Nguyễn Thị Tuyết Hạnh", role:"Kế toán", block:"TCHC"}, {name:"Trần Thị Hồng Gấm", role:"Kế toán", block:"TCHC"}, {name:"Lê Văn Tám", role:"Bảo vệ", block:"TCHC"},
+        // TCHC & IT (12)
+        {name:"Thái Hồng Quang", role:"TP CNTT", block:"TCHC"}, {name:"Trần Lê Nhật Tuấn", role:"PP CNTT", block:"TCHC"}, {name:"Nguyễn Thị Thu Hương", role:"GĐ Tài chính", block:"TCHC"}, 
+        {name:"Lê Thị Như Cát Tiên", role:"Kế toán thuế", block:"TCHC"}, {name:"Võ Thùy Phương Thảo", role:"Nhân sự", block:"TCHC"}, {name:"Nguyễn Phan Phục An", role:"Pháp chế", block:"TCHC"}, 
+        {name:"Nguyễn Thị Tuyết Hạnh", role:"Kế toán", block:"TCHC"}, {name:"Trần Thị Hồng Gấm", role:"Kế toán", block:"TCHC"}, {name:"Lê Văn Tám", role:"Bảo vệ", block:"TCHC"}, 
         {name:"Nguyễn Văn Bình", role:"Tài xế", block:"TCHC"}, {name:"Phạm Thị Lan", role:"Tạp vụ", block:"TCHC"}, {name:"Lê Tuấn Anh", role:"IT Helpdesk", block:"TCHC"},
-        {name:"Trần Ngọc Quỳnh Hương", role:"Sản phẩm", block:"KD"}, {name:"Huỳnh Ngọc Quý", role:"Sản phẩm", block:"KD"}, {name:"Võ Khánh Tường", role:"Sản phẩm", block:"KD"},
-        {name:"Bùi Thanh Sang", role:"Sản phẩm", block:"KD"}, {name:"Lại Thị Ngọc Bích", role:"GĐ Tiếp thị", block:"KD"}, {name:"Nguyễn Thị Mỹ Nhung", role:"Trợ lý GĐ MKT", block:"KD"},
-        {name:"Nguyễn Hồng Anh", role:"Q.TP FIT", block:"KD"}, {name:"Đỗ Thị Uyên Nhi", role:"Sales FIT", block:"KD"}, {name:"Nguyễn Thị Thanh", role:"TP Đối tác", block:"KD"},
-        {name:"Phạm Hoàng Yến", role:"Content MKT", block:"KD"}, {name:"Lê Quang Huy", role:"Designer", block:"KD"}, {name:"Trần Thị Bích Ngọc", role:"Tư vấn viên", block:"KD"},
-        {name:"Nguyễn Mai Hương", role:"CSKH", block:"KD"}, {name:"Nguyễn Ngọc Diễm Quỳnh", role:"TP MICE", block:"TM"}, {name:"Nguyễn Lê Nhật Tân", role:"TN MICE", block:"TM"},
-        {name:"Vũ Ngọc Tân", role:"TP GIT", block:"TM"}, {name:"Trần Anh Khoa", role:"Q.TP GIT", block:"TM"}, {name:"Nguyễn Đình Tấn Kiệt", role:"TN Sales", block:"TM"},
-        {name:"Phạm Văn Hùng", role:"BD Team", block:"TM"}, {name:"Lê Thị Mai", role:"Sales MICE", block:"TM"}, {name:"Trần Quốc Bảo", role:"Sales MICE", block:"TM"},
-        {name:"Nguyễn Thu Trang", role:"Core Team", block:"TM"}, {name:"Hoàng Văn Minh", role:"Core Team", block:"TM"}, {name:"Võ Thị Ánh", role:"Sales Admin", block:"TM"},
-        {name:"Huỳnh Việt Trung", role:"TP Vé", block:"DH"}, {name:"Nguyễn Tấn Mạnh", role:"TN Visa", block:"DH"}, {name:"Diệp Thụy Oanh", role:"GĐ Tour", block:"DH"},
-        {name:"Hồ Đăng Khoa", role:"HDV", block:"DH"}, {name:"Lê Thành Tài", role:"HDV", block:"DH"}, {name:"Trịnh Thế Cường", role:"HDV", block:"DH"},
-        {name:"Nguyễn Phương Tiên", role:"HDV", block:"DH"}, {name:"Phạm Thu Thủy", role:"Điều hành", block:"DH"}, {name:"Trần Văn Nam", role:"Điều hành xe", block:"DH"},
+        // KD & TIẾP THỊ (13)
+        {name:"Trần Ngọc Quỳnh Hương", role:"Sản phẩm", block:"KD"}, {name:"Huỳnh Ngọc Quý", role:"Sản phẩm", block:"KD"}, {name:"Võ Khánh Tường", role:"Sản phẩm", block:"KD"}, 
+        {name:"Bùi Thanh Sang", role:"Sản phẩm", block:"KD"}, {name:"Lại Thị Ngọc Bích", role:"GĐ Tiếp thị", block:"KD"}, {name:"Nguyễn Thị Mỹ Nhung", role:"Trợ lý GĐ MKT", block:"KD"}, 
+        {name:"Nguyễn Hồng Anh", role:"Q.TP FIT", block:"KD"}, {name:"Đỗ Thị Uyên Nhi", role:"Sales FIT", block:"KD"}, {name:"Nguyễn Thị Thanh", role:"TP Đối tác", block:"KD"}, 
+        {name:"Phạm Hoàng Yến", role:"Content MKT", block:"KD"}, {name:"Lê Quang Huy", role:"Designer", block:"KD"}, {name:"Trần Thị Bích Ngọc", role:"Tư vấn viên", block:"KD"}, 
+        {name:"Nguyễn Mai Hương", role:"CSKH", block:"KD"},
+        // THƯƠNG MẠI (11)
+        {name:"Nguyễn Ngọc Diễm Quỳnh", role:"TP MICE", block:"TM"}, {name:"Nguyễn Lê Nhật Tân", role:"TN MICE", block:"TM"}, {name:"Vũ Ngọc Tân", role:"TP GIT", block:"TM"}, 
+        {name:"Trần Anh Khoa", role:"Q.TP GIT", block:"TM"}, {name:"Nguyễn Đình Tấn Kiệt", role:"TN Sales", block:"TM"}, {name:"Phạm Văn Hùng", role:"BD Team", block:"TM"}, 
+        {name:"Lê Thị Mai", role:"Sales MICE", block:"TM"}, {name:"Trần Quốc Bảo", role:"Sales MICE", block:"TM"}, {name:"Nguyễn Thu Trang", role:"Core Team", block:"TM"}, 
+        {name:"Hoàng Văn Minh", role:"Core Team", block:"TM"}, {name:"Võ Thị Ánh", role:"Sales Admin", block:"TM"},
+        // ĐIỀU HÀNH (11)
+        {name:"Huỳnh Việt Trung", role:"TP Vé", block:"DH"}, {name:"Nguyễn Tấn Mạnh", role:"TN Visa", block:"DH"}, {name:"Diệp Thụy Oanh", role:"GĐ Tour", block:"DH"}, 
+        {name:"Hồ Đăng Khoa", role:"HDV", block:"DH"}, {name:"Lê Thành Tài", role:"HDV", block:"DH"}, {name:"Trịnh Thế Cường", role:"HDV", block:"DH"}, 
+        {name:"Nguyễn Phương Tiên", role:"HDV", block:"DH"}, {name:"Phạm Thu Thủy", role:"Điều hành", block:"DH"}, {name:"Trần Văn Nam", role:"Điều hành xe", block:"DH"}, 
         {name:"Lý Thị Hoa", role:"Ticketing", block:"DH"}, {name:"Nguyễn Văn Dũng", role:"Visa", block:"DH"}
     ];
 
-    // --- 2. KHO NHIỆM VỤ (FULL 50 TASKS) ---
+    const BLOCK_CAPS = { 18:200000, 19:400000, 20:600000, 21:800000, 22:1000000, 23:1250000 };
+
+    // --- 2. KHO NHIỆM VỤ (50 TASKS) ---
+    // Đã kiểm tra đầy đủ 50 tasks anh Phúc cung cấp
     const TASKS = [
-        {val:2000, req:"1 Đại diện", name:"XIN NƯỚC", desc:"Tìm <div class='target-box'>{target}</div> xin 1 ngụm nước uống. Phải xin cho bằng được!"},
-        {val:2000, req:"1 Đại diện", name:"XIN KẸO", desc:"Tìm <div class='target-box'>{target}</div> xin 1 cái kẹo hoặc bánh."},
-        {val:5000, req:"1 Đại diện", name:"KHEN NGỢI", desc:"Tìm gặp <div class='target-box'>{target}</div> và khen 1 câu thật lòng (áo đẹp, tóc xinh...)."},
-        {val:2000, req:"1 Đại diện", name:"ĐẬP TAY", desc:"Tìm <div class='target-box'>{target}</div> và đập tay High-five thật to."},
-        {val:5000, req:"1 Đại diện", name:"CHÚC MỪNG", desc:"Gửi lời chúc Giáng sinh ấm áp đến <div class='target-box'>{target}</div>."},
-        {val:2000, req:"1 Đại diện", name:"HỎI THĂM", desc:"Hỏi <div class='target-box'>{target}</div>: 'Hôm nay bạn thế nào?'."},
-        {val:5000, req:"1 Đại diện", name:"BÓP VAI", desc:"Đến bóp vai cho <div class='target-box'>{target}</div> trong 10 giây."},
-        {val:2000, req:"1 Đại diện", name:"MỜI NƯỚC", desc:"Rót 1 ly nước mời <div class='target-box'>{target}</div>."},
-        {val:5000, req:"1 Đại diện", name:"CƯỜI TƯƠI", desc:"Đến trước mặt <div class='target-box'>{target}</div> và cười thật tươi trong 5 giây."},
-        {val:2000, req:"1 Đại diện", name:"CẢM ƠN", desc:"Tìm <div class='target-box'>{target}</div> và nói 'Cảm ơn vì đã là đồng nghiệp của tôi'."},
-        {val:5000, req:"2 Đại diện", name:"SELFIE NHÓM", desc:"Rủ <div class='target-box'>{target}</div> chụp chung 1 tấm hình selfie nhóm 3 người."},
-        {val:5000, req:"3 Đại diện", name:"TẠO DÁNG", desc:"Cùng <div class='target-box'>{target}</div> tạo dáng 'Trái Tim' và chụp lại."},
-        {val:5000, req:"2 Đại diện", name:"CHECK-IN CÂY THÔNG", desc:"Rủ <div class='target-box'>{target}</div> ra cây thông công ty check-in."},
-        {val:5000, req:"2 Đại diện", name:"CHỤP LÉN", desc:"Chụp 1 bức ảnh <div class='target-box'>{target}</div> đang làm việc chăm chỉ (Góc đẹp)."},
+        // 1. Tương tác Cá nhân
+        {val:2000, req:"1 Đại diện", name:"XIN NƯỚC", desc:"Tìm <span class='target-hl'>{target} - {block}</span> xin 1 ngụm nước uống. Phải xin cho bằng được!"},
+        {val:2000, req:"1 Đại diện", name:"XIN KẸO", desc:"Tìm <span class='target-hl'>{target} ({role})</span> xin 1 cái kẹo hoặc bánh."},
+        {val:5000, req:"1 Đại diện", name:"KHEN NGỢI", desc:"Tìm gặp <span class='target-hl'>{target}</span> và khen 1 câu thật lòng (áo đẹp, tóc xinh...)."},
+        {val:2000, req:"1 Đại diện", name:"ĐẬP TAY", desc:"Tìm <span class='target-hl'>{target}</span> và đập tay High-five thật to."},
+        {val:5000, req:"1 Đại diện", name:"CHÚC MỪNG", desc:"Gửi lời chúc Giáng sinh ấm áp đến <span class='target-hl'>{target}</span>."},
+        {val:2000, req:"1 Đại diện", name:"HỎI THĂM", desc:"Hỏi <span class='target-hl'>{target}</span>: 'Hôm nay bạn thế nào?'."},
+        {val:5000, req:"1 Đại diện", name:"BÓP VAI", desc:"Đến bóp vai cho <span class='target-hl'>{target}</span> trong 10 giây."},
+        {val:2000, req:"1 Đại diện", name:"MỜI NƯỚC", desc:"Rót 1 ly nước mời <span class='target-hl'>{target}</span>."},
+        {val:5000, req:"1 Đại diện", name:"CƯỜI TƯƠI", desc:"Đến trước mặt <span class='target-hl'>{target}</span> và cười thật tươi trong 5 giây."},
+        {val:2000, req:"1 Đại diện", name:"CẢM ƠN", desc:"Tìm <span class='target-hl'>{target}</span> và nói 'Cảm ơn vì đã là đồng nghiệp của tôi'."},
+        // 2. Chụp ảnh & Video
+        {val:5000, req:"2 Đại diện", name:"SELFIE NHÓM", desc:"Rủ <span class='target-hl'>{target}</span> chụp chung 1 tấm hình selfie nhóm 3 người."},
+        {val:5000, req:"3 Đại diện", name:"TẠO DÁNG", desc:"Cùng <span class='target-hl'>{target}</span> tạo dáng 'Trái Tim' và chụp lại."},
+        {val:5000, req:"2 Đại diện", name:"CHECK-IN CÂY THÔNG", desc:"Rủ <span class='target-hl'>{target}</span> ra cây thông công ty check-in."},
+        {val:5000, req:"2 Đại diện", name:"CHỤP LÉN", desc:"Chụp 1 bức ảnh <span class='target-hl'>{target}</span> đang làm việc chăm chỉ (Góc đẹp)."},
         {val:5000, req:"Cả Team", name:"ẢNH GIA ĐÌNH", desc:"Cả Team chụp 1 bức ảnh tập thể tại chỗ ngồi."},
-        {val:5000, req:"2 Đại diện", name:"MẶT NGẦU", desc:"Rủ <div class='target-box'>{target}</div> chụp kiểu ảnh 'Thanh niên nghiêm túc'."},
-        {val:5000, req:"2 Đại diện", name:"STYLE HÀN QUỐC", desc:"Rủ <div class='target-box'>{target}</div> bắn tim kiểu Hàn Quốc."},
-        {val:5000, req:"1 Đại diện", name:"SELFIE GƯƠNG", desc:"Chụp ảnh selfie trước gương cùng <div class='target-box'>{target}</div>."},
-        {val:5000, req:"2 Đại diện", name:"CHỤP GIÀY", desc:"Chụp ảnh check-in giày của bạn và <div class='target-box'>{target}</div> chụm lại nhau."},
-        {val:5000, req:"2 Đại diện", name:"QUAY BOOMERANG", desc:"Quay 1 đoạn Boomerang nhún nhảy cùng <div class='target-box'>{target}</div>."},
-        {val:5000, req:"1 Đại diện", name:"HÁT TẶNG", desc:"Hát tặng <div class='target-box'>{target}</div> một câu 'Last Christmas'."},
-        {val:5000, req:"2 Đại diện", name:"MÚA QUẠT", desc:"Múa quạt 10 giây trước mặt <div class='target-box'>{target}</div> để giải trí."},
-        {val:5000, req:"1 Đại diện", name:"KỂ CHUYỆN CƯỜI", desc:"Kể cho <div class='target-box'>{target}</div> nghe 1 câu chuyện cười. Phải làm họ cười mới tính."},
-        {val:2000, req:"1 Đại diện", name:"OẲN TÙ TÌ", desc:"Rủ <div class='target-box'>{target}</div> chơi Oẳn tù tì 3 ván. Thắng hay thua đều được."},
-        {val:5000, req:"1 Đại diện", name:"ĐỐ VUI", desc:"Đố <div class='target-box'>{target}</div> một câu đố mẹo. Quay lại cảnh trả lời."},
-        {val:5000, req:"2 Đại diện", name:"NHẢY TỰ DO", desc:"Nhảy một điệu tự do bất kỳ cùng <div class='target-box'>{target}</div>."},
-        {val:5000, req:"1 Đại diện", name:"ĐỌC THƠ", desc:"Đọc tặng <div class='target-box'>{target}</div> 2 câu thơ chế vui vẻ."},
-        {val:5000, req:"1 Đại diện", name:"LÀM ẢO THUẬT", desc:"Biểu diễn 1 trò ảo thuật nhỏ cho <div class='target-box'>{target}</div> xem."},
-        {val:2000, req:"2 Đại diện", name:"VẬT TAY", desc:"Thử vật tay giao hữu với <div class='target-box'>{target}</div>."},
-        {val:5000, req:"1 Đại diện", name:"XEM BÓI", desc:"Xem chỉ tay phán bừa cho <div class='target-box'>{target}</div> (Vui là chính)."},
-        {val:5000, req:"2 Đại diện", name:"PHỎNG VẤN", desc:"Hỏi <div class='target-box'>{target}</div>: 'Món quà Noel thích nhất là gì?'."},
-        {val:5000, req:"1 Đại diện", name:"ĐIỀU TRA", desc:"Hỏi <div class='target-box'>{target}</div>: 'Cung hoàng đạo của bạn là gì?'."},
-        {val:5000, req:"1 Đại diện", name:"SỞ THÍCH", desc:"Hỏi <div class='target-box'>{target}</div> xem họ thích ăn món gì nhất."},
-        {val:5000, req:"1 Đại diện", name:"DỰ ĐỊNH", desc:"Hỏi <div class='target-box'>{target}</div>: 'Tết này đi đâu chơi?'."},
-        {val:5000, req:"1 Đại diện", name:"THẦN TƯỢNG", desc:"Hỏi <div class='target-box'>{target}</div> xem thần tượng của họ là ai."},
-        {val:5000, req:"1 Đại diện", name:"BÀI HÁT", desc:"Hỏi <div class='target-box'>{target}</div> bài hát họ nghe gần đây nhất."},
-        {val:5000, req:"1 Đại diện", name:"REVIEW", desc:"Nhờ <div class='target-box'>{target}</div> review bữa trưa hôm nay của họ."},
-        {val:5000, req:"1 Đại diện", name:"THÚ CƯNG", desc:"Hỏi xem <div class='target-box'>{target}</div> có nuôi chó mèo không."},
-        {val:5000, req:"1 Đại diện", name:"MÀU SẮC", desc:"Hỏi xem <div class='target-box'>{target}</div> thích màu gì nhất."},
-        {val:5000, req:"1 Đại diện", name:"KỶ NIỆM", desc:"Hỏi <div class='target-box'>{target}</div> về kỷ niệm vui nhất tại công ty."},
+        {val:5000, req:"2 Đại diện", name:"MẶT NGẦU", desc:"Rủ <span class='target-hl'>{target}</span> chụp kiểu ảnh 'Thanh niên nghiêm túc'."},
+        {val:5000, req:"2 Đại diện", name:"STYLE HÀN QUỐC", desc:"Rủ <span class='target-hl'>{target}</span> bắn tim kiểu Hàn Quốc."},
+        {val:5000, req:"1 Đại diện", name:"SELFIE GƯƠNG", desc:"Chụp ảnh selfie trước gương cùng <span class='target-hl'>{target}</span>."},
+        {val:5000, req:"2 Đại diện", name:"CHỤP GIÀY", desc:"Chụp ảnh check-in giày của bạn và <span class='target-hl'>{target}</span> chụm lại nhau."},
+        {val:5000, req:"2 Đại diện", name:"QUAY BOOMERANG", desc:"Quay 1 đoạn Boomerang nhún nhảy cùng <span class='target-hl'>{target}</span>."},
+        // 3. Văn nghệ & Giải trí
+        {val:5000, req:"1 Đại diện", name:"HÁT TẶNG", desc:"Hát tặng <span class='target-hl'>{target}</span> một câu 'Last Christmas'."},
+        {val:5000, req:"2 Đại diện", name:"MÚA QUẠT", desc:"Múa quạt 10 giây trước mặt <span class='target-hl'>{target}</span> để giải trí."},
+        {val:5000, req:"1 Đại diện", name:"KỂ CHUYỆN CƯỜI", desc:"Kể cho <span class='target-hl'>{target}</span> nghe 1 câu chuyện cười. Phải làm họ cười mới tính."},
+        {val:2000, req:"1 Đại diện", name:"OẲN TÙ TÌ", desc:"Rủ <span class='target-hl'>{target}</span> chơi Oẳn tù tì 3 ván. Thắng hay thua đều được."},
+        {val:5000, req:"1 Đại diện", name:"ĐỐ VUI", desc:"Đố <span class='target-hl'>{target}</span> một câu đố mẹo. Quay lại cảnh trả lời."},
+        {val:5000, req:"2 Đại diện", name:"NHẢY TỰ DO", desc:"Nhảy một điệu tự do bất kỳ cùng <span class='target-hl'>{target}</span>."},
+        {val:5000, req:"1 Đại diện", name:"ĐỌC THƠ", desc:"Đọc tặng <span class='target-hl'>{target}</span> 2 câu thơ chế vui vẻ."},
+        {val:5000, req:"1 Đại diện", name:"LÀM ẢO THUẬT", desc:"Biểu diễn 1 trò ảo thuật nhỏ (biến mất ngón tay) cho <span class='target-hl'>{target}</span> xem."},
+        {val:2000, req:"2 Đại diện", name:"VẬT TAY", desc:"Thử vật tay giao hữu với <span class='target-hl'>{target}</span>."},
+        {val:5000, req:"1 Đại diện", name:"XEM BÓI", desc:"Xem chỉ tay phán bừa cho <span class='target-hl'>{target}</span> (Vui là chính)."},
+        // 4. Phỏng vấn & Tìm hiểu
+        {val:5000, req:"2 Đại diện", name:"PHỎNG VẤN", desc:"Hỏi <span class='target-hl'>{target}</span>: 'Món quà Noel thích nhất là gì?'."},
+        {val:5000, req:"1 Đại diện", name:"ĐIỀU TRA", desc:"Hỏi <span class='target-hl'>{target}</span>: 'Cung hoàng đạo của bạn là gì?'."},
+        {val:5000, req:"1 Đại diện", name:"SỞ THÍCH", desc:"Hỏi <span class='target-hl'>{target}</span> xem họ thích ăn món gì nhất."},
+        {val:5000, req:"1 Đại diện", name:"DỰ ĐỊNH", desc:"Hỏi <span class='target-hl'>{target}</span>: 'Tết này đi đâu chơi?'."},
+        {val:5000, req:"1 Đại diện", name:"THẦN TƯỢNG", desc:"Hỏi <span class='target-hl'>{target}</span> xem thần tượng của họ là ai."},
+        {val:5000, req:"1 Đại diện", name:"BÀI HÁT", desc:"Hỏi <span class='target-hl'>{target}</span> bài hát họ nghe gần đây nhất."},
+        {val:5000, req:"1 Đại diện", name:"REVIEW", desc:"Nhờ <span class='target-hl'>{target}</span> review bữa trưa hôm nay của họ."},
+        {val:5000, req:"1 Đại diện", name:"THÚ CƯNG", desc:"Hỏi xem <span class='target-hl'>{target}</span> có nuôi chó mèo không."},
+        {val:5000, req:"1 Đại diện", name:"MÀU SẮC", desc:"Hỏi xem <span class='target-hl'>{target}</span> thích màu gì nhất."},
+        {val:5000, req:"1 Đại diện", name:"KỶ NIỆM", desc:"Hỏi <span class='target-hl'>{target}</span> về kỷ niệm vui nhất tại TST."},
+        // 5. Task Chung
         {val:2000, req:"Cả Team", name:"DỌN DẸP", desc:"Cả team cùng sắp xếp lại bàn ghế trong 1 phút."},
         {val:2000, req:"Cả Team", name:"THỂ DỤC", desc:"Cả team đứng dậy vươn vai 5 lần cho khỏe."},
         {val:5000, req:"3 Đại diện", name:"TÌM MÀU ĐỎ", desc:"Tìm 1 người mặc áo ĐỎ (khác Team) và chúc họ Giáng sinh vui vẻ."},
@@ -276,31 +330,32 @@
     ];
 
     const BOSS_CEO = { val:50000, req:"TOÀN KHỐI", name:"VỆ SĨ CEO", desc:"Tìm <b>CEO Mai Hữu Minh Phúc</b>. Cả Khối vây quanh, khoanh tay đeo kính ngầu chụp ảnh 'Biệt đội bảo vệ Sếp'." };
-    const BOSS_CHAIRMAN = { val:50000, req:"TOÀN KHỐI", name:"TIM CHỦ TỊCH", desc:"Tìm <b>Chủ tịch Lại Minh Duy</b>. Cả Khối cùng đứng xung quanh bắn tim chụp ảnh." };
+    const BOSS_CHAIRMAN = { val:50000, req:"TOÀN KHỐI", name:"TIM CHỦ TỊCH", desc:"Tìm <b>Chủ tịch Lại Minh Duy</b>. Cả Khối cùng đứng xung quanh và tạo dáng 'Bắn Tim' chụp ảnh." };
 
-    // --- 3. LOGIC XỬ LÝ ---
+    // --- 3. CORE LOGIC ---
     let curBlock="", curSubIdx=-1, subCap=0, pendingTask=null, autoRefreshInterval=null;
-    const getKey = (b,i) => `BAL_V3_${b}_${i}`;
-    const getStatusKey = (b,i) => `ST_V3_${b}_${i}`;
-    const getMsgKey = (b,i) => `MSG_V3_${b}_${i}`;
+    // Dữ liệu V6 mới nhất để đảm bảo không bị trùng cache cũ
+    const getKey = (b,i) => `BAL_V6_${b}_${i}`;
+    const getStatusKey = (b,i) => `ST_V6_${b}_${i}`;
+    const getMsgKey = (b,i) => `MSG_V6_${b}_${i}`;
 
     window.onload = () => { createSnow(); initLogin(); };
 
     function initLogin() {
-        const s = document.getElementById('selBlock'); s.innerHTML='<option value="">-- Chọn Khối --</option>';
+        const s = document.getElementById('selBlock'); s.innerHTML='<option value="">-- CHỌN KHỐI --</option>';
         for(let k in ORG_CHART) s.innerHTML+=`<option value="${k}">${ORG_CHART[k].name}</option>`;
     }
     function renderTeams() {
         curBlock = document.getElementById('selBlock').value;
         const s = document.getElementById('selTeam');
         document.getElementById('teamArea').style.display = curBlock ? 'block' : 'none';
-        s.innerHTML='<option value="">-- Chọn Team --</option>';
+        s.innerHTML='<option value="">-- CHỌN TEAM --</option>';
         if(curBlock) ORG_CHART[curBlock].subs.forEach((t,i)=>s.innerHTML+=`<option value="${i}">${t.name}</option>`);
     }
     function handleLogin() {
         const idx = document.getElementById('selTeam').value;
         const pass = document.getElementById('inpPass').value;
-        if(idx==="") return alert("Chọn Team!");
+        if(idx==="") return alert("Vui lòng chọn Team!");
         if(pass !== ORG_CHART[curBlock].subs[idx].pass) return alert("Sai mật khẩu!");
         curSubIdx = parseInt(idx);
         switchView('viewGame');
@@ -315,11 +370,10 @@
 
     function calcBudget() {
         const d = new Date().getDate();
-        const CAPS = { 18:200000, 19:400000, 20:600000, 21:800000, 22:1000000, 23:1250000 };
         let k = d < 18 ? 18 : (d > 23 ? 23 : d);
-        subCap = Math.floor((CAPS[k] || 200000) / ORG_CHART[curBlock].subs.length / 1000) * 1000;
+        subCap = Math.floor((BLOCK_CAPS[k] || 200000) / ORG_CHART[curBlock].subs.length / 1000) * 1000;
     }
-
+    
     function checkBlockSync() {
         let allDone = true;
         ORG_CHART[curBlock].subs.forEach((s,i) => {
@@ -343,33 +397,33 @@
         document.getElementById('lblCap').innerText = subCap.toLocaleString();
         document.getElementById('progBar').style.width = Math.min((bal/subCap)*100, 100) + "%";
 
-        const gBtn = document.getElementById('gachaBtn');
+        const gBtn = document.getElementById('cardInner');
         const msg = document.getElementById('msgStatus');
         const badge = document.getElementById('statusBadge');
 
         gBtn.classList.remove('locked');
-        badge.className = "status-badge st-idle"; badge.innerText = "SẴN SÀNG";
+        badge.className = "badge st-ready"; badge.innerText = "SẴN SÀNG";
+        msg.innerText = "👇 Bấm vào túi quà ông già Noel để nhận nhiệm vụ!";
 
         if(st === 1) {
             gBtn.classList.add('locked');
-            badge.className = "status-badge st-pending"; badge.innerText = "⏳ ĐANG CHỜ DUYỆT";
-            msg.innerText = "Đã nộp bài. Đợi BTC duyệt ảnh/video...";
+            badge.className = "badge st-pending"; badge.innerText = "CHỜ DUYỆT";
+            msg.innerText = "Đã nộp bài. Vui lòng đợi BTC duyệt...";
         } else if(st === 2) {
-            badge.className = "status-badge st-reject"; badge.innerText = "❌ LÀM LẠI";
-            msg.innerText = "BTC: " + localStorage.getItem(getMsgKey(curBlock, curSubIdx));
+            badge.className = "badge st-reject"; badge.innerText = "BỊ TỪ CHỐI";
+            msg.innerHTML = "<span style='color:#f44336'>BTC: " + localStorage.getItem(getMsgKey(curBlock, curSubIdx)) + "</span>";
         } else if(bal >= subCap) {
             if(checkBlockSync()) {
-                if(localStorage.getItem(`BOSS_V3_${curBlock}`)) {
-                    msg.innerText = "🏆 KHỐI ĐÃ HOÀN THÀNH TẤT CẢ!";
+                if(localStorage.getItem(`BOSS_V6_${curBlock}`)) {
+                    msg.innerHTML = "<span style='color:#4caf50; font-weight:bold;'>🏆 TUYỆT VỜI! ĐÃ HOÀN THÀNH.</span>";
                     gBtn.classList.add('locked');
                 } else {
-                    msg.innerText = "🔥 BOSS XUẤT HIỆN! MỞ TÚI ĐỂ NHẬN!";
-                    msg.style.color = "#fbc02d";
+                    msg.innerHTML = "<span style='color:var(--gold); font-weight:bold;'>🔥 BOSS XUẤT HIỆN! MỞ QUÀ NGAY!</span>";
                 }
             } else {
                 gBtn.classList.add('locked');
-                badge.className = "status-badge st-waiting"; badge.innerText = "⛔ ĐỢI ĐỒNG ĐỘI";
-                msg.innerText = "Team đã xong. Hãy giúp các team khác cùng khối nhé!";
+                badge.className = "badge st-pending"; badge.innerText = "ĐỢI ĐỒNG ĐỘI";
+                msg.innerText = "Team bạn đã xong. Hãy giúp team khác cùng Khối!";
             }
         }
 
@@ -377,8 +431,12 @@
         ORG_CHART[curBlock].subs.forEach((s,i) => {
             let v = parseInt(localStorage.getItem(getKey(curBlock,i))||0);
             let sSt = parseInt(localStorage.getItem(getStatusKey(curBlock,i))||0);
-            let txt = v >= subCap ? "✅" : (sSt===1 ? "⏳" : "..");
-            html += `<div style="display:flex; justify-content:space-between; margin-bottom:2px; opacity:${i==curSubIdx?1:0.7}"><span>${s.name}</span><b>${v.toLocaleString()} ${txt}</b></div>`;
+            let txt = v >= subCap ? "XONG" : (sSt===1 ? "CHỜ..." : "...");
+            let color = v >= subCap ? "#4caf50" : (sSt===1 ? "var(--gold)" : "#aaa");
+            html += `<div class="list-item" style="opacity:${i==curSubIdx?1:0.5}">
+                <span>${s.name}</span>
+                <span style="color:${color}; font-family:'Montserrat'; font-size:10px; font-weight:bold;">${txt} [${v}]</span>
+            </div>`;
         });
         document.getElementById('statusList').innerHTML = html;
     }
@@ -387,10 +445,9 @@
         const bal = parseInt(localStorage.getItem(getKey(curBlock,curSubIdx))||0);
         if(document.getElementById('cardInner').classList.contains('is-flipped')) return;
 
-        // BOSS LOGIC
         if(bal >= subCap && checkBlockSync()) {
             pendingTask = (curBlock==='TM'||curBlock==='KD') ? BOSS_CEO : BOSS_CHAIRMAN;
-            showQuestResult("EPIC", pendingTask);
+            showQuestResult("LEGENDARY", pendingTask);
             return;
         }
 
@@ -398,17 +455,17 @@
         
         setTimeout(() => {
             document.getElementById('cardInner').classList.remove('shake');
-            
-            // Random Rarity
             let r = Math.random()*100;
-            let rarity = r > 92 ? "EPIC" : (r > 70 ? "RARE" : "COMMON");
+            // COMMON: 65%, RARE: 25%, EPIC: 10%
+            let rarity = r > 90 ? "EPIC" : (r > 65 ? "RARE" : "COMMON");
             
             let task = JSON.parse(JSON.stringify(TASKS[Math.floor(Math.random()*TASKS.length)]));
             if(task.desc.includes("{target}")) {
                 let s = getSmartStaff();
-                task.desc = task.desc.replace(/{target}/g, `${s.name} (${s.role})`);
+                task.desc = task.desc.replace(/{target}/g, `${s.name} (${s.role})`)
+                                     .replace(/{block}/g, s.block)
+                                     .replace(/{role}/g, s.role);
             }
-            
             if(bal + task.val > subCap) task.val = subCap - bal;
             pendingTask = task;
             showQuestResult(rarity, task);
@@ -418,19 +475,30 @@
     function showQuestResult(rarity, task) {
         const res = document.getElementById('cardResult');
         const tag = document.getElementById('resRarity');
-        res.className = "card-back rare-" + rarity.toLowerCase();
+        
+        // Màu sắc theo độ hiếm
+        let color = "#7f8c8d";
+        if(rarity==="RARE") color = "#00796b";
+        if(rarity==="EPIC") color = "#d32f2f";
+        if(rarity==="LEGENDARY") color = "var(--gold)";
+
+        res.className = `card-face card-back rare-${rarity}`;
         tag.innerText = rarity;
-        tag.style.background = rarity==="EPIC"?"#9c27b0":(rarity==="RARE"?"#2196f3":"#90a4ae");
+        tag.style.background = color;
+        
         document.getElementById('resName').innerText = task.name;
+        document.getElementById('resName').style.color = rarity==="EPIC"?"#d32f2f":"#333";
         document.getElementById('resVal').innerText = "+" + task.val.toLocaleString();
+        document.getElementById('resVal').style.color = color;
+        
         document.getElementById('cardInner').classList.add('is-flipped');
     }
 
     function openFullTask(e) {
         e.stopPropagation();
         document.getElementById('modalName').innerText = pendingTask.name;
-        document.getElementById('modalVal').innerText = "+" + pendingTask.val.toLocaleString() + " đ";
-        document.getElementById('modalReq').innerText = "⚡ Yêu cầu: " + (pendingTask.req || "Cả Team");
+        document.getElementById('modalVal').innerText = "+" + pendingTask.val.toLocaleString();
+        document.getElementById('modalReq').innerText = pendingTask.req || "Cả Team";
         document.getElementById('modalDesc').innerHTML = pendingTask.desc;
         document.getElementById('overlay').style.display = 'flex';
         setTimeout(() => { document.getElementById('cardInner').classList.remove('is-flipped'); }, 500);
@@ -439,31 +507,32 @@
     function closeTask() { document.getElementById('overlay').style.display = 'none'; }
 
     function submitTask() {
-        let all = JSON.parse(localStorage.getItem('PENDING_V3')||"[]");
+        let all = JSON.parse(localStorage.getItem('PENDING_V6')||"[]");
         all.push({
             block: curBlock, idx: curSubIdx, team: ORG_CHART[curBlock].subs[curSubIdx].name,
-            task: pendingTask.name, val: pendingTask.val,
-            isBoss: (pendingTask.val === 50000)
+            task: pendingTask.name, val: pendingTask.val, isBoss: (pendingTask.val === 50000)
         });
-        localStorage.setItem('PENDING_V3', JSON.stringify(all));
+        localStorage.setItem('PENDING_V6', JSON.stringify(all));
         localStorage.setItem(getStatusKey(curBlock, curSubIdx), 1);
         closeTask(); updateUI();
-        alert("✅ Đã nộp! Vui lòng gửi ảnh/video vào group BTC để được duyệt.");
+        alert("Đã nộp bài thành công! Hãy báo BTC duyệt.");
     }
 
     // --- ADMIN ---
     function openAdminLogin() { if(prompt("Mật mã BTC:")==="admin123") { renderAdmin(); document.getElementById('adminPanel').style.display='block'; } }
     function closeAdmin() { document.getElementById('adminPanel').style.display='none'; }
     function renderAdmin() {
-        let all = JSON.parse(localStorage.getItem('PENDING_V3')||"[]");
-        let html = all.length ? "" : "<div style='text-align:center;padding:20px;color:#aaa;'>Không có yêu cầu chờ duyệt.</div>";
+        let all = JSON.parse(localStorage.getItem('PENDING_V6')||"[]");
+        let html = all.length ? "" : "<div style='text-align:center;padding:20px;color:#777;'>Không có bài chờ duyệt.</div>";
         all.forEach((p,i) => {
-            html += `<div class="admin-card">
-                <div style="font-weight:bold; color:var(--red)">${p.team}</div>
-                <div style="font-size:13px">NV: ${p.task} (+${p.val.toLocaleString()})</div>
-                <div style="margin-top:8px">
-                    <button class="btn-mini btn-success" onclick="adminApprove(${i})">DUYỆT ✅</button>
-                    <button class="btn-mini btn-danger" onclick="adminReject(${i})">HỦY ❌</button>
+            html += `<div style="background:#222; padding:15px; border-radius:12px; margin-bottom:10px; border:1px solid #444; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <div style="font-weight:bold; color:var(--gold); font-size:12px;">${p.team}</div>
+                    <div style="font-size:11px; color:#ccc;">${p.task} (+${p.val.toLocaleString()})</div>
+                </div>
+                <div>
+                    <button class="btn-mini" style="background:#4caf50; color:#fff; border:none;" onclick="adminApprove(${i})">✓</button>
+                    <button class="btn-mini" style="background:#f44336; color:#fff; border:none;" onclick="adminReject(${i})">✕</button>
                 </div>
             </div>`;
         });
@@ -471,36 +540,36 @@
 
         let ov = "";
         for(let b in ORG_CHART) {
-            ov += `<div style='color:var(--gold);margin-top:10px;font-weight:bold'>${ORG_CHART[b].name}</div>`;
+            ov += `<div style='color:var(--gold); margin-top:15px; font-family:"Montserrat"; font-size:12px; font-weight:bold;'>${ORG_CHART[b].name}</div>`;
             ORG_CHART[b].subs.forEach((s,i) => {
                 let v = parseInt(localStorage.getItem(getKey(b,i))||0);
-                ov += `<div style='font-size:11px; display:flex; justify-content:space-between'><span>${s.name}</span><span>${v.toLocaleString()}</span></div>`;
+                ov += `<div style='font-size:11px; display:flex; justify-content:space-between; color:#aaa; border-bottom:1px solid #333; padding:4px 0;'><span>${s.name}</span><span>${v.toLocaleString()}</span></div>`;
             });
         }
         document.getElementById('adminOverviewList').innerHTML = ov;
     }
     function adminApprove(i) {
-        let all = JSON.parse(localStorage.getItem('PENDING_V3')||"[]");
+        let all = JSON.parse(localStorage.getItem('PENDING_V6')||"[]");
         let p = all[i];
         let cur = parseInt(localStorage.getItem(getKey(p.block, p.idx))||0);
         localStorage.setItem(getKey(p.block, p.idx), cur + p.val);
         localStorage.setItem(getStatusKey(p.block, p.idx), 0);
-        if(p.isBoss) localStorage.setItem(`BOSS_V3_${p.block}`, "1");
-        all.splice(i,1); localStorage.setItem('PENDING_V3', JSON.stringify(all));
+        if(p.isBoss) localStorage.setItem(`BOSS_V6_${p.block}`, "1");
+        all.splice(i,1); localStorage.setItem('PENDING_V6', JSON.stringify(all));
         renderAdmin();
     }
     function adminReject(i) {
-        let reason = prompt("Lý do từ chối (Gửi cho Team):", "Ảnh thiếu người / Chưa đúng yêu cầu");
+        let reason = prompt("Lý do từ chối (Gửi cho Team):", "Ảnh mờ / Thiếu thành viên");
         if(!reason) return;
-        let all = JSON.parse(localStorage.getItem('PENDING_V3')||"[]");
+        let all = JSON.parse(localStorage.getItem('PENDING_V6')||"[]");
         let p = all[i];
         localStorage.setItem(getStatusKey(p.block, p.idx), 2);
         localStorage.setItem(getMsgKey(p.block, p.idx), reason);
-        all.splice(i,1); localStorage.setItem('PENDING_V3', JSON.stringify(all));
+        all.splice(i,1); localStorage.setItem('PENDING_V6', JSON.stringify(all));
         renderAdmin();
     }
-    function resetAllData() { if(confirm("Xóa sạch toàn bộ dữ liệu?")) { localStorage.clear(); location.reload(); } }
-    function createSnow() { const c = document.getElementById('snowContainer'); setInterval(()=>{ const d=document.createElement('div'); d.classList.add('snowflake'); d.innerText='❄'; d.style.left=Math.random()*100+'vw'; d.style.animationDuration=Math.random()*3+2+'s'; c.appendChild(d); setTimeout(()=>d.remove(),5000); },300); }
+    function resetAllData() { if(confirm("CẢNH BÁO: XÓA SẠCH DỮ LIỆU?")) { localStorage.clear(); location.reload(); } }
+    function createSnow() { const c = document.getElementById('snowContainer'); setInterval(()=>{ const d=document.createElement('div'); d.classList.add('snowflake'); d.innerText='❄'; d.style.left=Math.random()*100+'vw'; d.style.animationDuration=Math.random()*3+2+'s'; c.appendChild(d); setTimeout(()=>d.remove(),5000); },200); }
 </script>
 </body>
 </html>
