@@ -3,60 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TRẠM 3: XMAS FINAL</title>
+    <title>TRẠM 3: XMAS CHARITY (LOGIC FIX)</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Mali:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
+        /* --- CORE THEME --- */
         :root { --bg-dark: #0f2027; --gold: #ffd700; --glass: rgba(20, 30, 40, 0.95); --glass-border: rgba(255, 215, 0, 0.15); }
         body { font-family: 'Mali', cursive; background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364); color: #fff; margin: 0; min-height: 100vh; display: flex; justify-content: center; align-items: center; overflow-x: hidden; user-select: none; }
         .app-container { width: 100%; max-width: 420px; background: var(--glass); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); min-height: 100vh; padding: 20px; box-sizing: border-box; position: relative; z-index: 10; display: flex; flex-direction: column; }
-        
         h1 { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 26px; text-align: center; margin: 0; background: linear-gradient(180deg, #fff, #ffd700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-transform: uppercase; filter: drop-shadow(0 2px 0 rgba(0,0,0,0.8)); }
-        .subtitle { font-size: 11px; text-align: center; color: #888; margin-bottom: 20px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px; }
-
+        .subtitle { font-size: 11px; text-align: center; color: #888; margin-bottom: 25px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; }
         select, input { width: 100%; padding: 16px; margin-top: 8px; margin-bottom: 15px; background: #222; border: 1px solid #444; border-radius: 12px; color: #fff; font-family: 'Mali'; font-size: 16px; box-sizing: border-box; transition: 0.3s; }
-        
         .btn { width: 100%; padding: 16px; border: none; border-radius: 14px; font-family: 'Montserrat', sans-serif; font-weight: 800; cursor: pointer; margin-top: 10px; text-transform: uppercase; transition: all 0.2s; position: relative; overflow: hidden; letter-spacing: 1px; }
         .btn:active { transform: scale(0.98); }
         .btn-primary { background: linear-gradient(135deg, #d32f2f, #8e0000); color: #fff; box-shadow: 0 4px 15px rgba(211, 47, 47, 0.4); }
         .btn-secondary { background: transparent; color: #888; border: 1px solid #444; font-size: 11px; padding: 12px; margin-top: 10px; }
-        .btn-option { background: #333; border: 1px solid #555; color: #eee; margin-top: 10px; text-align: left; font-family: 'Mali'; text-transform: none; font-weight: normal; width: 100%; padding: 15px; border-radius: 10px; font-size: 14px; }
+        .btn-option { background: #333; border: 1px solid #555; color: #eee; margin-top: 8px; text-align: left; font-family: 'Mali'; text-transform: none; font-weight: normal; width: 100%; padding: 12px; border-radius: 8px; margin-bottom: 5px; }
         .btn-option:hover { background: #444; border-color: #777; }
-        
-        .dashboard { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 15px; margin-bottom: 15px; text-align: center; }
-        .balance { font-size: 42px; font-weight: 900; font-family: 'Montserrat'; color: var(--gold); margin: 5px 0; }
-        .progress-bar { height: 6px; background: #333; border-radius: 10px; overflow: hidden; margin-top: 10px; }
-        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #d32f2f, #ffcc00); transition: width 0.8s; }
-
-        .gacha-container { perspective: 1000px; width: 220px; height: 320px; margin: 10px auto; cursor: pointer; position: relative; z-index: 5; }
+        .dashboard { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 20px; margin-bottom: 20px; text-align: center; backdrop-filter: blur(5px); }
+        .balance { font-size: 42px; font-weight: 900; font-family: 'Montserrat'; color: var(--gold); text-shadow: 0 0 20px rgba(255, 215, 0, 0.3); letter-spacing: -2px; line-height: 1; margin: 5px 0; }
+        .progress-bar { height: 6px; background: #333; border-radius: 10px; overflow: hidden; margin-top: 15px; }
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #d32f2f, #ffcc00); box-shadow: 0 0 10px #d32f2f; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+        .gacha-container { perspective: 1000px; width: 220px; height: 320px; margin: 20px auto; cursor: pointer; position: relative; z-index: 5; }
         .card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); transform-style: preserve-3d; }
         .card-inner.is-flipped { transform: rotateY(180deg); }
         .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 24px; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 4px solid var(--gold); box-shadow: 0 20px 50px rgba(0,0,0,0.5); background-size: cover; overflow: hidden; transition: border-color 0.1s, box-shadow 0.1s; }
         .card-front { background: #1a0b0b; background-image: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.05) 0%, transparent 60%); }
         .card-back { transform: rotateY(180deg); background: #fffdf5; color: #333; border-color: #333; }
-
         .rarity-tag { font-family: 'Montserrat', sans-serif; font-size: 10px; padding: 6px 12px; border-radius: 30px; font-weight: 900; margin-bottom: 15px; text-transform: uppercase; color: #fff; letter-spacing: 1px; }
         .rare-COMMON { background: #95a5a6; border-color: #bdc3c7 !important; }
-        .rare-UNCOMMON { background: #27ae60; border-color: #27ae60 !important; }
-        .rare-RARE { background: #2980b9; border-color: #2980b9 !important; }
-        .rare-SUPER_RARE { background: #8e44ad; border-color: #8e44ad !important; }
-        .rare-ULTRA_RARE { background: #c0392b; border-color: #c0392b !important; }
-        .rare-SECRET_RARE { background: linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff); border: 3px solid #fff !important; }
-
+        .rare-UNCOMMON { background: #27ae60; border-color: #27ae60 !important; box-shadow: 0 0 15px #2ecc71; }
+        .rare-RARE { background: #2980b9; border-color: #2980b9 !important; box-shadow: 0 0 20px #3498db; }
+        .rare-SUPER_RARE { background: #8e44ad; border-color: #8e44ad !important; box-shadow: 0 0 25px #9b59b6; }
+        .rare-ULTRA_RARE { background: #c0392b; border-color: #c0392b !important; box-shadow: 0 0 30px #e74c3c; animation: pulse-red 1s infinite; }
+        .rare-SECRET_RARE { background: linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff); background-size: 400%; animation: rainbow-bg 3s linear infinite; border: 3px solid #fff !important; box-shadow: 0 0 60px gold; }
+        @keyframes pulse-red { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+        @keyframes rainbow-bg { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
         .shaking { animation: shake-hard 0.1s infinite; }
         @keyframes shake-hard { 0% { transform: translate(1px, 1px) rotate(0deg); } 50% { transform: translate(-1px, -2px) rotate(-1deg); } 100% { transform: translate(-2px, 1px) rotate(1deg); } }
-
         #toastBox { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 1000; display: flex; flex-direction: column; gap: 10px; width: 90%; max-width: 350px; pointer-events: none; }
-        .toast { background: rgba(0,0,0,0.9); color: #fff; padding: 15px 20px; border-radius: 12px; font-size: 14px; font-weight: bold; display: flex; align-items: center; gap: 10px; animation: slideIn 0.3s; border-left: 5px solid; }
+        .toast { background: rgba(0,0,0,0.9); color: #fff; padding: 15px 20px; border-radius: 12px; font-size: 14px; font-weight: bold; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 10px; animation: slideIn 0.3s; border-left: 5px solid; }
         .toast.success { border-color: #4caf50; } .toast.error { border-color: #f44336; } .toast.info { border-color: #2196f3; }
         @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-        .list-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px dashed rgba(255,255,255,0.1); font-size: 12px; color: #aaa; align-items: center; }
+        .list-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px dashed rgba(255,255,255,0.1); font-size: 12px; color: #aaa; align-items: center; }
         .target-hl { color: #d32f2f; font-weight: 800; background: #ffebee; padding: 2px 6px; border-radius: 4px; }
         #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); backdrop-filter: blur(5px); z-index: 100; display: none; justify-content: center; align-items: center; }
-        .modal-card { background: #fff; width: 90%; max-width: 380px; padding: 25px; border-radius: 24px; text-align: center; position: relative; }
-        
+        .modal-card { background: #fff; width: 90%; max-width: 380px; padding: 30px; border-radius: 24px; text-align: center; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
         #adminPanel { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #111; z-index: 200; padding: 20px; overflow-y: auto; }
         .admin-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; border-bottom: 1px solid #333; position: sticky; top: 0; background: #111; z-index: 5; }
         .upload-area { display: block; border: 2px dashed #aaa; padding: 15px; border-radius: 10px; margin-bottom:10px; cursor: pointer; }
@@ -82,36 +75,36 @@
             <div class="subtitle">TRIỆU BƯỚC CHÂN - MỘT TRÁI TIM</div>
         </div>
         <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05);">
-            <label style="font-size: 10px; color: #aaa; font-weight: bold;">CHỌN KHỐI</label>
+            <label style="font-size: 10px; color: #aaa; font-weight: bold; letter-spacing: 1px;">CHỌN KHỐI</label>
             <select id="selBlock" onchange="renderTeams()"><option>Đang tải dữ liệu...</option></select>
             <div id="teamArea" style="display:none;">
-                <label style="font-size: 10px; color: #aaa; font-weight: bold; margin-top: 10px; display:block;">CHỌN TEAM</label>
+                <label style="font-size: 10px; color: #aaa; font-weight: bold; letter-spacing: 1px; margin-top: 10px; display:block;">CHỌN TEAM</label>
                 <select id="selTeam"></select>
-                <label style="font-size: 10px; color: #aaa; font-weight: bold; margin-top: 10px; display:block;">MẬT KHẨU</label>
+                <label style="font-size: 10px; color: #aaa; font-weight: bold; letter-spacing: 1px; margin-top: 10px; display:block;">MẬT KHẨU</label>
                 <input type="password" id="inpPass" placeholder="••••••">
             </div>
         </div>
         <button class="btn btn-primary" onclick="handleLogin()">THAM GIA NGAY</button>
         <div style="text-align:center; margin-top:30px;">
-            <span style="font-size:10px; color:#666; cursor:pointer;" onclick="openAdminLogin()">[ BTC ACCESS ]</span>
+            <span style="font-size:10px; color:#666; cursor:pointer; font-family: 'Montserrat'; font-weight: bold;" onclick="openAdminLogin()">[ BTC ACCESS ]</span>
         </div>
     </div>
 
     <div id="viewGame" style="display:none;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
             <div>
-                <div id="lblBlockName" style="font-size:10px; color:var(--gold); font-weight:bold;">KHỐI...</div>
-                <div id="lblTeamName" style="font-size:18px; font-weight:900;">TEAM...</div>
+                <div id="lblBlockName" style="font-size:10px; color:var(--gold); font-weight:bold; letter-spacing: 1px;">KHỐI...</div>
+                <div id="lblTeamName" style="font-size:18px; font-weight:900; font-family:'Montserrat'; text-transform: uppercase;">TEAM...</div>
             </div>
             <div style="display:flex; gap:5px;">
                 <button onclick="emergencyReset()" style="background:#f44336; border:none; color:#fff; padding:5px 10px; border-radius:20px; font-size:10px; font-weight:bold;">⚠️ RESET LỖI</button>
                 <button onclick="logout()" style="background:rgba(255,255,255,0.1); border:none; color:#fff; width:36px; height:36px; border-radius:50%;">✕</button>
             </div>
         </div>
-        <div style="text-align:center; margin-bottom: 10px;"><span id="statusBadge" class="badge st-ready">SẴN SÀNG</span></div>
+        <div style="text-align:center; margin-bottom: 15px;"><span id="statusBadge" class="badge st-ready">SẴN SÀNG</span></div>
         
         <div class="dashboard">
-            <div style="font-size:10px; color:#aaa; font-weight: bold;">QUỸ TỪ THIỆN TEAM</div>
+            <div style="font-size:10px; color:#aaa; font-weight: bold; letter-spacing: 1px;">QUỸ TỪ THIỆN TEAM</div>
             <div class="balance" id="lblBalance">0</div>
             <div style="border-top: 1px dashed #444; margin: 10px 0; padding-top: 10px;">
                 <div style="font-size:12px; color:#4caf50; font-weight:bold; margin-bottom:5px;">
@@ -125,26 +118,28 @@
         <div class="gacha-container" id="gachaContainer" onclick="spinGacha()">
             <div class="card-inner" id="cardInner">
                 <div class="card-face card-front" id="cardFront">
-                    <div id="spinIcon" style="font-size:80px;">🎁</div>
-                    <div id="spinText" style="font-family:'Montserrat'; font-weight:800; font-size:16px; margin-top:20px; color:var(--gold);">CHẠM ĐỂ RÚT</div>
+                    <div id="spinIcon" style="font-size:80px; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5));">🎁</div>
+                    <div id="spinText" style="font-family:'Montserrat'; font-weight:800; font-size:16px; margin-top:20px; color:var(--gold); letter-spacing: 1px;">CHẠM ĐỂ RÚT</div>
+                    
                     <div id="cooldownDisplay" style="display:none; margin-top:10px;">
                         <div id="timer">10:00</div>
-                        <div id="timerDesc">Vui lòng đợi</div>
+                        <div id="timerDesc">Vui lòng đợi để rút tiếp</div>
                     </div>
+
                 </div>
                 <div class="card-face card-back" id="cardResult">
                     <div id="resRarity" class="rarity-tag">COMMON</div>
-                    <div id="resName" style="font-family:'Montserrat'; font-weight:800; font-size:18px; margin:15px 0; color:#333;">TASK</div>
+                    <div id="resName" style="font-family:'Montserrat'; font-weight:800; font-size:18px; margin:15px 0; line-height:1.4; color:#333;">TASK</div>
                     <div id="resVal" style="font-size:36px; font-weight:900; color:#f57f17;">+0</div>
-                    <button class="btn btn-primary" style="margin-top:auto; font-size:12px; padding:12px;" onclick="openFullTask()">XEM NHIỆM VỤ</button>
+                    <button class="btn btn-primary" style="margin-top:auto; font-size:12px; padding:12px;" onclick="openFullTask(event)">XEM NHIỆM VỤ</button>
                 </div>
             </div>
         </div>
         
-        <div id="msgStatus" style="text-align:center; font-size:12px; color:#888; min-height:20px; margin-bottom:15px; font-style: italic;">...</div>
+        <div id="msgStatus" style="text-align:center; font-size:12px; color:#888; min-height:30px; margin-bottom:20px; font-style: italic;">...</div>
         
         <div style="flex:1; overflow-y: auto; background:rgba(0,0,0,0.2); padding:15px; border-radius:16px; border:1px solid rgba(255,255,255,0.05);">
-            <div style="font-size:10px; color:#666; font-weight:bold; margin-bottom:10px;">TIẾN ĐỘ CÁC ĐỘI (REALTIME)</div>
+            <div style="font-size:10px; color:#666; font-weight:bold; margin-bottom:10px; text-transform: uppercase;">TIẾN ĐỘ CÁC ĐỘI (REALTIME)</div>
             <div id="statusList"></div>
         </div>
     </div>
@@ -156,8 +151,11 @@
         </div>
         <div style="font-size:12px; color:#666; margin-bottom:10px; font-weight: bold;">YÊU CẦU CHỜ DUYỆT:</div>
         <div id="pendingList"></div>
+        
+        <button class="btn" style="margin-top:20px; background:#2196f3; color:#fff; border:1px solid #4caf50;" onclick="adminResetCooldown()">♻️ XÓA COOL-DOWN TOÀN SERVER</button>
+
         <div style="margin-top:40px; border-top:1px dashed #333; padding-top:20px;">
-            <h3 style="font-family:'Montserrat'; font-size:14px; color:#fff;">QUẢN LÝ TEAM</h3>
+            <h3 style="font-family:'Montserrat'; font-size:14px; color:#fff;">QUẢN LÝ TEAM (Sửa Tiền & Gỡ Kẹt)</h3>
             <div id="adminOverviewList"></div>
         </div>
         <button class="btn" style="margin-top:40px; background:#220000; color:#ff5555; border:1px solid #500;" onclick="resetServerData()">⚠️ DELETE ALL DATA</button>
@@ -185,12 +183,12 @@
         </div>
 
         <div id="uiQuiz" class="hide">
-            <div style="font-size:12px; color:#555; margin-bottom:10px; font-weight:bold;">CHỌN ĐÁP ÁN ĐÚNG NHẤT:</div>
+            <div style="font-size:12px; color:#555; margin-bottom:10px; font-weight:bold;">CHỌN ĐÁP ÁN ĐÚNG NHẤT (Chỉ 1 cơ hội):</div>
             <div id="quizOptions"></div>
         </div>
 
-        <button class="btn btn-secondary" onclick="skipTask()">BỎ QUA (Phạt chờ 5')</button>
-        <div style="margin-top:20px; font-size:12px; color:#999; cursor:pointer; text-decoration: underline;" onclick="closeTask()">Để sau làm</div>
+        <button class="btn btn-secondary" onclick="skipTask()">BỎ QUA (Chỉ được 2 lần)</button>
+        <div style="margin-top:20px; font-size:12px; color:#999; cursor:pointer; text-decoration: underline;" onclick="closeTask()">Để sau làm (Treo task)</div>
     </div>
 </div>
 
@@ -212,31 +210,68 @@
     const MAX_SKIPS = 2;        
 
     const ORG_CHART = { "TM":{name:"KHỐI THƯƠNG MẠI",subs:[{name:"MICE Team 01",pass:"mice1"},{name:"MICE Team 02",pass:"mice2"},{name:"Core Team",pass:"core"},{name:"BD Team",pass:"bd"},{name:"Team TC",pass:"tc"},{name:"Team B2B",pass:"b2b"}]}, "KD":{name:"KHỐI KD & TIẾP THỊ",subs:[{name:"Tư vấn Khách lẻ",pass:"fit"},{name:"Tiếp thị (MKT)",pass:"mkt"},{name:"Sản phẩm (Product)",pass:"prod"},{name:"Đối tác (Partner)",pass:"partner"},{name:"Thương hiệu (Brand)",pass:"brand"}]}, "DH":{name:"KHỐI ĐIỀU HÀNH",subs:[{name:"Điều hành Tour & Visa",pass:"ops"},{name:"Vé máy bay",pass:"ticket"},{name:"Hướng dẫn viên",pass:"guide"}]}, "TCHC":{name:"KHỐI TCHC & IT",subs:[{name:"Tài chính - KT",pass:"acc"},{name:"Hành chính - NS",pass:"hr"},{name:"Công nghệ (IT)",pass:"it"}]} };
-    const STAFF_DB = [{name:"Lại Minh Duy",role:"Chủ tịch HĐQT",block:"BOD"},{name:"Mai Hữu Minh Phúc",role:"CEO",block:"BOD"},{name:"Thái Hồng Quang",role:"Trưởng phòng Giải pháp Công nghệ",block:"TCHC"},{name:"Trần Lê Nhật Tuấn",role:"Phó phòng Giải pháp Công nghệ",block:"TCHC"},{name:"Nguyễn Thị Thu Hương",role:"Giám đốc Tài chính",block:"TCHC"},{name:"Lê Thị Như Cát Tiên",role:"Trưởng phòng Kế toán",block:"TCHC"},{name:"Phạm Thị Minh Châu",role:"Kế toán",block:"TCHC"},{name:"Võ Thùy Phương Thảo",role:"Nhân sự",block:"TCHC"},{name:"Nguyễn Phan Phúc An",role:"Pháp chế",block:"TCHC"},{name:"Nguyễn Thị Tuyết Nhung",role:"Lễ Tân",block:"TCHC"},{name:"Nguyễn Thị Tuyết Hạnh",role:"Kế toán",block:"TCHC"},{name:"Bùi Ngọc Dung",role:"Tạp vụ",block:"TCHC"},{name:"Nguyễn Anh Tú",role:"Kế Toán",block:"TCHC"},{name:"Trần Ngọc Quỳnh Hương",role:"Sản phẩm",block:"KD"},{name:"Huỳnh Ngọc Quý",role:"Sản phẩm",block:"KD"},{name:"Võ Khánh Tường",role:"Sản phẩm",block:"KD"},{name:"Bùi Thanh Sang",role:"Sản phẩm",block:"KD"},{name:"Lại Thị Ngọc Bích",role:"GĐ Tiếp thị",block:"KD"},{name:"Nguyễn Thị Hoài Thương",role:"B2C",block:"KD"},{name:"Tăng Bửu Oanh",role:"B2C",block:"KD"},{name:"Lê Xuân Yến Ngọc",role:"B2C",block:"KD"},{name:"Chung Cát Tiên",role:"B2C",block:"KD"},{name:"Nguyễn Thùy Trang",role:"MKT",block:"KD"},{name:"Nguyễn Lê Trung",role:"MKT",block:"KD"},{name:"Nguyễn Huy Khôi",role:"MKT",block:"KD"},{name:"Nguyễn Thị Mỹ Nhung",role:"Trợ lý GĐ Khối",block:"KD"},{name:"Đỗ Thị Uyển Nhi",role:"Core Team",block:"KD"},{name:"Lê Đinh Quang Huy",role:"TL CTHĐQT",block:"KD"},{name:"Nguyễn Thanh Tuấn",role:"Sales Mice1",block:"KD"},{name:"Hồ Chí Khang",role:"Sales Mice1",block:"KD"},{name:"Nguyễn Ngọc Diễm Quỳnh",role:"TP MICE1",block:"TM"},{name:"Nguyễn Lê Nhật Tân",role:"TN MICE1",block:"TM"},{name:"Vũ Ngọc Phương Linh",role:"Phó Giám đốc BD",block:"TM"},{name:"Hoàng Thị Lan Anh",role:"BD 02",block:"TM"},{name:"Vũ Ngọc Tân",role:"TP MICE2",block:"TM"},{name:"Trần Anh Khoa",role:"Core Team",block:"TM"},{name:"Nguyễn Như Mai Hân",role:"Trợ Lý GĐTM",block:"TM"},{name:"Nguyễn Hoàng Thụy Diệp My",role:"Core Team",block:"TM"},{name:"Huỳnh Viết Trung",role:"TP Vé",block:"DH"},{name:"Nguyễn Tấn Mạnh",role:"TN Visa",block:"DH"},{name:"Diệp Thúy Oanh",role:"GĐ Tour",block:"DH"},{name:"Hồ Đăng Khoa",role:"HDV",block:"DH"},{name:"Lê Thành Tài",role:"HDV",block:"DH"},{name:"Lâm Sanyo",role:"HDV",block:"DH"},{name:"Nguyễn Phương Tiến",role:"HDV",block:"DH"},{name:"Nguyễn Mạnh Dũng",role:"GĐTM",block:"KD"},{name:"Phan Tuấn Nguyên",role:"TPDH",block:"DH"},{name:"Hồ Ngọc Hoàn Nhi",role:"visa",block:"DH"},{name:"Hồng Ân",role:"ĐH",block:"DH"},{name:"Hoàng Nhân",role:"HDV",block:"DH"}];
-    const BASE_ACTIONS = [{name:"XIN KẸO",d:"Xin 1 cái kẹo/bánh từ",v:2000,r:"COMMON"},{name:"XIN NƯỚC",d:"Xin 1 ngụm nước uống từ",v:2000,r:"COMMON"},{name:"BẮT TAY",d:"Bắt tay thật chặt với",v:2000,r:"COMMON"},{name:"ĐẬP TAY",d:"High-five thật to với",v:2000,r:"COMMON"},{name:"KHEN NGỢI",d:"Khen 1 câu thật lòng về trang phục của",v:5000,r:"UNCOMMON"},{name:"CHÚC NOEL",d:"Chúc 'Merry Christmas' thật ấm áp tới",v:5000,r:"UNCOMMON"},{name:"HỎI THĂM",d:"Hỏi 'Dạo này thế nào?' với",v:2000,r:"COMMON"},{name:"MỜI NƯỚC",d:"Rót 1 ly nước mời",v:2000,r:"COMMON"},{name:"CẢM ƠN",d:"Nói lời cảm ơn chân thành với",v:5000,r:"UNCOMMON"},{name:"CƯỜI TƯƠI",d:"Đứng trước mặt và cười tươi 5s với",v:2000,r:"COMMON"},{name:"BÓP VAI",d:"Bóp vai 10s cho",v:5000,r:"UNCOMMON"},{name:"SELFIE",d:"Chụp 1 tấm selfie cùng",v:5000,r:"UNCOMMON"},{name:"THẢ TIM",d:"Cùng tạo dáng bắn tim với",v:5000,r:"UNCOMMON"},{name:"KHOÁC VAI",d:"Khoác vai thân thiết chụp ảnh với",v:5000,r:"UNCOMMON"},{name:"CHỤP LÉN",d:"Chụp lén khoảnh khắc làm việc của",v:5000,r:"UNCOMMON"},{name:"XIN 2K",d:"Xin 2.000đ tiền mặt từ",v:5000,r:"UNCOMMON"},{name:"OẲN TÙ TÌ",d:"Rủ chơi Oẳn tù tì 1 ván với",v:2000,r:"COMMON"},{name:"VẬT TAY",d:"Thử vật tay giao hữu với",v:5000,r:"RARE"},{name:"NHÌN MẮT",d:"Thi nhìn mắt không chớp 10s với",v:5000,r:"RARE"},{name:"HÁT TẶNG",d:"Hát tặng 1 câu hát bất kỳ cho",v:20000,r:"RARE"},{name:"KỂ CHUYỆN",d:"Kể 1 chuyện cười cho",v:5000,r:"UNCOMMON"},{name:"MÚA QUẠT",d:"Múa quạt 5s trước mặt",v:20000,r:"RARE"},{name:"NHẢY FREESTYLE",d:"Nhảy 1 điệu tự do bất kỳ cùng",v:20000,r:"SUPER_RARE"},{name:"ĐỌC THƠ",d:"Đọc tặng 2 câu thơ chế cho",v:5000,r:"UNCOMMON"},{name:"GIẢ GIỌNG",d:"Giả giọng 1 nhân vật hoạt hình nói chuyện với",v:20000,r:"SUPER_RARE"},{name:"HỎI CUNG",d:"Hỏi ngày sinh nhật của",v:5000,r:"UNCOMMON"},{name:"ĐIỀU TRA",d:"Hỏi món ăn yêu thích nhất của",v:5000,r:"UNCOMMON"},{name:"PHỎNG VẤN",d:"Phỏng vấn 'Tết này đi đâu?' với",v:5000,r:"UNCOMMON"},{name:"REVIEW",d:"Nhờ review bữa trưa nay của",v:5000,r:"UNCOMMON"},{name:"XEM BÓI",d:"Xem chỉ tay phán bừa cho",v:20000,r:"RARE"},{name:"RỦ RÊ",d:"Rủ đi rửa tay/WC chung với",v:2000,r:"COMMON"},{name:"CỤNG ĐẦU",d:"Cụng đầu nhẹ vào vai",v:5000,r:"UNCOMMON"},{name:"XIN LÌ XÌ",d:"Xin lì xì sớm (bao nhiêu cũng được) từ",v:20000,r:"RARE"}];
-    const MULTIPLE_CHOICE_LIST = [{val:2000,name:"KIẾN THỨC",desc:"Lễ Giáng Sinh chính thức là ngày nào?",options:["23/12","24/12","25/12","26/12"],correct:2},{val:2000,name:"KIẾN THỨC",desc:"Ông già Noel thường vào nhà bằng đường nào?",options:["Cửa chính","Cửa sổ","Ống khói","Ban công"],correct:2},{val:2000,name:"KIẾN THỨC",desc:"Màu sắc chủ đạo của Giáng Sinh là gì?",options:["Đỏ & Xanh lá","Vàng & Tím","Đen & Trắng","Cam & Lam"],correct:0},{val:5000,name:"TST TRIVIA",desc:"TST Tourist thành lập năm nào?",options:["1990","1995","2000","2005"],correct:1},{val:5000,name:"TST TRIVIA",desc:"Slogan của TST Tourist là gì?",options:["Chuyên nghiệp","Nụ cười của bạn","Luôn đồng hành","Chất lượng hàng đầu"],correct:1},{val:2000,name:"KIẾN THỨC",desc:"Con vật nào kéo xe cho ông già Noel?",options:["Tuần lộc","Ngựa","Voi","Chó Husky"],correct:0},{val:2000,name:"ĐỐ VUI",desc:"Tháng nào ngắn nhất trong năm?",options:["Tháng 2","Tháng 5","Tháng 10","Tháng 12"],correct:0},{val:2000,name:"ĐỐ VUI",desc:"Cái gì càng thắng lại càng thua?",options:["Đua xe","Cái thắng (phanh)","Cờ bạc","Đánh lộn"],correct:1},{val:5000,name:"TST TRIVIA",desc:"Trụ sở chính của TST Tourist nằm ở quận nào?",options:["Quận 1","Quận 3","Quận 5","Tân Bình"],correct:1},{val:2000,name:"ĐỐ VUI",desc:"Cái gì càng dài thì càng ngắn?",options:["Con rắn","Cuộc đời","Thời gian","Lịch sử"],correct:3},{val:2000,name:"ĐỐ VUI",desc:"Con gì đập thì sống, không đập thì chết?",options:["Con cá","Con tim","Con muỗi","Con quay"],correct:1},{val:2000,name:"ĐỐ VUI",desc:"Cái gì đen khi bạn mua nó, đỏ khi dùng nó, xám xịt khi vứt nó?",options:["Cục than","Bút chì","Cà vạt","Đôi giày"],correct:0},{val:2000,name:"ĐỐ VUI",desc:"Nắng ba năm ta chưa hề bỏ bạn?",options:["Người yêu","Cái bóng","Cây dù","Đôi dép"],correct:1},{val:2000,name:"KIẾN THỨC",desc:"Thủ đô của Việt Nam là gì?",options:["TP.HCM","Hà Nội","Đà Nẵng","Huế"],correct:1},{val:2000,name:"KIẾN THỨC",desc:"Đỉnh núi cao nhất Việt Nam?",options:["Langbiang","Bà Đen","Fansipan","Pu Si Lung"],correct:2},{val:2000,name:"KIẾN THỨC",desc:"Một thế kỷ có bao nhiêu năm?",options:["50","100","1000","10"],correct:1},{val:2000,name:"KIẾN THỨC",desc:"Ai là người đầu tiên đặt chân lên mặt trăng?",options:["Neil Armstrong","Yuri Gagarin","Buzz Aldrin","Phạm Tuân"],correct:0},{val:2000,name:"KIẾN THỨC",desc:"Vịnh Hạ Long được UNESCO công nhận là gì?",options:["Di sản văn hóa","Di sản thiên nhiên","Di sản tư liệu","Kỳ quan nhân tạo"],correct:1},{val:2000,name:"ĐỐ VUI",desc:"Con gì sinh ra đã là vua?",options:["Con lân","Con cua (Hoàng đế)","Con trai (Hoàng tử)","Con sư tử"],correct:2},{val:2000,name:"ĐỐ VUI",desc:"Bệnh gì bác sĩ bó tay?",options:["Gãy tay","Đau đầu","Sổ mũi","Nan y"],correct:0},{val:2000,name:"KIẾN THỨC",desc:"Loài vật nào chạy nhanh nhất trên cạn?",options:["Sư tử","Ngựa","Báo Cheetah","Thỏ"],correct:2},{val:2000,name:"KIẾN THỨC",desc:"Biển nào mặn nhất thế giới?",options:["Biển Đông","Biển Đỏ","Biển Chết","Biển Đen"],correct:2},{val:2000,name:"KIẾN THỨC",desc:"Đất nước hình chiếc ủng?",options:["Pháp","Ý (Italia)","Đức","Tây Ban Nha"],correct:1},{val:5000,name:"XMAS",desc:"Bài hát 'Jingle Bells' ban đầu viết cho dịp nào?",options:["Giáng Sinh","Năm Mới","Lễ Tạ Ơn","Lễ Phục Sinh"],correct:2},{val:2000,name:"XMAS",desc:"Món ăn truyền thống Giáng Sinh phương Tây?",options:["Gà Tây","Vịt Quay","Heo Sữa","Bò Beefsteak"],correct:0},{val:2000,name:"XMAS",desc:"Tên chú tuần lộc mũi đỏ?",options:["Dasher","Dancer","Rudolph","Vixen"],correct:2},{val:2000,name:"XMAS",desc:"Nơi ở của ông già Noel?",options:["Nam Cực","Bắc Cực","Mỹ","Phần Lan"],correct:1},{val:2000,name:"ĐỐ VUI",desc:"Cái gì có răng mà không cắn được?",options:["Con chó","Cái lược","Cái cưa","Cái kìm"],correct:1},{val:2000,name:"ĐỐ VUI",desc:"Cái gì có cổ nhưng không có đầu?",options:["Con hươu","Cái áo","Cái chai","Cây đàn"],correct:1},{val:2000,name:"ĐỐ VUI",desc:"Một ly đầy nước, làm sao lấy nước dưới đáy mà không đổ?",options:["Đổ ra ly khác","Dùng ống hút","Đợi bốc hơi","Không làm được"],correct:1},{val:2000,name:"KIẾN THỨC",desc:"Sông nào dài nhất thế giới?",options:["Sông Amazon","Sông Nile","Sông Mê Kông","Sông Dương Tử"],correct:1},{val:2000,name:"KIẾN THỨC",desc:"Cầu thủ nào có biệt danh là El Pulga?",options:["Ronaldo","Neymar","Messi","Mbappe"],correct:2},{val:2000,name:"KIẾN THỨC",desc:"Thành phố nào được mệnh danh là Hòn ngọc Viễn Đông?",options:["Hà Nội","Hải Phòng","Sài Gòn (TP.HCM)","Đà Nẵng"],correct:2},{val:2000,name:"ĐỐ VUI",desc:"Cái gì chặt không đứt, bứt không rời, phơi không khô?",options:["Sợi dây","Nước","Tình yêu","Cái bóng"],correct:1},{val:2000,name:"ĐỐ VUI",desc:"Cái gì bạn có thể giữ ngay cả khi cho người khác?",options:["Tiền","Lời hứa","Bí mật","Kỷ vật"],correct:1},{val:5000,name:"TST TRIVIA",desc:"TST Tourist chuyên về thị trường nào?",options:["Châu Âu","Châu Á","Nội địa","Toàn cầu"],correct:3},{val:2000,name:"KIẾN THỨC",desc:"Cá heo ngủ như thế nào?",options:["Nhắm 2 mắt","Nhắm 1 mắt","Không nhắm mắt","Ngủ ngồi"],correct:1},{val:2000,name:"KIẾN THỨC",desc:"Chuột túi (Kangaroo) là biểu tượng nước nào?",options:["Mỹ","Úc","New Zealand","Canada"],correct:1},{val:2000,name:"ĐỐ VUI",desc:"Cái gì tay trái cầm được còn tay phải cầm không được?",options:["Cùi chỏ trái","Cùi chỏ phải","Chân trái","Chân phải"],correct:1},{val:2000,name:"XMAS",desc:"Bài hát 'Last Christmas' là của nhóm nào?",options:["ABBA","Boney M","Wham!","Modern Talking"],correct:2}];
+    const STAFF_DB = ["Nguyễn Thị Thu Hương", "Lê Thị Như Cát Tiên", "Phạm Thị Minh Châu", "Võ Thùy Phương Thảo", "Nguyễn Phan Phúc An", "Nguyễn Thị Tuyết Nhung", "Nguyễn Thị Tuyết Hạnh", "Bùi Ngọc Dung", "Nguyễn Anh Tú", "Trần Ngọc Quỳnh Hương", "Huỳnh Ngọc Quý", "Võ Khánh Tường", "Bùi Thanh Sang", "Lại Thị Ngọc Bích", "Nguyễn Thị Hoài Thương", "Tăng Bửu Oanh", "Lê Xuân Yến Ngọc", "Chung Cát Tiên", "Nguyễn Thùy Trang", "Nguyễn Lê Trung", "Nguyễn Huy Khôi", "Nguyễn Thị Mỹ Nhung", "Đỗ Thị Uyển Nhi", "Lê Đinh Quang Huy", "Nguyễn Thanh Tuấn", "Hồ Chí Khang", "Nguyễn Ngọc Diễm Quỳnh", "Nguyễn Lê Nhật Tân", "Vũ Ngọc Phương Linh", "Hoàng Thị Lan Anh", "Vũ Ngọc Tân", "Trần Anh Khoa", "Nguyễn Như Mai Hân", "Nguyễn Hoàng Thụy Diệp My", "Huỳnh Viết Trung", "Nguyễn Tấn Mạnh", "Diệp Thúy Oanh", "Hồ Đăng Khoa", "Lê Thành Tài", "Lâm Sanyo", "Nguyễn Phương Tiến", "Nguyễn Mạnh Dũng", "Phan Tuấn Nguyên", "Hồ Ngọc Hoàn Nhi", "Hồng Ân", "Hoàng Nhân"];
 
-    let TASKS = [];
-    function generateTasks() {
-        TASKS = [];
-        BASE_ACTIONS.forEach(act => {
-            TASKS.push({ type:"action", val:act.val, r:act.r, req:"1 Đại diện", name:act.name, desc:`${act.d} <span class='target-hl'>{target}</span>` });
-            if(act.r === "COMMON" || act.r === "UNCOMMON") TASKS.push({ type:"action", val:act.val, r:act.r, req:"2 Đại diện", name:act.name + " (NHÓM)", desc:`Cùng 1 đồng đội nữa ${act.d.toLowerCase()} <span class='target-hl'>{target}</span>` });
-        });
-        MULTIPLE_CHOICE_LIST.forEach((q, i) => { TASKS.push({ type:"quiz_mc", val:q.val, r:(q.val>2000?"UNCOMMON":"COMMON"), req:"Cả Team", name:q.name + " " + (i+1), desc:q.desc, options:q.options, correct:q.correct }); });
-        TASKS.push({type:"action", val:50000, r:"SUPER_RARE", req:"Cả Team", name:"ẢNH GIA ĐÌNH", desc:"Cả Team chụp ảnh tập thể tại chỗ ngồi."});
-        TASKS.push({type:"action", val:100000, r:"ULTRA_RARE", req:"3 Đại diện", name:"SĂN MÀU ĐỎ", desc:"Tìm người mặc áo ĐỎ (khác Team) và chúc mừng."});
-        TASKS.push({type:"action", val:100000, r:"ULTRA_RARE", req:"3 Đại diện", name:"SĂN MÀU XANH", desc:"Tìm người mặc áo XANH (khác Team) và High-five."});
-        TASKS.push({type:"action", val:200000, r:"SECRET_RARE", req:"Cả Team", name:"UỐNG MỪNG", desc:"Cả team nâng ly nước hô 'Dô' thật to (Quay video)."});
-        TASKS.push({type:"action", val:200000, r:"SECRET_RARE", req:"2 Đại diện", name:"TRAI ĐẸP", desc:"Tìm bạn nam đẹp trai nhất khối khác chụp ảnh."});
-    }
-    generateTasks();
+    // DANH SÁCH TASK CỨNG (KHÔNG DÙNG RANDOM SINH)
+    let ALL_TASKS = [
+        {type:"action", val:2000, r:"COMMON", req:"1 Đại diện", name:"XIN KẸO", desc:"Xin 1 cái kẹo/bánh từ {target}"},
+        {type:"action", val:2000, r:"COMMON", req:"1 Đại diện", name:"XIN NƯỚC", desc:"Xin 1 ngụm nước uống từ {target}"},
+        {type:"action", val:5000, r:"UNCOMMON", req:"1 Đại diện", name:"SELFIE", desc:"Chụp 1 tấm selfie cùng {target}"},
+        {type:"action", val:5000, r:"UNCOMMON", req:"1 Đại diện", name:"THẢ TIM", desc:"Cùng tạo dáng bắn tim với {target}"},
+        {type:"action", val:2000, r:"COMMON", req:"1 Đại diện", name:"OẲN TÙ TÌ", desc:"Rủ chơi Oẳn tù tì 1 ván với {target}"},
+        {type:"action", val:2000, r:"COMMON", req:"1 Đại diện", name:"BẮT TAY", desc:"Bắt tay thật chặt với {target}"},
+        {type:"action", val:5000, r:"UNCOMMON", req:"1 Đại diện", name:"CHÚC NOEL", desc:"Chúc 'Merry Christmas' thật ấm áp tới {target}"},
+        {type:"action", val:2000, r:"COMMON", req:"1 Đại diện", name:"CƯỜI TƯƠI", desc:"Đứng trước mặt và cười tươi 5s với {target}"},
+        {type:"action", val:5000, r:"UNCOMMON", req:"1 Đại diện", name:"HỎI THĂM", desc:"Hỏi thăm 'Dạo này thế nào' với {target}"},
+        {type:"action", val:2000, r:"COMMON", req:"1 Đại diện", name:"ĐẬP TAY", desc:"High-five thật to với {target}"},
+        
+        // TRẮC NGHIỆM (QUIZ_MC) - ĐẢM BẢO TỈ LỆ 30%
+        {type:"quiz_mc", val:2000, r:"COMMON", req:"Cả Team", name:"KIẾN THỨC 1", desc:"Lễ Giáng Sinh chính thức là ngày nào?", options:["23/12","24/12","25/12","26/12"], correct:2}, 
+        {type:"quiz_mc", val:2000, r:"COMMON", req:"Cả Team", name:"KIẾN THỨC 2", desc:"Ông già Noel thường vào nhà bằng đường nào?", options:["Cửa chính","Cửa sổ","Ống khói","Ban công"], correct:2},
+        {type:"quiz_mc", val:2000, r:"COMMON", req:"Cả Team", name:"KIẾN THỨC 3", desc:"Màu sắc chủ đạo của Giáng Sinh là gì?", options:["Đỏ & Xanh lá","Vàng & Tím","Đen & Trắng","Cam & Lam"], correct:0},
+        {type:"quiz_mc", val:5000, r:"UNCOMMON", req:"Cả Team", name:"TST TRIVIA 1", desc:"TST Tourist thành lập năm nào?", options:["1990","1995","2000","2005"], correct:1},
+        {type:"quiz_mc", val:2000, r:"COMMON", req:"Cả Team", name:"ĐỐ VUI 1", desc:"Tháng nào ngắn nhất trong năm?", options:["Tháng 2","Tháng 5","Tháng 10","Tháng 12"], correct:0},
+        {type:"quiz_mc", val:2000, r:"COMMON", req:"Cả Team", name:"ĐỐ VUI 2", desc:"Cái gì càng thắng lại càng thua?", options:["Đua xe","Cái thắng (phanh)","Cờ bạc","Đánh lộn"], correct:1},
+        {type:"quiz_mc", val:5000, r:"UNCOMMON", req:"Cả Team", name:"TST TRIVIA 2", desc:"Trụ sở chính của TST Tourist nằm ở quận nào?", options:["Quận 1","Quận 3","Quận 5","Tân Bình"], correct:1},
+        {type:"quiz_mc", val:2000, r:"COMMON", req:"Cả Team", name:"ĐỐ VUI 3", desc:"Con gì đập thì sống, không đập thì chết?", options:["Con cá","Con tim","Con muỗi","Con quay"], correct:1},
+        {type:"quiz_mc", val:2000, r:"COMMON", req:"Cả Team", name:"ĐỐ VUI 4", desc:"Nắng ba năm ta chưa hề bỏ bạn?", options:["Người yêu","Cái bóng","Cây dù","Đôi dép"], correct:1},
+        {type:"quiz_mc", val:2000, r:"COMMON", req:"Cả Team", name:"KIẾN THỨC 4", desc:"Thủ đô của Việt Nam là gì?", options:["TP.HCM","Hà Nội","Đà Nẵng","Huế"], correct:1},
+        
+        // CÁC TASK HÀNH ĐỘNG "NHÓM"
+        {type:"action", val:5000, r:"UNCOMMON", req:"2 Đại diện", name:"SELFIE NHÓM", desc:"Cùng 1 đồng đội selfie với {target}"},
+        {type:"action", val:2000, r:"COMMON", req:"2 Đại diện", name:"CHÚC TẾT", desc:"Cùng đồng đội chúc Tết sớm {target}"},
+        
+        // RARE TASKS
+        {type:"action", val:50000, r:"SUPER_RARE", req:"Cả Team", name:"ẢNH GIA ĐÌNH", desc:"Cả Team chụp ảnh tập thể tại chỗ ngồi."},
+        {type:"action", val:100000, r:"ULTRA_RARE", req:"3 Đại diện", name:"SĂN MÀU ĐỎ", desc:"Tìm người mặc áo ĐỎ (khác Team) và chúc mừng."},
+        {type:"action", val:200000, r:"SECRET_RARE", req:"Cả Team", name:"UỐNG MỪNG", desc:"Cả team nâng ly nước hô 'Dô' thật to (Quay video)."}
+    ];
+    
+    // TÁCH RA 2 RỔ ĐỂ RANDOM TỈ LỆ
+    const ACTION_TASKS = ALL_TASKS.filter(t => t.type === 'action');
+    const QUIZ_TASKS = ALL_TASKS.filter(t => t.type === 'quiz_mc');
+
     const BOSS_CEO = { val:50000, type:"action", req:"TOÀN KHỐI", name:"VỆ SĨ CEO", desc:"Tìm <b>CEO Mai Hữu Minh Phúc</b>. Cả Khối vây quanh, khoanh tay đeo kính ngầu chụp ảnh." };
     const BOSS_CHAIRMAN = { val:50000, type:"action", req:"TOÀN KHỐI", name:"TIM CHỦ TỊCH", desc:"Tìm <b>Chủ tịch Lại Minh Duy</b>. Cả Khối cùng đứng xung quanh và tạo dáng 'Bắn Tim'." };
 
-    window.onload = () => { createSnow(); initLogin(); startPolling(); setInterval(checkCooldownUI, 1000); };
+    window.onload = () => { 
+        createSnow(); 
+        initLogin(); 
+        startPolling(); 
+        setInterval(checkCooldownUI, 1000);
+        
+        // AUTO FIX ON LOAD: Xóa sạch task cũ nếu lỗi
+        const key = `pendingTask_${curBlock}_${curSubIdx}`;
+        if(localStorage.getItem(key)) {
+            try {
+                let p = JSON.parse(localStorage.getItem(key));
+                if(p.type === 'quiz' || (!p.options && p.type === 'quiz_mc')) { // Phát hiện task cũ lỗi
+                    localStorage.removeItem(key);
+                }
+            } catch(e) { localStorage.removeItem(key); }
+        }
+    };
     
-    // --- EMERGENCY RESET ---
     function emergencyReset() {
         if(confirm("Bạn đang bị lỗi treo? Bấm OK để reset lại ngay!")) {
             localStorage.clear();
@@ -276,37 +311,15 @@
 
     function initLogin() { const s = document.getElementById('selBlock'); s.innerHTML='<option value="">-- CHỌN KHỐI --</option>'; for(let k in ORG_CHART) s.innerHTML+=`<option value="${k}">${ORG_CHART[k].name}</option>`; }
     function renderTeams() { curBlock = document.getElementById('selBlock').value; const s = document.getElementById('selTeam'); document.getElementById('teamArea').style.display = curBlock ? 'block' : 'none'; s.innerHTML='<option value="">-- CHỌN TEAM --</option>'; if(curBlock) ORG_CHART[curBlock].subs.forEach((t,i)=>s.innerHTML+=`<option value="${i}">${t.name}</option>`); }
-    function handleLogin() { 
-        const idx = document.getElementById('selTeam').value; const pass = document.getElementById('inpPass').value; 
-        if(idx==="") return showToast("Vui lòng chọn Team!","error"); 
-        if(pass !== ORG_CHART[curBlock].subs[idx].pass) return showToast("Sai mật khẩu!","error"); 
-        curSubIdx = parseInt(idx); 
-        document.getElementById('viewLogin').style.display = 'none'; 
-        document.getElementById('viewGame').style.display = 'block'; 
-        document.getElementById('lblBlockName').innerText = ORG_CHART[curBlock].name; 
-        document.getElementById('lblTeamName').innerText = ORG_CHART[curBlock].subs[idx].name; 
-        
-        // AUTO HEAL: Check for bad data
-        const saved = localStorage.getItem(`pendingTask_${curBlock}_${curSubIdx}`);
-        if(saved) {
-            try { 
-                const p = JSON.parse(saved);
-                // Nếu task cũ là dạng QUIZ nhập tay (không có options) -> XÓA NGAY
-                if(p.type === 'quiz' || (!p.options && p.type === 'quiz_mc')) {
-                    localStorage.removeItem(`pendingTask_${curBlock}_${curSubIdx}`);
-                    pendingTask = null;
-                } else {
-                    pendingTask = p;
-                }
-            } catch(e) { 
-                localStorage.removeItem(`pendingTask_${curBlock}_${curSubIdx}`);
-                pendingTask = null; 
-            }
-        }
-        updateUI(); 
-    }
+    function handleLogin() { const idx = document.getElementById('selTeam').value; const pass = document.getElementById('inpPass').value; if(idx==="") return showToast("Vui lòng chọn Team!","error"); if(pass !== ORG_CHART[curBlock].subs[idx].pass) return showToast("Sai mật khẩu!","error"); curSubIdx = parseInt(idx); document.getElementById('viewLogin').style.display = 'none'; document.getElementById('viewGame').style.display = 'block'; document.getElementById('lblBlockName').innerText = ORG_CHART[curBlock].name; document.getElementById('lblTeamName').innerText = ORG_CHART[curBlock].subs[idx].name; restorePendingTask(); updateUI(); }
     function logout() { location.reload(); }
     
+    function restorePendingTask() {
+        const saved = localStorage.getItem(`pendingTask_${curBlock}_${curSubIdx}`);
+        if(saved) {
+            try { pendingTask = JSON.parse(saved); } catch(e) { pendingTask = null; }
+        }
+    }
     function savePendingTaskLocally() {
         if(pendingTask) localStorage.setItem(`pendingTask_${curBlock}_${curSubIdx}`, JSON.stringify(pendingTask));
         else localStorage.removeItem(`pendingTask_${curBlock}_${curSubIdx}`);
@@ -319,6 +332,7 @@
         const key = `last_action_time_${curBlock}_${curSubIdx}`;
         const last = localStorage.getItem(key);
         if(!last) return 0;
+        
         const type = localStorage.getItem(`cooldown_type_${curBlock}_${curSubIdx}`) || 3;
         const duration = parseInt(type) * 60 * 1000;
         const diff = Date.now() - parseInt(last);
@@ -344,6 +358,16 @@
         const spinIcon = document.getElementById('spinIcon');
         const spinText = document.getElementById('spinText');
         const badge = document.getElementById('statusBadge');
+        
+        // KIỂM TRA TRẠNG THÁI "CHỜ DUYỆT" TỪ SERVER
+        const myData = getTeamData(curBlock, curSubIdx);
+        if(myData.st === 1) { // 1 = PENDING APPROVAL
+             container.classList.add('locked');
+             spinIcon.style.display='none'; spinText.style.display='none';
+             timerDisplay.style.display='block'; timerText.innerText = "ĐỢI DUYỆT...";
+             badge.innerText="ĐANG CHỜ BTC"; badge.className="badge st-pending";
+             return;
+        }
 
         if(pendingTask) {
             container.classList.remove('locked');
@@ -383,6 +407,7 @@
         if(myData.st === 1) msg.innerText = "Đã gửi. Vui lòng chờ BTC xác nhận..."; 
         else if(myData.st === 2) msg.innerHTML = "<span style='color:#f44336'>BTC: " + (myData.msg || "Làm lại") + "</span>"; 
         else if(totalBlock >= BLOCK_CAP) msg.innerHTML = "<span style='color:#4caf50; font-weight:bold;'>🏆 KHỐI ĐÃ ĐẠT CHỈ TIÊU! (CHƠI VUI)</span>"; 
+        else msg.innerHTML = `👇 Bấm vào túi quà để rút nhiệm vụ! <br><span onclick="emergencyReset()" style="text-decoration:underline; cursor:pointer; color:#888; font-size:10px;">(Nếu lỗi bấm vào đây)</span>`;
         
         let html = ""; 
         ORG_CHART[curBlock].subs.forEach((s,i) => { const t = getTeamData(curBlock, i); let txt = t.bal >= BLOCK_CAP ? "ĐẠT!" : (t.st===1 ? "CHỜ..." : "..."); let color = t.bal > 0 ? "#4caf50" : "#aaa"; html += `<div class="list-item" style="opacity:${i==curSubIdx?1:0.5}"> <span>${s.name}</span> <span style="color:${color}; font-family:'Montserrat'; font-size:10px; font-weight:bold;">${t.bal.toLocaleString()}</span> </div>`; }); 
@@ -391,27 +416,14 @@
     }
 
     function createSnow() { const c = document.getElementById('snowContainer'); setInterval(()=>{ const d=document.createElement('div'); d.classList.add('snowflake'); d.innerText='❄'; d.style.left=Math.random()*100+'vw'; d.style.animationDuration=Math.random()*3+2+'s'; c.appendChild(d); setTimeout(()=>d.remove(),5000); },200); }
-    function getSmartStaff() { 
-        try {
-            let candidates = STAFF_DB.filter(s => s.block !== curBlock && s.block !== "BOD" && !recentTargets.includes(s.name)); 
-            if(!candidates.length) { recentTargets = []; candidates = STAFF_DB.filter(s => s.block !== curBlock && s.block !== "BOD"); }
-            if(!candidates.length) candidates = STAFF_DB; 
-            const chosen = candidates[Math.floor(Math.random() * candidates.length)];
-            recentTargets.push(chosen.name); if(recentTargets.length > 30) recentTargets.shift(); 
-            return chosen; 
-        } catch(e) { return STAFF_DB[0]; }
-    }
+    function getSmartStaff() { return STAFF_DB[Math.floor(Math.random()*STAFF_DB.length)]; }
 
     function spinGacha() { 
         if(getCooldownTime() > 0) return showToast("Đang chờ hồi chiêu!", "error");
-        
-        // SAFE OPEN PENDING
-        if(pendingTask) {
-            openFullTask(); // NO PARAMS
-            return;
-        }
-        
+        if(pendingTask) { openFullTask(); return; } 
         const myData = getTeamData(curBlock, curSubIdx); 
+        if(myData.st === 1) return showToast("Đang chờ duyệt, không được rút!", "error"); // BLOCK IF PENDING
+
         if(document.getElementById('cardInner').classList.contains('is-flipped')) return;
         
         let totalBlock = 0;
@@ -421,13 +433,9 @@
         const front = document.getElementById('cardFront');
         const txt = document.getElementById('spinText');
         document.getElementById('cardInner').classList.add('shaking');
-        const colors = [ {c:"#95a5a6", t:"COMMON"}, {c:"#27ae60", t:"UNCOMMON"}, {c:"#2980b9", t:"RARE"}, {c:"#8e44ad", t:"SUPER RARE"}, {c:"#c0392b", t:"ULTRA RARE"}, {c:"#f1c40f", t:"SECRET RARE"} ];
+        
         let speed = 50; let count = 0; let maxCount = 15;
-
         function runRoulette() {
-            const pick = colors[count % colors.length];
-            front.style.borderColor = pick.c; front.style.boxShadow = `0 0 30px ${pick.c}`;
-            txt.innerText = pick.t; txt.style.color = pick.c;
             count++;
             if (count < maxCount) { if (count > maxCount - 6) speed += 50; setTimeout(runRoulette, speed); } 
             else { document.getElementById('cardInner').classList.remove('shaking'); finalizeResult(); }
@@ -438,31 +446,30 @@
     function finalizeResult() {
         try {
             const myData = getTeamData(curBlock, curSubIdx);
-            let r = Math.random() * 100;
-            let tier = "COMMON";
-            if(r < 50) tier = "COMMON"; else if(r < 80) tier = "UNCOMMON"; else if(r < 92) tier = "RARE"; else if(r < 97) tier = "SUPER_RARE"; else if(r < 99.5) tier = "ULTRA_RARE"; else tier = "SECRET_RARE";
             
-            let pool = TASKS.filter(t => t.r === tier && !recentTasks.includes(t.name));
-            if(!pool.length) pool = TASKS.filter(t => t.r === tier);
-            if(!pool.length) pool = TASKS; 
+            // --- LOGIC CÂN BẰNG TỈ LỆ: 70% ACTION - 30% QUIZ ---
+            let wantAction = Math.random() < 0.7; // 70%
+            let pool = wantAction ? ACTION_TASKS : QUIZ_TASKS;
+            
+            // Lấy ngẫu nhiên từ pool
             let task = JSON.parse(JSON.stringify(pool[Math.floor(Math.random() * pool.length)])); 
             
-            if(task.desc.includes("{target}")) { 
+            if(task.desc && task.desc.includes("{target}")) { 
                 let s = getSmartStaff(); 
-                task.desc = task.desc.replace(/{target}/g, `${s.name} (${s.role})`).replace(/{block}/g, s.block).replace(/{role}/g, s.role); 
+                task.desc = task.desc.replace(/{target}/g, `${s.name} (${s.role})`); 
             } 
-            recentTasks.push(task.name); if(recentTasks.length > 20) recentTasks.shift(); 
             
             let totalBlock = 0;
             ORG_CHART[curBlock].subs.forEach((s, i) => { totalBlock += (getTeamData(curBlock, i).bal || 0); });
             if (totalBlock >= BLOCK_CAP) task.val = 0; else if (totalBlock + task.val > BLOCK_CAP) task.val = BLOCK_CAP - totalBlock;
 
             pendingTask = task; savePendingTaskLocally(); 
-            showQuestResult(tier, task);
-            if(tier.includes("ULTRA") || tier.includes("SECRET")) confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 } });
+            showQuestResult(task.r, task);
+            if(task.r.includes("ULTRA") || task.r.includes("SECRET")) confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 } });
         } catch(e) { 
             console.error(e); 
-            pendingTask = TASKS[0]; savePendingTaskLocally(); showQuestResult("COMMON", pendingTask);
+            // EMERGENCY FALLBACK
+            pendingTask = ACTION_TASKS[0]; savePendingTaskLocally(); showQuestResult("COMMON", pendingTask);
         }
     }
 
@@ -473,7 +480,7 @@
         const val = document.getElementById('resVal');
         document.getElementById('gachaContainer').className = `gacha-container glow-${rarity}`;
         res.className = `card-face card-back rare-${rarity}`;
-        tag.innerText = rarity.replace("_", " ");
+        tag.innerText = rarity;
         name.innerText = task.name;
         val.innerText = "+" + task.val.toLocaleString();
         document.getElementById('cardInner').classList.add('is-flipped'); 
@@ -485,7 +492,7 @@
         // --- FIX CRITICAL: REGENERATE TASK IF NULL ---
         if(!pendingTask) { 
             console.warn("Task data lost, regenerating...");
-            pendingTask = TASKS[Math.floor(Math.random()*TASKS.length)];
+            pendingTask = ACTION_TASKS[0];
             savePendingTaskLocally();
         }
 
@@ -516,6 +523,7 @@
             document.getElementById('imgPreview').style.display = "none";
         }
         document.getElementById('overlay').style.display = 'flex'; 
+        // Ensure visual sync
         document.getElementById('cardInner').classList.add('is-flipped');
     }
     
@@ -529,7 +537,7 @@
         } else {
              if(confirm(`Bỏ qua? (Còn ${MAX_SKIPS - skipCount} lần miễn phí)`)) {
                  skipCount++; localStorage.setItem(`skip_counter_${curBlock}_${curSubIdx}`, skipCount);
-                 clearPendingAndCooldown(0); // 0 minutes penalty
+                 clearPendingAndCooldown(0); 
                  showToast("Đã bỏ qua!", "info");
              }
         }
@@ -549,6 +557,7 @@
         }
     }
 
+    // --- FIX LOGIC NỘP BÀI: CHỈ LÊN TRẠNG THÁI PENDING, KHÔNG CỘNG TIỀN/COOLDOWN NGAY ---
     async function submitAction() {
         const fileInput = document.getElementById('evidenceFile');
         const btn = document.getElementById('btnSubmitAction');
@@ -564,18 +573,37 @@
                 if(!error) { const { data: urlData } = db.storage.from('evidence').getPublicUrl(fileName); publicUrl = urlData.publicUrl; }
             }
             const reqId = Date.now() + "_" + Math.floor(Math.random()*1000);
-            serverData.requests.push({ id: reqId, block: curBlock, idx: curSubIdx, team: ORG_CHART[curBlock].subs[curSubIdx].name, task: pendingTask.name, val: pendingTask.val, isBoss: (pendingTask.val === 50000), img: publicUrl, timestamp: Date.now() });
+            serverData.requests.push({ 
+                id: reqId, 
+                block: curBlock, 
+                idx: curSubIdx, 
+                team: ORG_CHART[curBlock].subs[curSubIdx].name, 
+                task: pendingTask.name, 
+                val: pendingTask.val, 
+                isBoss: (pendingTask.val === 50000), 
+                img: publicUrl, 
+                timestamp: Date.now() 
+            });
             if(!serverData.teams[curBlock]) serverData.teams[curBlock] = {};
             if(!serverData.teams[curBlock][curSubIdx]) serverData.teams[curBlock][curSubIdx] = {bal:0, st:0, msg:""};
+            
+            // SET STATUS = 1 (PENDING) -> UI will lock gacha
             serverData.teams[curBlock][curSubIdx].st = 1;
+            
             await saveData();
-            clearPendingAndCooldown(COOLDOWN_SUCCESS);
-            resetSkips();
+            
+            // Don't start cooldown yet, wait for approval
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('cardInner').classList.remove('is-flipped');
+            pendingTask = null; 
+            savePendingTaskLocally(); 
+            
             showToast("✅ Đã nộp! Chờ BTC duyệt.", "success");
         } catch(err) { showToast("Lỗi: " + err.message, "error"); } finally { btn.innerText = "NỘP BÀI"; btn.disabled = false; }
     }
 
     async function checkQuizMC(selectedIndex) {
+        // QUIZ IS AUTO-APPROVED -> ADD MONEY & COOLDOWN IMMEDIATELY
         if(selectedIndex === pendingTask.correct) {
             await fetchData();
             if(!serverData.teams[curBlock]) serverData.teams[curBlock] = {};
@@ -631,6 +659,7 @@
             let html = ""; 
             serverData.requests.forEach((p, index) => { 
                 html += `<div style="background:#222; padding:15px; border-radius:12px; margin-bottom:10px; border:1px solid #444; display:flex; align-items:center; gap:10px;"> 
+                    <img src="${p.img || 'https://via.placeholder.com/60x60?text=No+Img'}" class="admin-img-preview" onclick="showImage('${p.img}')">
                     <div style="flex:1;"> <div style="font-weight:bold; color:var(--gold); font-size:12px;">${p.team}</div> <div style="font-size:11px; color:#ccc;">${p.task} (+${p.val.toLocaleString()})</div> </div> 
                     <div> <button class="btn-mini" style="background:#4caf50; color:#fff;" onclick="adminApprove(${index})">✓</button> <button class="btn-mini" style="background:#f44336; color:#fff;" onclick="adminReject(${index})">✕</button> </div> </div>`; 
             }); 
@@ -654,8 +683,39 @@
         ov.innerHTML = htmlOv; 
     }
 
-    async function adminApprove(arrIndex) { await fetchData(); const p = serverData.requests[arrIndex]; if(!serverData.teams[p.block]) serverData.teams[p.block] = {}; if(!serverData.teams[p.block][p.idx]) serverData.teams[p.block][p.idx] = {bal:0}; const curBal = serverData.teams[p.block][p.idx].bal || 0; serverData.teams[p.block][p.idx].bal = curBal + p.val; serverData.teams[p.block][p.idx].st = 0; if(p.isBoss) { serverData.boss = serverData.boss || {}; serverData.boss[p.block] = true; } serverData.requests.splice(arrIndex, 1); await saveData(); showToast("Đã duyệt!", "success"); }
-    async function adminReject(arrIndex) { const reason = prompt("Lý do từ chối:", "Ảnh chưa đạt"); if(!reason) return; await fetchData(); const p = serverData.requests[arrIndex]; serverData.teams[p.block][p.idx].st = 2; serverData.teams[p.block][p.idx].msg = reason; serverData.requests.splice(arrIndex, 1); await saveData(); showToast("Đã từ chối", "info"); }
+    async function adminApprove(arrIndex) { 
+        await fetchData(); 
+        const p = serverData.requests[arrIndex]; 
+        if(!serverData.teams[p.block]) serverData.teams[p.block] = {}; 
+        if(!serverData.teams[p.block][p.idx]) serverData.teams[p.block][p.idx] = {bal:0}; 
+        
+        // ADD MONEY
+        const curBal = serverData.teams[p.block][p.idx].bal || 0; 
+        serverData.teams[p.block][p.idx].bal = curBal + p.val; 
+        
+        // UNLOCK STATUS
+        serverData.teams[p.block][p.idx].st = 0; 
+        
+        if(p.isBoss) { serverData.boss = serverData.boss || {}; serverData.boss[p.block] = true; } 
+        serverData.requests.splice(arrIndex, 1); 
+        await saveData(); 
+        showToast("Đã duyệt!", "success"); 
+    }
+    
+    async function adminReject(arrIndex) { 
+        const reason = prompt("Lý do từ chối:", "Ảnh chưa đạt"); 
+        if(!reason) return; 
+        await fetchData(); 
+        const p = serverData.requests[arrIndex]; 
+        
+        // REJECT STATUS (2)
+        serverData.teams[p.block][p.idx].st = 2; 
+        serverData.teams[p.block][p.idx].msg = reason; 
+        serverData.requests.splice(arrIndex, 1); 
+        await saveData(); 
+        showToast("Đã từ chối", "info"); 
+    }
+    
     async function resetServerData() { if(confirm("CẢNH BÁO: Xóa sạch dữ liệu máy chủ?")) { serverData = { teams:{}, requests:[], boss:{} }; await saveData(); location.reload(); } }
 </script>
 </body>
