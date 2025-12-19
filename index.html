@@ -70,12 +70,12 @@
         
         #adminPanel { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #111; z-index: 200; padding: 20px; overflow-y: auto; }
         .admin-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; border-bottom: 1px solid #333; position: sticky; top: 0; background: #111; z-index: 5; }
-        .upload-area { display: none; }
+        .upload-area { display: block; border: 2px dashed #aaa; padding: 15px; border-radius: 10px; margin-bottom:10px; cursor: pointer; }
         .btn-mini { padding: 4px 8px; font-size: 10px; border-radius: 4px; margin-left: 5px; cursor: pointer; border: none; font-weight: bold; }
         .locked { filter: grayscale(1); opacity: 0.5; pointer-events: none; }
         
         /* Quiz Styles */
-        .quiz-input { border: 2px solid var(--gold); background: #fff; color: #333; font-weight: bold; text-align: center; }
+        .quiz-input { border: 2px solid var(--gold); background: #fff; color: #333; font-weight: bold; text-align: center; font-size: 16px; }
         .hide { display: none !important; }
     </style>
 </head>
@@ -101,7 +101,7 @@
                 <input type="password" id="inpPass" placeholder="••••••">
             </div>
         </div>
-        <button class="btn btn-primary" onclick="handleLogin()">BẮT ĐẦU</button>
+        <button class="btn btn-primary" onclick="handleLogin()">THAM GIA NGAY</button>
         <div style="text-align:center; margin-top:30px;">
             <span style="font-size:10px; color:#444; cursor:pointer; font-family: 'Montserrat'; font-weight: bold;" onclick="openAdminLogin()">[ BTC ACCESS ]</span>
         </div>
@@ -117,7 +117,7 @@
         </div>
         <div style="text-align:center; margin-bottom: 15px;"><span id="statusBadge" class="badge st-ready">SẴN SÀNG</span></div>
         <div class="dashboard">
-            <div style="font-size:10px; color:#aaa; font-weight: bold; letter-spacing: 1px;">SỐ DƯ QUỸ TỪ THIỆN</div>
+            <div style="font-size:10px; color:#aaa; font-weight: bold; letter-spacing: 1px;">QUỸ TỪ THIỆN TEAM</div>
             <div class="balance" id="lblBalance">0</div>
             <div style="font-size:11px; color:#666;">MỤC TIÊU: <span id="lblCap" style="color:#eee">0</span></div>
             <div class="progress-bar"><div id="progBar" class="progress-fill"></div></div>
@@ -170,7 +170,7 @@
         </div>
         
         <div id="uiAction" class="hide">
-            <div class="upload-area" style="display:block; border: 2px dashed #aaa; padding: 15px; border-radius: 10px; margin-bottom:10px;">
+            <div class="upload-area">
                 <label for="evidenceFile" style="cursor:pointer; display:block; color:#555; font-size:12px;">📸 <b>CHỤP ẢNH MINH CHỨNG (Tùy chọn)</b></label>
                 <input type="file" id="evidenceFile" accept="image/*" style="display:none;" onchange="previewImage(this)">
                 <img id="imgPreview" class="upload-preview" style="width:100%; max-height:200px; display:none; margin-top:10px; border-radius:8px;">
@@ -179,7 +179,10 @@
         </div>
 
         <div id="uiQuiz" class="hide">
-            <input type="text" id="inpQuiz" class="quiz-input" placeholder="Nhập đáp án của bạn..." onkeypress="if(event.key==='Enter') checkQuiz()">
+            <div style="font-size:11px; color:#666; margin-bottom: 8px; font-style: italic;">
+                (Mẹo: Nhập tiếng Việt, không phân biệt hoa thường)
+            </div>
+            <input type="text" id="inpQuiz" class="quiz-input" placeholder="Nhập đáp án..." onkeypress="if(event.key==='Enter') checkQuiz()">
             <button class="btn btn-primary" id="btnSubmitQuiz" onclick="checkQuiz()">KIỂM TRA NGAY</button>
         </div>
 
@@ -200,6 +203,8 @@
     let curBlock="", curSubIdx=-1, subCap=0, pendingTask=null;
     let serverData = { teams:{}, requests:{}, boss:{} }; 
     let syncInterval = null;
+    let recentTargets = []; // Smart Logic: Nhớ người vừa bị gọi tên
+    let recentTasks = [];   // Smart Logic: Nhớ task vừa ra
 
     const ORG_CHART = {
         "TM": { name: "KHỐI THƯƠNG MẠI", subs: [ {name:"MICE Team 01", pass:"mice1"}, {name:"MICE Team 02", pass:"mice2"}, {name:"Core Team", pass:"core"}, {name:"BD Team", pass:"bd"}, {name:"Team TC", pass:"tc"}, {name:"Team B2B", pass:"b2b"} ]},
@@ -208,86 +213,86 @@
         "TCHC": { name: "KHỐI TCHC & IT", subs: [ {name:"Tài chính - KT", pass:"acc"}, {name:"Hành chính - NS", pass:"hr"}, {name:"Công nghệ (IT)", pass:"it"} ]}
     };
     
-    // STAFF (Giữ nguyên)
+    // STAFF
     const STAFF_DB = [
         {name:"Lại Minh Duy", role:"Chủ tịch HĐQT", block:"BOD"}, {name:"Mai Hữu Minh Phúc", role:"CEO", block:"BOD"}, {name:"Thái Hồng Quang", role:"Trưởng phòng Giải pháp Công nghệ", block:"TCHC"}, {name:"Trần Lê Nhật Tuấn", role:"Phó phòng Giải pháp Công nghệ", block:"TCHC"}, {name:"Nguyễn Thị Thu Hương", role:"Giám đốc Tài chính", block:"TCHC"}, {name:"Lê Thị Như Cát Tiên", role:"Trưởng phòng Kế toán", block:"TCHC"}, {name:"Phạm Thị Minh Châu", role:"Kế toán", block:"TCHC"}, {name:"Võ Thùy Phương Thảo", role:"Nhân sự", block:"TCHC"}, {name:"Nguyễn Phan Phúc An", role:"Pháp chế", block:"TCHC"}, {name:"Nguyễn Thị Tuyết Nhung", role:"Lễ Tân", block:"TCHC"}, {name:"Nguyễn Thị Tuyết Hạnh", role:"Kế toán", block:"TCHC"}, {name:"Bùi Ngọc Dung", role:"Tạp vụ", block:"TCHC"}, {name:"Nguyễn Anh Tú", role:"Kế Toán", block:"TCHC"}, {name:"Trần Ngọc Quỳnh Hương", role:"Sản phẩm", block:"KD"}, {name:"Huỳnh Ngọc Quý", role:"Sản phẩm", block:"KD"}, {name:"Võ Khánh Tường", role:"Sản phẩm", block:"KD"}, {name:"Bùi Thanh Sang", role:"Sản phẩm", block:"KD"}, {name:"Lại Thị Ngọc Bích", role:"GĐ Tiếp thị", block:"KD"}, {name:"Nguyễn Thị Hoài Thương", role:"B2C", block:"KD"}, {name:"Tăng Bửu Oanh", role:"B2C", block:"KD"}, {name:"Lê Xuân Yến Ngọc", role:"B2C", block:"KD"}, {name:"Chung Cát Tiên", role:"B2C", block:"KD"}, {name:"Nguyễn Thùy Trang", role:"MKT", block:"KD"}, {name:"Nguyễn Lê Trung", role:"MKT", block:"KD"}, {name:"Nguyễn Huy Khôi", role:"MKT", block:"KD"}, {name:"Nguyễn Thị Mỹ Nhung", role:"Trợ lý GĐ Khối", block:"KD"}, {name:"Đỗ Thị Uyển Nhi", role:"Core Team", block:"KD"}, {name:"Lê Đinh Quang Huy", role:"TL CTHĐQT", block:"KD"}, {name:"Nguyễn Thanh Tuấn", role:"Sales Mice1", block:"KD"}, {name:"Hồ Chí Khang", role:"Sales Mice1", block:"KD"}, {name:"Nguyễn Ngọc Diễm Quỳnh", role:"TP MICE1", block:"TM"}, {name:"Nguyễn Lê Nhật Tân", role:"TN MICE1", block:"TM"}, {name:"Vũ Ngọc Phương Linh", role:"Phó Giám đốc BD", block:"TM"}, {name:"Hoàng Thị Lan Anh", role:"BD 02", block:"TM"}, {name:"Vũ Ngọc Tân", role:"TP MICE2", block:"TM"}, {name:"Trần Anh Khoa", role:"Core Team", block:"TM"}, {name:"Nguyễn Như Mai Hân", role:"Trợ Lý GĐTM", block:"TM"}, {name:"Nguyễn Hoàng Thụy Diệp My", role:"Core Team", block:"TM"}, {name:"Huỳnh Viết Trung", role:"TP Vé", block:"DH"}, {name:"Nguyễn Tấn Mạnh", role:"TN Visa", block:"DH"}, {name:"Diệp Thúy Oanh", role:"GĐ Tour", block:"DH"}, {name:"Hồ Đăng Khoa", role:"HDV", block:"DH"}, {name:"Lê Thành Tài", role:"HDV", block:"DH"}, {name:"Lâm Sanyo", role:"HDV", block:"DH"}, {name:"Nguyễn Phương Tiến", role:"HDV", block:"DH"}, {name:"Nguyễn Mạnh Dũng", role:"GĐTM", block:"KD"}, {name:"Phan Tuấn Nguyên", role:"TPDH", block:"DH"}, {name:"Hồ Ngọc Hoàn Nhi", role:"visa", block:"DH"}, {name:"Hồng Ân", role:"ĐH", block:"DH"}, {name:"Hoàng Nhân", role:"HDV", block:"DH"}
     ];
 
-    // --- HYBRID TASKS (ACTION & QUIZ) ---
-    const TASKS_RAW = [
-        // QUIZ (TỰ ĐỘNG CHẤM - CỘNG TIỀN LUÔN)
-        {val:2000, type:"quiz", ans:["cái thắng", "cai thang", "thắng", "phanh"], name:"ĐỐ MẸO 1", desc:"Cái gì càng thắng lại càng thua? (Nhập đáp án chữ thường)"},
-        {val:2000, type:"quiz", ans:["tháng 2", "tháng hai", "thang 2", "thang hai"], name:"ĐỐ MẸO 2", desc:"Tháng nào ngắn nhất trong năm?"},
-        {val:5000, type:"quiz", ans:["tst tourist", "tst"], name:"TRIVIA CÔNG TY", desc:"Tên viết tắt của công ty chúng ta là gì?"},
-        {val:5000, type:"quiz", ans:["10", "mười"], name:"ĐỐ VUI", desc:"Hai bàn tay có bao nhiêu ngón?"},
-        {val:2000, type:"quiz", ans:["con dốc", "con doc"], name:"ĐỐ MẸO 3", desc:"Con gì đầu dê mình ốc?"},
-        
-        // ACTION (NHƯ CŨ)
-        {val:2000, type:"action", req:"1 Đại diện", name:"XIN NƯỚC", desc:"Tìm <span class='target-hl'>{target} - {block}</span> xin 1 ngụm nước uống."},
-        {val:2000, type:"action", req:"1 Đại diện", name:"XIN KẸO", desc:"Tìm <span class='target-hl'>{target} ({role})</span> xin 1 cái kẹo hoặc bánh."},
-        {val:5000, type:"action", req:"1 Đại diện", name:"KHEN NGỢI", desc:"Tìm gặp <span class='target-hl'>{target}</span> và khen 1 câu thật lòng."},
-        {val:2000, type:"action", req:"1 Đại diện", name:"ĐẬP TAY", desc:"Tìm <span class='target-hl'>{target}</span> và đập tay High-five thật to."},
-        {val:5000, type:"action", req:"1 Đại diện", name:"CHÚC MỪNG", desc:"Gửi lời chúc Giáng sinh ấm áp đến <span class='target-hl'>{target}</span>."},
-        {val:2000, type:"action", req:"1 Đại diện", name:"HỎI THĂM", desc:"Hỏi <span class='target-hl'>{target}</span>: 'Hôm nay bạn thế nào?'."},
-        {val:5000, type:"action", req:"1 Đại diện", name:"BÓP VAI", desc:"Đến bóp vai cho <span class='target-hl'>{target}</span> trong 10 giây."},
-        {val:2000, type:"action", req:"1 Đại diện", name:"MỜI NƯỚC", desc:"Rót 1 ly nước mời <span class='target-hl'>{target}</span>."},
-        {val:5000, type:"action", req:"1 Đại diện", name:"CƯỜI TƯƠI", desc:"Đến trước mặt <span class='target-hl'>{target}</span> và cười thật tươi trong 5 giây."},
-        {val:2000, type:"action", req:"1 Đại diện", name:"CẢM ƠN", desc:"Tìm <span class='target-hl'>{target}</span> và nói 'Cảm ơn vì đã là đồng nghiệp của tôi'."},
-        {val:5000, type:"action", req:"2 Đại diện", name:"SELFIE NHÓM", desc:"Rủ <span class='target-hl'>{target}</span> chụp chung 1 tấm hình selfie nhóm 3 người."},
-        {val:5000, type:"action", req:"3 Đại diện", name:"TẠO DÁNG", desc:"Cùng <span class='target-hl'>{target}</span> tạo dáng 'Trái Tim' và chụp lại."},
-        {val:5000, type:"action", req:"2 Đại diện", name:"CHECK-IN CÂY THÔNG", desc:"Rủ <span class='target-hl'>{target}</span> ra cây thông công ty check-in."},
-        {val:5000, type:"action", req:"2 Đại diện", name:"CHỤP LÉN", desc:"Chụp 1 bức ảnh <span class='target-hl'>{target}</span> đang làm việc chăm chỉ (Góc đẹp)."},
-        {val:5000, type:"action", req:"Cả Team", name:"ẢNH GIA ĐÌNH", desc:"Cả Team chụp 1 bức ảnh tập thể tại chỗ ngồi."},
-        {val:5000, type:"action", req:"2 Đại diện", name:"MẶT NGẦU", desc:"Rủ <span class='target-hl'>{target}</span> chụp kiểu ảnh 'Thanh niên nghiêm túc'."},
-        {val:5000, type:"action", req:"2 Đại diện", name:"STYLE HÀN QUỐC", desc:"Rủ <span class='target-hl'>{target}</span> bắn tim kiểu Hàn Quốc."},
-        {val:5000, type:"action", req:"1 Đại diện", name:"SELFIE GƯƠNG", desc:"Chụp ảnh selfie trước gương cùng <span class='target-hl'>{target}</span>."},
-        {val:5000, type:"action", req:"2 Đại diện", name:"CHỤP GIÀY", desc:"Chụp ảnh check-in giày của bạn và <span class='target-hl'>{target}</span> chụm lại nhau."},
-        {val:5000, type:"action", req:"2 Đại diện", name:"QUAY BOOMERANG", desc:"Quay 1 đoạn Boomerang nhún nhảy cùng <span class='target-hl'>{target}</span>."},
-        {val:5000, type:"action", req:"1 Đại diện", name:"HÁT TẶNG", desc:"Hát tặng <span class='target-hl'>{target}</span> một câu 'Last Christmas'."},
-        {val:50000, type:"action", req:"2 Đại diện", name:"MÚA QUẠT", desc:"Múa quạt 10 giây trước mặt <span class='target-hl'>{target}</span> để giải trí."},
-        {val:5000, type:"action", req:"1 Đại diện", name:"KỂ CHUYỆN CƯỜI", desc:"Kể cho <span class='target-hl'>{target}</span> nghe 1 câu chuyện cười. Phải làm họ cười mới tính."},
-        {val:2000, type:"action", req:"1 Đại diện", name:"OẲN TÙ TÌ", desc:"Rủ <span class='target-hl'>{target}</span> chơi Oẳn tù tì 3 ván. Thắng hay thua đều được."},
-        {val:50000, type:"action", req:"1 Đại diện", name:"ĐỐ VUI", desc:"Đố <span class='target-hl'>{target}</span> một câu đố mẹo. Quay lại cảnh trả lời."},
-        {val:50000, type:"action", req:"2 Đại diện", name:"NHẢY TỰ DO", desc:"Nhảy một điệu tự do bất kỳ cùng <span class='target-hl'>{target}</span>."},
-        {val:5000, type:"action", req:"1 Đại diện", name:"ĐỌC THƠ", desc:"Đọc tặng <span class='target-hl'>{target}</span> 2 câu thơ chế vui vẻ."},
-        {val:50000, type:"action", req:"1 Đại diện", name:"LÀM ẢO THUẬT", desc:"Biểu diễn 1 trò ảo thuật nhỏ cho <span class='target-hl'>{target}</span> xem."},
-        {val:2000, type:"action", req:"2 Đại diện", name:"VẬT TAY", desc:"Thử vật tay giao hữu với <span class='target-hl'>{target}</span>."},
-        {val:50000, type:"action", req:"1 Đại diện", name:"XEM BÓI", desc:"Xem chỉ tay phán bừa cho <span class='target-hl'>{target}</span> (Vui là chính)."},
-        {val:5000, type:"action", req:"2 Đại diện", name:"PHỎNG VẤN", desc:"Hỏi <span class='target-hl'>{target}</span>: 'Món quà Noel thích nhất là gì?'."},
-        {val:5000, type:"action", req:"1 Đại diện", name:"ĐIỀU TRA", desc:"Hỏi <span class='target-hl'>{target}</span>: 'Cung hoàng đạo của bạn là gì?'."},
-        {val:5000, type:"action", req:"1 Đại diện", name:"SỞ THÍCH", desc:"Hỏi <span class='target-hl'>{target}</span> xem họ thích ăn món gì nhất."},
-        {val:5000, type:"action", req:"1 Đại diện", name:"DỰ ĐỊNH", desc:"Hỏi <span class='target-hl'>{target}</span>: 'Tết này đi đâu chơi?'."},
-        {val:5000, type:"action", req:"1 Đại diện", name:"THẦN TƯỢNG", desc:"Hỏi <span class='target-hl'>{target}</span> xem thần tượng của họ là ai."},
-        {val:5000, type:"action", req:"1 Đại diện", name:"BÀI HÁT", desc:"Hỏi <span class='target-hl'>{target}</span> bài hát họ nghe gần đây nhất."},
-        {val:5000, type:"action", req:"1 Đại diện", name:"REVIEW", desc:"Nhờ <span class='target-hl'>{target}</span> review bữa trưa hôm nay của họ."},
-        {val:5000, type:"action", req:"1 Đại diện", name:"THÚ CƯNG", desc:"Hỏi xem <span class='target-hl'>{target}</span> có nuôi chó mèo không."},
-        {val:5000, type:"action", req:"1 Đại diện", name:"MÀU SẮC", desc:"Hỏi xem <span class='target-hl'>{target}</span> thích màu gì nhất."},
-        {val:5000, type:"action", req:"1 Đại diện", name:"KỶ NIỆM", desc:"Hỏi <span class='target-hl'>{target}</span> về kỷ niệm vui nhất tại TST."},
-        {val:2000, type:"action", req:"Cả Team", name:"DỌN DẸP", desc:"Cả team cùng sắp xếp lại bàn ghế trong 1 phút."},
-        {val:2000, type:"action", req:"Cả Team", name:"THỂ DỤC", desc:"Cả team đứng dậy vươn vai 5 lần cho khỏe."},
-        {val:100000, type:"action", req:"3 Đại diện", name:"TÌM MÀU ĐỎ", desc:"Tìm 1 người mặc áo ĐỎ (khác Team) và chúc họ Giáng sinh vui vẻ."},
-        {val:100000, type:"action", req:"3 Đại diện", name:"TÌM MÀU XANH", desc:"Tìm 1 người mặc áo XANH (khác Team) và High-five."},
-        {val:20000, type:"action", req:"2 Đại diện", name:"TÌM KÍNH CẬN", desc:"Tìm 1 người đeo kính (khác Team) để chụp ảnh chung."},
-        {val:2000, type:"action", req:"1 Đại diện", name:"BẢO VỆ", desc:"Ra cổng bắt tay chú Bảo vệ và cảm ơn chú."},
-        {val:2000, type:"action", req:"1 Đại diện", name:"TẠP VỤ", desc:"Tìm cô Tạp vụ và chúc cô một ngày vui vẻ."},
-        {val:2000, type:"action", req:"2 Đại diện", name:"BÃO LIKE", desc:"Vào Page công ty thả tim 5 bài mới nhất."},
-        {val:200000, type:"action", req:"Cả Team", name:"UỐNG NƯỚC", desc:"Cả team cùng nâng ly nước hô 'Dô' thật to."},
-        {val:200000, type:"action", req:"2 Đại diện", name:"TÌM TRAI ĐẸP", desc:"Tìm bạn nam đẹp trai nhất khối khác để chụp ảnh."}
+    // --- GENERATE 300+ TASKS DYNAMICALLY ---
+    const BASE_ACTIONS = [
+        {name:"XIN KẸO", d:"Xin 1 cái kẹo/bánh từ", v:2000, r:"COMMON"},
+        {name:"XIN NƯỚC", d:"Xin 1 ngụm nước uống từ", v:2000, r:"COMMON"},
+        {name:"BẮT TAY", d:"Bắt tay thật chặt với", v:2000, r:"COMMON"},
+        {name:"ĐẬP TAY", d:"High-five thật to với", v:2000, r:"COMMON"},
+        {name:"KHEN NGỢI", d:"Khen 1 câu thật lòng về trang phục của", v:5000, r:"UNCOMMON"},
+        {name:"CHÚC NOEL", d:"Chúc 'Merry Christmas' thật ấm áp tới", v:5000, r:"UNCOMMON"},
+        {name:"HỎI THĂM", d:"Hỏi 'Dạo này thế nào?' với", v:2000, r:"COMMON"},
+        {name:"MỜI NƯỚC", d:"Rót 1 ly nước mời", v:2000, r:"COMMON"},
+        {name:"CẢM ƠN", d:"Nói 'Cảm ơn vì đã là đồng nghiệp của tôi' với", v:5000, r:"UNCOMMON"},
+        {name:"CƯỜI TƯƠI", d:"Đứng trước mặt và cười tươi 5s với", v:2000, r:"COMMON"},
+        {name:"BÓP VAI", d:"Bóp vai 10s cho", v:5000, r:"UNCOMMON"},
+        {name:"SELFIE", d:"Chụp 1 tấm selfie cùng", v:5000, r:"UNCOMMON"},
+        {name:"THẢ TIM", d:"Cùng tạo dáng bắn tim với", v:5000, r:"UNCOMMON"},
+        {name:"KHOÁC VAI", d:"Khoác vai thân thiết chụp ảnh với", v:5000, r:"UNCOMMON"},
+        {name:"CHỤP LÉN", d:"Chụp lén khoảnh khắc làm việc của", v:5000, r:"UNCOMMON"},
+        {name:"XIN 2K", d:"Xin 2.000đ tiền mặt từ", v:5000, r:"UNCOMMON"},
+        {name:"OẲN TÙ TÌ", d:"Rủ chơi Oẳn tù tì 1 ván với", v:2000, r:"COMMON"},
+        {name:"VẬT TAY", d:"Thử vật tay giao hữu với", v:5000, r:"RARE"},
+        {name:"NHÌN MẮT", d:"Thi nhìn mắt không chớp 10s với", v:5000, r:"RARE"},
+        {name:"HÁT TẶNG", d:"Hát tặng 1 câu hát bất kỳ cho", v:20000, r:"RARE"},
+        {name:"KỂ CHUYỆN", d:"Kể 1 chuyện cười cho", v:5000, r:"UNCOMMON"},
+        {name:"MÚA QUẠT", d:"Múa quạt 5s trước mặt", v:20000, r:"RARE"},
+        {name:"NHẢY FREESTYLE", d:"Nhảy 1 điệu tự do bất kỳ cùng", v:20000, r:"SUPER_RARE"},
+        {name:"ĐỌC THƠ", d:"Đọc tặng 2 câu thơ chế cho", v:5000, r:"UNCOMMON"},
+        {name:"GIẢ GIỌNG", d:"Giả giọng 1 nhân vật hoạt hình nói chuyện với", v:20000, r:"SUPER_RARE"},
+        {name:"HỎI CUNG", d:"Hỏi ngày sinh nhật của", v:5000, r:"UNCOMMON"},
+        {name:"ĐIỀU TRA", d:"Hỏi món ăn yêu thích nhất của", v:5000, r:"UNCOMMON"},
+        {name:"PHỎNG VẤN", d:"Phỏng vấn 'Tết này đi đâu?' với", v:5000, r:"UNCOMMON"},
+        {name:"REVIEW", d:"Nhờ review bữa trưa nay của", v:5000, r:"UNCOMMON"},
+        {name:"XEM BÓI", d:"Xem chỉ tay phán bừa cho", v:20000, r:"RARE"},
+        {name:"RỦ RÊ", d:"Rủ đi rửa tay/WC chung với", v:2000, r:"COMMON"},
+        {name:"CỤNG ĐẦU", d:"Cụng đầu nhẹ vào vai", v:5000, r:"UNCOMMON"},
+        {name:"XIN LÌ XÌ", d:"Xin lì xì sớm (bao nhiêu cũng được) từ", v:20000, r:"RARE"}
     ];
 
-    const TASKS = TASKS_RAW.map(t => {
-        if(t.val === 2000) t.r = "COMMON";
-        else if(t.val === 5000) t.r = "UNCOMMON";
-        else if(t.val === 20000) t.r = "RARE";
-        else if(t.val === 50000) t.r = "SUPER_RARE";
-        else if(t.val === 100000) t.r = "ULTRA_RARE";
-        else t.r = "SECRET_RARE";
-        return t;
+    // --- CẬP NHẬT DANH SÁCH CÂU HỎI THÔNG MINH ---
+    const QUIZ_LIST = [
+        {val:2000, ans:["cái thắng", "cai thang", "thắng", "phanh"], name:"ĐỐ MẸO", desc:"Cái gì càng thắng lại càng thua?"},
+        {val:2000, ans:["tháng 2", "tháng hai", "thang 2", "thang hai", "feb"], name:"ĐỐ MẸO", desc:"Tháng nào ngắn nhất trong năm?"},
+        {val:5000, ans:["tst tourist", "tst", "tsttourist"], name:"TRIVIA", desc:"Tên viết tắt của công ty chúng ta là gì?"},
+        {val:2000, ans:["10", "mười", "muoi"], name:"ĐỐ VUI", desc:"Hai bàn tay có bao nhiêu ngón?"},
+        {val:2000, ans:["con dốc", "con doc"], name:"ĐỐ MẸO", desc:"Con gì đầu dê mình ốc?"},
+        {val:5000, ans:["ông già noel", "ong gia noel", "santa", "santa claus"], name:"XMAS", desc:"Ai là người mặc đồ đỏ đi phát quà?"},
+        {val:5000, ans:["cây thông", "cay thong", "pine", "christmas tree"], name:"XMAS", desc:"Cây gì thường được trang trí dịp Giáng sinh?"},
+        {val:5000, ans:["con tuần lộc", "tuần lộc", "tuan loc", "reindeer"], name:"XMAS", desc:"Con vật nào kéo xe cho ông già Noel?"},
+        {val:2000, ans:["lịch sử", "lich su", "history"], name:"ĐỐ MẸO", desc:"Cái gì càng dài càng ngắn?"},
+        {val:2000, ans:["cái bóng", "cai bong", "shadow"], name:"ĐỐ MẸO", desc:"Cái gì đi thì nằm, đứng thì nằm, nhưng nằm lại đứng?"}
+    ];
+
+    let TASKS = [];
+    // 1. Generate Action Tasks
+    BASE_ACTIONS.forEach(act => {
+        TASKS.push({ type:"action", val:act.val, r:act.r, req:"1 Đại diện", name:act.name, desc:`${act.d} <span class='target-hl'>{target}</span>` });
+        // Tạo thêm biến thể
+        if(act.r === "COMMON" || act.r === "UNCOMMON") {
+             TASKS.push({ type:"action", val:act.val, r:act.r, req:"2 Đại diện", name:act.name + " (NHÓM)", desc:`Cùng 1 đồng đội nữa ${act.d.toLowerCase()} <span class='target-hl'>{target}</span>` });
+        }
     });
+    // 2. Add Quiz Tasks (Auto mapped to UNCOMMON/RARE)
+    QUIZ_LIST.forEach((q, i) => {
+        TASKS.push({ type:"quiz", val:q.val, r:(q.val>2000?"UNCOMMON":"COMMON"), req:"Cả Team", name:q.name + " " + (i+1), desc:q.desc, ans:q.ans });
+    });
+    // 3. Add Special Tasks
+    TASKS.push({type:"action", val:50000, r:"SUPER_RARE", req:"Cả Team", name:"ẢNH GIA ĐÌNH", desc:"Cả Team chụp ảnh tập thể tại chỗ ngồi."});
+    TASKS.push({type:"action", val:100000, r:"ULTRA_RARE", req:"3 Đại diện", name:"SĂN MÀU ĐỎ", desc:"Tìm người mặc áo ĐỎ (khác Team) và chúc mừng."});
+    TASKS.push({type:"action", val:100000, r:"ULTRA_RARE", req:"3 Đại diện", name:"SĂN MÀU XANH", desc:"Tìm người mặc áo XANH (khác Team) và High-five."});
+    TASKS.push({type:"action", val:200000, r:"SECRET_RARE", req:"Cả Team", name:"UỐNG MỪNG", desc:"Cả team nâng ly nước hô 'Dô' thật to (Quay video)."});
+    TASKS.push({type:"action", val:200000, r:"SECRET_RARE", req:"2 Đại diện", name:"TRAI ĐẸP", desc:"Tìm bạn nam đẹp trai nhất khối khác chụp ảnh."});
 
-    const BOSS_CEO = { val:50000, req:"TOÀN KHỐI", name:"VỆ SĨ CEO", desc:"Tìm <b>CEO Mai Hữu Minh Phúc</b>. Cả Khối vây quanh, khoanh tay đeo kính ngầu chụp ảnh 'Biệt đội bảo vệ Sếp'." };
-    const BOSS_CHAIRMAN = { val:50000, req:"TOÀN KHỐI", name:"TIM CHỦ TỊCH", desc:"Tìm <b>Chủ tịch Lại Minh Duy</b>. Cả Khối cùng đứng xung quanh và tạo dáng 'Bắn Tim' chụp ảnh." };
+    const BOSS_CEO = { val:50000, type:"action", req:"TOÀN KHỐI", name:"VỆ SĨ CEO", desc:"Tìm <b>CEO Mai Hữu Minh Phúc</b>. Cả Khối vây quanh, khoanh tay đeo kính ngầu chụp ảnh." };
+    const BOSS_CHAIRMAN = { val:50000, type:"action", req:"TOÀN KHỐI", name:"TIM CHỦ TỊCH", desc:"Tìm <b>Chủ tịch Lại Minh Duy</b>. Cả Khối cùng đứng xung quanh và tạo dáng 'Bắn Tim'." };
 
+    // --- LOGIC ---
     window.onload = () => { createSnow(); initLogin(); startPolling(); };
     
     function showToast(msg, type="info") {
@@ -313,13 +318,15 @@
             }
         } catch(err) { console.error(err); }
     }
+    
+    // --- LƯU Ý: ĐÂY LÀ CHẾ ĐỘ CHẠY THẬT (REAL MODE) ---
     async function saveData() { await db.from('gamestate').update({ data: serverData }).eq('id', 'main'); }
+    // async function saveData() { console.log("Test Mode: Data saved locally"); }
 
     function initLogin() { const s = document.getElementById('selBlock'); s.innerHTML='<option value="">-- CHỌN KHỐI --</option>'; for(let k in ORG_CHART) s.innerHTML+=`<option value="${k}">${ORG_CHART[k].name}</option>`; }
     function renderTeams() { curBlock = document.getElementById('selBlock').value; const s = document.getElementById('selTeam'); document.getElementById('teamArea').style.display = curBlock ? 'block' : 'none'; s.innerHTML='<option value="">-- CHỌN TEAM --</option>'; if(curBlock) ORG_CHART[curBlock].subs.forEach((t,i)=>s.innerHTML+=`<option value="${i}">${t.name}</option>`); }
     function handleLogin() { const idx = document.getElementById('selTeam').value; const pass = document.getElementById('inpPass').value; if(idx==="") return showToast("Vui lòng chọn Team!","error"); if(pass !== ORG_CHART[curBlock].subs[idx].pass) return showToast("Sai mật khẩu!","error"); curSubIdx = parseInt(idx); document.getElementById('viewLogin').style.display = 'none'; document.getElementById('viewGame').style.display = 'block'; document.getElementById('lblBlockName').innerText = ORG_CHART[curBlock].name; document.getElementById('lblTeamName').innerText = ORG_CHART[curBlock].subs[idx].name; calcBudget(); updateUI(); }
     function logout() { location.reload(); }
-    
     function calcBudget() { const d = new Date().getDate(); const BLOCK_CAPS = { 18:200000, 19:400000, 20:600000, 21:800000, 22:1000000, 23:1250000 }; let k = d < 18 ? 18 : (d > 23 ? 23 : d); subCap = Math.floor((BLOCK_CAPS[k] || 200000) / ORG_CHART[curBlock].subs.length / 1000) * 1000; }
     function getTeamData(b, i) { if(serverData.teams && serverData.teams[b] && serverData.teams[b][i]) { return serverData.teams[b][i]; } return { bal: 0, st: 0, msg: "" }; }
     function checkBlockSync() { let allDone = true; ORG_CHART[curBlock].subs.forEach((s,i) => { const t = getTeamData(curBlock, i); if(t.bal < subCap) allDone = false; }); return allDone; }
@@ -338,8 +345,6 @@
         
         container.className = "gacha-container";
         gBtn.classList.remove('locked', 'shaking'); 
-        
-        // Reset Front card style
         document.getElementById('cardFront').style.borderColor = "#444";
         document.getElementById('cardFront').style.boxShadow = "none";
         document.getElementById('spinIcon').innerText = "🎁";
@@ -365,13 +370,24 @@
     }
 
     function createSnow() { const c = document.getElementById('snowContainer'); setInterval(()=>{ const d=document.createElement('div'); d.classList.add('snowflake'); d.innerText='❄'; d.style.left=Math.random()*100+'vw'; d.style.animationDuration=Math.random()*3+2+'s'; c.appendChild(d); setTimeout(()=>d.remove(),5000); },200); }
-    function getSmartStaff() { let candidates = STAFF_DB.filter(s => s.block !== curBlock && s.block !== "BOD"); if(!candidates.length) return STAFF_DB[0]; return candidates[Math.floor(Math.random() * candidates.length)]; }
     
-    // --- GACHA NEW VISUAL ---
+    // --- SMART RANDOM LOGIC ---
+    function getSmartStaff() { 
+        let candidates = STAFF_DB.filter(s => s.block !== curBlock && s.block !== "BOD" && !recentTargets.includes(s.name)); 
+        if(!candidates.length) {
+            recentTargets = [];
+            candidates = STAFF_DB.filter(s => s.block !== curBlock && s.block !== "BOD");
+        }
+        const chosen = candidates[Math.floor(Math.random() * candidates.length)];
+        recentTargets.push(chosen.name);
+        if(recentTargets.length > 30) recentTargets.shift(); // Nhớ 30 người
+        return chosen; 
+    }
+
+    // GACHA
     function spinGacha() { 
         const myData = getTeamData(curBlock, curSubIdx); 
         if(document.getElementById('cardInner').classList.contains('is-flipped')) return; 
-        
         if(myData.bal >= subCap && checkBlockSync()) { pendingTask = (curBlock==='TM'||curBlock==='KD') ? BOSS_CEO : BOSS_CHAIRMAN; showQuestResult("LEGENDARY", pendingTask); return; } 
         
         const front = document.getElementById('cardFront');
@@ -379,12 +395,8 @@
         const txt = document.getElementById('spinText');
         document.getElementById('cardInner').classList.add('shaking');
         
-        const colors = [
-            {c:"#95a5a6", t:"COMMON"}, {c:"#27ae60", t:"UNCOMMON"}, {c:"#2980b9", t:"RARE"},
-            {c:"#8e44ad", t:"SUPER RARE"}, {c:"#c0392b", t:"ULTRA RARE"}, {c:"#f1c40f", t:"SECRET RARE"}
-        ];
-
-        let speed = 50; let count = 0; let maxCount = 30;
+        const colors = [ {c:"#95a5a6", t:"COMMON"}, {c:"#27ae60", t:"UNCOMMON"}, {c:"#2980b9", t:"RARE"}, {c:"#8e44ad", t:"SUPER RARE"}, {c:"#c0392b", t:"ULTRA RARE"}, {c:"#f1c40f", t:"SECRET RARE"} ];
+        let speed = 50; let count = 0; let maxCount = 25;
 
         function runRoulette() {
             const pick = colors[count % colors.length];
@@ -392,8 +404,6 @@
             front.style.boxShadow = `0 0 30px ${pick.c}`;
             txt.innerText = pick.t;
             txt.style.color = pick.c;
-            // Icon vẫn giữ nguyên hoặc có thể đổi nhẹ nếu muốn
-            
             count++;
             if (count < maxCount) {
                 if (count > maxCount - 10) speed += 30; 
@@ -412,19 +422,27 @@
         let tier = "COMMON";
         if(r < 50) tier = "COMMON"; else if(r < 80) tier = "UNCOMMON"; else if(r < 92) tier = "RARE"; else if(r < 97) tier = "SUPER_RARE"; else if(r < 99.5) tier = "ULTRA_RARE"; else tier = "SECRET_RARE";
 
-        let pool = TASKS.filter(t => t.r === tier);
-        if(pool.length === 0) pool = TASKS.filter(t => t.r === "COMMON");
+        // Filter and Anti-Duplicate Task
+        let pool = TASKS.filter(t => t.r === tier && !recentTasks.includes(t.name));
+        if(pool.length === 0) {
+             pool = TASKS.filter(t => t.r === tier); 
+             if(pool.length === 0) pool = TASKS.filter(t => t.r === "COMMON"); 
+        }
+
         let task = JSON.parse(JSON.stringify(pool[Math.floor(Math.random() * pool.length)])); 
         
         if(task.desc.includes("{target}")) { 
             let s = getSmartStaff(); 
             task.desc = task.desc.replace(/{target}/g, `${s.name} (${s.role})`).replace(/{block}/g, s.block).replace(/{role}/g, s.role); 
         } 
+        
+        recentTasks.push(task.name);
+        if(recentTasks.length > 20) recentTasks.shift(); // Nhớ 20 task
+
         if(myData.bal + task.val > subCap) task.val = subCap - myData.bal; 
         
         pendingTask = task; 
         showQuestResult(tier, task);
-        
         if(tier === "ULTRA_RARE" || tier === "SECRET_RARE") { confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 } }); }
     }
 
@@ -433,17 +451,14 @@
         const tag = document.getElementById('resRarity'); 
         const name = document.getElementById('resName'); 
         const val = document.getElementById('resVal');
-        
         document.getElementById('gachaContainer').className = `gacha-container glow-${rarity}`;
         res.className = `card-face card-back rare-${rarity}`;
         tag.innerText = rarity.replace("_", " ");
         name.innerText = task.name;
         val.innerText = "+" + task.val.toLocaleString();
-        
         let color = "#333";
         if(rarity==="RARE") color = "#2980b9"; if(rarity==="SUPER_RARE") color = "#8e44ad"; if(rarity==="ULTRA_RARE") color = "#c0392b"; if(rarity==="SECRET_RARE") color = "#d35400";
         name.style.color = color; val.style.color = color;
-
         document.getElementById('cardInner').classList.add('is-flipped'); 
     }
 
@@ -455,7 +470,6 @@
         document.getElementById('modalDesc').innerHTML = pendingTask.desc; 
         document.getElementById('modalIcon').innerText = pendingTask.type === "quiz" ? "🧩" : "📸";
         
-        // Show/Hide UI based on Type
         if(pendingTask.type === "quiz") {
             document.getElementById('uiQuiz').classList.remove('hide');
             document.getElementById('uiAction').classList.add('hide');
@@ -463,7 +477,6 @@
         } else {
             document.getElementById('uiQuiz').classList.add('hide');
             document.getElementById('uiAction').classList.remove('hide');
-            // Reset upload
             document.getElementById('evidenceFile').value = "";
             document.getElementById('imgPreview').src = "";
             document.getElementById('imgPreview').style.display = "none";
@@ -483,7 +496,6 @@
     function closeTask() { document.getElementById('overlay').style.display = 'none'; }
     function skipTask() { if(confirm("Bỏ qua nhiệm vụ này?")) { closeTask(); showToast("Đã bỏ qua.", "info"); } }
     
-    // PREVIEW
     function previewImage(input) {
         if (input.files && input.files[0]) {
             var reader = new FileReader();
@@ -495,7 +507,6 @@
     // --- SUBMIT ACTION (MANUAL CHECK) ---
     async function submitAction() {
         const fileInput = document.getElementById('evidenceFile');
-        // if(!fileInput.files || fileInput.files.length === 0) return alert("⚠️ Cần chụp ảnh minh chứng!"); // Bỏ bắt buộc
         const btn = document.getElementById('btnSubmitAction');
         btn.innerText = "⏳ ĐANG GỬI..."; btn.disabled = true;
 
@@ -503,6 +514,16 @@
             await fetchData();
             let publicUrl = "";
 
+            if(fileInput.files && fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const fileExt = file.name.split('.').pop();
+                const fileName = `${curBlock}_${curSubIdx}_${Date.now()}.${fileExt}`;
+                const { data, error } = await db.storage.from('evidence').upload(fileName, file);
+                if(!error) {
+                     const { data: urlData } = db.storage.from('evidence').getPublicUrl(fileName);
+                     publicUrl = urlData.publicUrl;
+                }
+            }
             
             const reqId = Date.now() + "_" + Math.floor(Math.random()*1000);
             serverData.requests = serverData.requests || [];
@@ -528,8 +549,7 @@
         const ans = inp.value.trim().toLowerCase();
         if(!ans) return showToast("Hãy nhập đáp án!", "error");
         
-        // Check answer
-        const correct = pendingTask.ans.some(a => ans.includes(a)); // Simple includes check
+        const correct = pendingTask.ans.some(a => ans.includes(a)); 
         
         if(correct) {
             await fetchData();
