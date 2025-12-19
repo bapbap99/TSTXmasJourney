@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TRẠM 3: XMAS CHARITY (LOGIC FIX)</title>
+    <title>TRẠM 3: XMAS CHARITY (BALANCED)</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Mali:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -20,7 +20,6 @@
         .btn-primary { background: linear-gradient(135deg, #d32f2f, #8e0000); color: #fff; box-shadow: 0 4px 15px rgba(211, 47, 47, 0.4); }
         .btn-secondary { background: transparent; color: #888; border: 1px solid #444; font-size: 11px; padding: 12px; margin-top: 10px; }
         .btn-option { background: #333; border: 1px solid #555; color: #eee; margin-top: 8px; text-align: left; font-family: 'Mali'; text-transform: none; font-weight: normal; width: 100%; padding: 12px; border-radius: 8px; margin-bottom: 5px; }
-        .btn-option:hover { background: #444; border-color: #777; }
         .dashboard { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 20px; margin-bottom: 20px; text-align: center; backdrop-filter: blur(5px); }
         .balance { font-size: 42px; font-weight: 900; font-family: 'Montserrat'; color: var(--gold); text-shadow: 0 0 20px rgba(255, 215, 0, 0.3); letter-spacing: -2px; line-height: 1; margin: 5px 0; }
         .progress-bar { height: 6px; background: #333; border-radius: 10px; overflow: hidden; margin-top: 15px; }
@@ -120,12 +119,10 @@
                 <div class="card-face card-front" id="cardFront">
                     <div id="spinIcon" style="font-size:80px; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5));">🎁</div>
                     <div id="spinText" style="font-family:'Montserrat'; font-weight:800; font-size:16px; margin-top:20px; color:var(--gold); letter-spacing: 1px;">CHẠM ĐỂ RÚT</div>
-                    
                     <div id="cooldownDisplay" style="display:none; margin-top:10px;">
                         <div id="timer">10:00</div>
                         <div id="timerDesc">Vui lòng đợi để rút tiếp</div>
                     </div>
-
                 </div>
                 <div class="card-face card-back" id="cardResult">
                     <div id="resRarity" class="rarity-tag">COMMON</div>
@@ -151,9 +148,7 @@
         </div>
         <div style="font-size:12px; color:#666; margin-bottom:10px; font-weight: bold;">YÊU CẦU CHỜ DUYỆT:</div>
         <div id="pendingList"></div>
-        
         <button class="btn" style="margin-top:20px; background:#2196f3; color:#fff; border:1px solid #4caf50;" onclick="adminResetCooldown()">♻️ XÓA COOL-DOWN TOÀN SERVER</button>
-
         <div style="margin-top:40px; border-top:1px dashed #333; padding-top:20px;">
             <h3 style="font-family:'Montserrat'; font-size:14px; color:#fff;">QUẢN LÝ TEAM (Sửa Tiền & Gỡ Kẹt)</h3>
             <div id="adminOverviewList"></div>
@@ -262,13 +257,16 @@
         
         // AUTO FIX ON LOAD: Xóa sạch task cũ nếu lỗi
         const key = `pendingTask_${curBlock}_${curSubIdx}`;
-        if(localStorage.getItem(key)) {
-            try {
-                let p = JSON.parse(localStorage.getItem(key));
-                if(p.type === 'quiz' || (!p.options && p.type === 'quiz_mc')) { // Phát hiện task cũ lỗi
-                    localStorage.removeItem(key);
-                }
-            } catch(e) { localStorage.removeItem(key); }
+        if(curBlock && curSubIdx !== -1) {
+            const saved = localStorage.getItem(key);
+            if(saved) {
+                try {
+                    let p = JSON.parse(saved);
+                    if(p.type === 'quiz' || (!p.options && p.type === 'quiz_mc')) { // Phát hiện task cũ lỗi
+                        localStorage.removeItem(key);
+                    }
+                } catch(e) { localStorage.removeItem(key); }
+            }
         }
     };
     
@@ -324,6 +322,19 @@
         if(pendingTask) localStorage.setItem(`pendingTask_${curBlock}_${curSubIdx}`, JSON.stringify(pendingTask));
         else localStorage.removeItem(`pendingTask_${curBlock}_${curSubIdx}`);
     }
+    
+    // --- LOAD DONE TASKS (BLACKLIST) ---
+    function getDoneTasks() {
+        const key = `done_tasks_${curBlock}_${curSubIdx}`;
+        return JSON.parse(localStorage.getItem(key) || "[]");
+    }
+    function addDoneTask(taskName) {
+        const key = `done_tasks_${curBlock}_${curSubIdx}`;
+        let done = getDoneTasks();
+        if(!done.includes(taskName)) done.push(taskName);
+        localStorage.setItem(key, JSON.stringify(done));
+    }
+
     function getTeamData(b, i) { if(serverData.teams && serverData.teams[b] && serverData.teams[b][i]) { return serverData.teams[b][i]; } return { bal: 0, st: 0, msg: "" }; }
     function checkBlockSync() { let allDone = true; ORG_CHART[curBlock].subs.forEach((s,i) => { const t = getTeamData(curBlock, i); if(t.bal < BLOCK_CAP) allDone = false; }); return allDone; }
     
@@ -358,16 +369,6 @@
         const spinIcon = document.getElementById('spinIcon');
         const spinText = document.getElementById('spinText');
         const badge = document.getElementById('statusBadge');
-        
-        // KIỂM TRA TRẠNG THÁI "CHỜ DUYỆT" TỪ SERVER
-        const myData = getTeamData(curBlock, curSubIdx);
-        if(myData.st === 1) { // 1 = PENDING APPROVAL
-             container.classList.add('locked');
-             spinIcon.style.display='none'; spinText.style.display='none';
-             timerDisplay.style.display='block'; timerText.innerText = "ĐỢI DUYỆT...";
-             badge.innerText="ĐANG CHỜ BTC"; badge.className="badge st-pending";
-             return;
-        }
 
         if(pendingTask) {
             container.classList.remove('locked');
@@ -422,8 +423,6 @@
         if(getCooldownTime() > 0) return showToast("Đang chờ hồi chiêu!", "error");
         if(pendingTask) { openFullTask(); return; } 
         const myData = getTeamData(curBlock, curSubIdx); 
-        if(myData.st === 1) return showToast("Đang chờ duyệt, không được rút!", "error"); // BLOCK IF PENDING
-
         if(document.getElementById('cardInner').classList.contains('is-flipped')) return;
         
         let totalBlock = 0;
@@ -446,12 +445,32 @@
     function finalizeResult() {
         try {
             const myData = getTeamData(curBlock, curSubIdx);
+            const doneTasks = getDoneTasks(); // Lấy danh sách đã làm
+
+            // --- TỈ LỆ RA TIỀN MỚI (ANTI-INFLATION) ---
+            let rand = Math.random() * 100;
+            let targetRarity = "COMMON";
+            if(rand > 99.8) targetRarity = "SECRET_RARE"; // 0.2%
+            else if(rand > 99.4) targetRarity = "ULTRA_RARE"; // 0.4%
+            else if(rand > 98) targetRarity = "SUPER_RARE"; // 1.4%
+            else if(rand > 90) targetRarity = "RARE"; // 8%
+            else if(rand > 60) targetRarity = "UNCOMMON"; // 30%
+            else targetRarity = "COMMON"; // 60%
+
+            // --- LỌC TASK THEO RARITY VÀ BLACKLIST ---
+            let pool = ALL_TASKS.filter(t => t.r === targetRarity && !doneTasks.includes(t.name));
             
-            // --- LOGIC CÂN BẰNG TỈ LỆ: 70% ACTION - 30% QUIZ ---
-            let wantAction = Math.random() < 0.7; // 70%
-            let pool = wantAction ? ACTION_TASKS : QUIZ_TASKS;
-            
-            // Lấy ngẫu nhiên từ pool
+            // Nếu không tìm thấy (do đã làm hết task loại đó), giảm độ khó xuống dần
+            if(!pool.length) {
+                // Fallback: Lấy task COMMON chưa làm
+                pool = ALL_TASKS.filter(t => t.r === "COMMON" && !doneTasks.includes(t.name));
+            }
+            // Nếu vẫn không có (làm hết sạch sành sanh), reset lại cho phép trùng Common
+            if(!pool.length) {
+                pool = ALL_TASKS.filter(t => t.r === "COMMON"); 
+            }
+
+            // Chọn ngẫu nhiên
             let task = JSON.parse(JSON.stringify(pool[Math.floor(Math.random() * pool.length)])); 
             
             if(task.desc && task.desc.includes("{target}")) { 
@@ -469,7 +488,7 @@
         } catch(e) { 
             console.error(e); 
             // EMERGENCY FALLBACK
-            pendingTask = ACTION_TASKS[0]; savePendingTaskLocally(); showQuestResult("COMMON", pendingTask);
+            pendingTask = ALL_TASKS[0]; savePendingTaskLocally(); showQuestResult("COMMON", pendingTask);
         }
     }
 
@@ -489,10 +508,9 @@
     function openFullTask(e) { 
         if(e) e.stopPropagation(); 
         
-        // --- FIX CRITICAL: REGENERATE TASK IF NULL ---
         if(!pendingTask) { 
             console.warn("Task data lost, regenerating...");
-            pendingTask = ACTION_TASKS[0];
+            pendingTask = ALL_TASKS[0];
             savePendingTaskLocally();
         }
 
@@ -557,7 +575,6 @@
         }
     }
 
-    // --- FIX LOGIC NỘP BÀI: CHỈ LÊN TRẠNG THÁI PENDING, KHÔNG CỘNG TIỀN/COOLDOWN NGAY ---
     async function submitAction() {
         const fileInput = document.getElementById('evidenceFile');
         const btn = document.getElementById('btnSubmitAction');
@@ -573,37 +590,22 @@
                 if(!error) { const { data: urlData } = db.storage.from('evidence').getPublicUrl(fileName); publicUrl = urlData.publicUrl; }
             }
             const reqId = Date.now() + "_" + Math.floor(Math.random()*1000);
-            serverData.requests.push({ 
-                id: reqId, 
-                block: curBlock, 
-                idx: curSubIdx, 
-                team: ORG_CHART[curBlock].subs[curSubIdx].name, 
-                task: pendingTask.name, 
-                val: pendingTask.val, 
-                isBoss: (pendingTask.val === 50000), 
-                img: publicUrl, 
-                timestamp: Date.now() 
-            });
+            serverData.requests.push({ id: reqId, block: curBlock, idx: curSubIdx, team: ORG_CHART[curBlock].subs[curSubIdx].name, task: pendingTask.name, val: pendingTask.val, isBoss: (pendingTask.val === 50000), img: publicUrl, timestamp: Date.now() });
             if(!serverData.teams[curBlock]) serverData.teams[curBlock] = {};
             if(!serverData.teams[curBlock][curSubIdx]) serverData.teams[curBlock][curSubIdx] = {bal:0, st:0, msg:""};
-            
-            // SET STATUS = 1 (PENDING) -> UI will lock gacha
             serverData.teams[curBlock][curSubIdx].st = 1;
-            
             await saveData();
             
-            // Don't start cooldown yet, wait for approval
-            document.getElementById('overlay').style.display = 'none';
-            document.getElementById('cardInner').classList.remove('is-flipped');
-            pendingTask = null; 
-            savePendingTaskLocally(); 
+            // GHI NHỚ TASK ĐÃ LÀM
+            addDoneTask(pendingTask.name);
             
+            clearPendingAndCooldown(COOLDOWN_SUCCESS);
+            resetSkips();
             showToast("✅ Đã nộp! Chờ BTC duyệt.", "success");
         } catch(err) { showToast("Lỗi: " + err.message, "error"); } finally { btn.innerText = "NỘP BÀI"; btn.disabled = false; }
     }
 
     async function checkQuizMC(selectedIndex) {
-        // QUIZ IS AUTO-APPROVED -> ADD MONEY & COOLDOWN IMMEDIATELY
         if(selectedIndex === pendingTask.correct) {
             await fetchData();
             if(!serverData.teams[curBlock]) serverData.teams[curBlock] = {};
@@ -611,6 +613,10 @@
             const currentBal = serverData.teams[curBlock][curSubIdx].bal || 0;
             serverData.teams[curBlock][curSubIdx].bal = currentBal + pendingTask.val;
             await saveData();
+            
+            // GHI NHỚ TASK ĐÃ LÀM
+            addDoneTask(pendingTask.name);
+
             clearPendingAndCooldown(COOLDOWN_SUCCESS);
             resetSkips();
             confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 } });
@@ -659,7 +665,6 @@
             let html = ""; 
             serverData.requests.forEach((p, index) => { 
                 html += `<div style="background:#222; padding:15px; border-radius:12px; margin-bottom:10px; border:1px solid #444; display:flex; align-items:center; gap:10px;"> 
-                    <img src="${p.img || 'https://via.placeholder.com/60x60?text=No+Img'}" class="admin-img-preview" onclick="showImage('${p.img}')">
                     <div style="flex:1;"> <div style="font-weight:bold; color:var(--gold); font-size:12px;">${p.team}</div> <div style="font-size:11px; color:#ccc;">${p.task} (+${p.val.toLocaleString()})</div> </div> 
                     <div> <button class="btn-mini" style="background:#4caf50; color:#fff;" onclick="adminApprove(${index})">✓</button> <button class="btn-mini" style="background:#f44336; color:#fff;" onclick="adminReject(${index})">✕</button> </div> </div>`; 
             }); 
@@ -683,39 +688,8 @@
         ov.innerHTML = htmlOv; 
     }
 
-    async function adminApprove(arrIndex) { 
-        await fetchData(); 
-        const p = serverData.requests[arrIndex]; 
-        if(!serverData.teams[p.block]) serverData.teams[p.block] = {}; 
-        if(!serverData.teams[p.block][p.idx]) serverData.teams[p.block][p.idx] = {bal:0}; 
-        
-        // ADD MONEY
-        const curBal = serverData.teams[p.block][p.idx].bal || 0; 
-        serverData.teams[p.block][p.idx].bal = curBal + p.val; 
-        
-        // UNLOCK STATUS
-        serverData.teams[p.block][p.idx].st = 0; 
-        
-        if(p.isBoss) { serverData.boss = serverData.boss || {}; serverData.boss[p.block] = true; } 
-        serverData.requests.splice(arrIndex, 1); 
-        await saveData(); 
-        showToast("Đã duyệt!", "success"); 
-    }
-    
-    async function adminReject(arrIndex) { 
-        const reason = prompt("Lý do từ chối:", "Ảnh chưa đạt"); 
-        if(!reason) return; 
-        await fetchData(); 
-        const p = serverData.requests[arrIndex]; 
-        
-        // REJECT STATUS (2)
-        serverData.teams[p.block][p.idx].st = 2; 
-        serverData.teams[p.block][p.idx].msg = reason; 
-        serverData.requests.splice(arrIndex, 1); 
-        await saveData(); 
-        showToast("Đã từ chối", "info"); 
-    }
-    
+    async function adminApprove(arrIndex) { await fetchData(); const p = serverData.requests[arrIndex]; if(!serverData.teams[p.block]) serverData.teams[p.block] = {}; if(!serverData.teams[p.block][p.idx]) serverData.teams[p.block][p.idx] = {bal:0}; const curBal = serverData.teams[p.block][p.idx].bal || 0; serverData.teams[p.block][p.idx].bal = curBal + p.val; serverData.teams[p.block][p.idx].st = 0; if(p.isBoss) { serverData.boss = serverData.boss || {}; serverData.boss[p.block] = true; } serverData.requests.splice(arrIndex, 1); await saveData(); showToast("Đã duyệt!", "success"); }
+    async function adminReject(arrIndex) { const reason = prompt("Lý do từ chối:", "Ảnh chưa đạt"); if(!reason) return; await fetchData(); const p = serverData.requests[arrIndex]; serverData.teams[p.block][p.idx].st = 2; serverData.teams[p.block][p.idx].msg = reason; serverData.requests.splice(arrIndex, 1); await saveData(); showToast("Đã từ chối", "info"); }
     async function resetServerData() { if(confirm("CẢNH BÁO: Xóa sạch dữ liệu máy chủ?")) { serverData = { teams:{}, requests:[], boss:{} }; await saveData(); location.reload(); } }
 </script>
 </body>
