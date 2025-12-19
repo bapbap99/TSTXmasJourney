@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TRẠM 3: XMAS CHARITY</title>
+    <title>TRẠM 3: XMAS CHARITY (LOGIC FIX)</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Mali:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -11,35 +11,26 @@
         /* --- CORE THEME --- */
         :root { --bg-dark: #0f2027; --gold: #ffd700; --glass: rgba(20, 30, 40, 0.95); --glass-border: rgba(255, 215, 0, 0.15); }
         body { font-family: 'Mali', cursive; background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364); color: #fff; margin: 0; min-height: 100vh; display: flex; justify-content: center; align-items: center; overflow-x: hidden; user-select: none; }
-        
         .app-container { width: 100%; max-width: 420px; background: var(--glass); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); min-height: 100vh; padding: 20px; box-sizing: border-box; position: relative; z-index: 10; display: flex; flex-direction: column; }
-        @media(min-width: 450px) { .app-container { min-height: auto; height: 90vh; border-radius: 24px; box-shadow: 0 0 80px rgba(0, 255, 200, 0.1); } }
-
         h1 { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 26px; text-align: center; margin: 0; background: linear-gradient(180deg, #fff, #ffd700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-transform: uppercase; filter: drop-shadow(0 2px 0 rgba(0,0,0,0.8)); }
         .subtitle { font-size: 11px; text-align: center; color: #888; margin-bottom: 25px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; }
-
         select, input { width: 100%; padding: 16px; margin-top: 8px; margin-bottom: 15px; background: #222; border: 1px solid #444; border-radius: 12px; color: #fff; font-family: 'Mali'; font-size: 16px; box-sizing: border-box; transition: 0.3s; }
-        select:focus, input:focus { border-color: var(--gold); outline: none; background: #333; }
-
         .btn { width: 100%; padding: 16px; border: none; border-radius: 14px; font-family: 'Montserrat', sans-serif; font-weight: 800; cursor: pointer; margin-top: 10px; text-transform: uppercase; transition: all 0.2s; position: relative; overflow: hidden; letter-spacing: 1px; }
         .btn:active { transform: scale(0.98); }
         .btn-primary { background: linear-gradient(135deg, #d32f2f, #8e0000); color: #fff; box-shadow: 0 4px 15px rgba(211, 47, 47, 0.4); }
         .btn-secondary { background: transparent; color: #888; border: 1px solid #444; font-size: 11px; padding: 12px; margin-top: 10px; }
         .btn-option { background: #333; border: 1px solid #555; color: #eee; margin-top: 8px; text-align: left; font-family: 'Mali'; text-transform: none; font-weight: normal; width: 100%; padding: 12px; border-radius: 8px; margin-bottom: 5px; }
         .btn-option:hover { background: #444; border-color: #777; }
-        
         .dashboard { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 20px; margin-bottom: 20px; text-align: center; backdrop-filter: blur(5px); }
         .balance { font-size: 42px; font-weight: 900; font-family: 'Montserrat'; color: var(--gold); text-shadow: 0 0 20px rgba(255, 215, 0, 0.3); letter-spacing: -2px; line-height: 1; margin: 5px 0; }
         .progress-bar { height: 6px; background: #333; border-radius: 10px; overflow: hidden; margin-top: 15px; }
         .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #d32f2f, #ffcc00); box-shadow: 0 0 10px #d32f2f; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
-
         .gacha-container { perspective: 1000px; width: 220px; height: 320px; margin: 20px auto; cursor: pointer; position: relative; z-index: 5; }
         .card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); transform-style: preserve-3d; }
         .card-inner.is-flipped { transform: rotateY(180deg); }
         .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 24px; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 4px solid var(--gold); box-shadow: 0 20px 50px rgba(0,0,0,0.5); background-size: cover; overflow: hidden; transition: border-color 0.1s, box-shadow 0.1s; }
         .card-front { background: #1a0b0b; background-image: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.05) 0%, transparent 60%); }
         .card-back { transform: rotateY(180deg); background: #fffdf5; color: #333; border-color: #333; }
-
         .rarity-tag { font-family: 'Montserrat', sans-serif; font-size: 10px; padding: 6px 12px; border-radius: 30px; font-weight: 900; margin-bottom: 15px; text-transform: uppercase; color: #fff; letter-spacing: 1px; }
         .rare-COMMON { background: #95a5a6; border-color: #bdc3c7 !important; }
         .rare-UNCOMMON { background: #27ae60; border-color: #27ae60 !important; box-shadow: 0 0 15px #2ecc71; }
@@ -47,22 +38,18 @@
         .rare-SUPER_RARE { background: #8e44ad; border-color: #8e44ad !important; box-shadow: 0 0 25px #9b59b6; }
         .rare-ULTRA_RARE { background: #c0392b; border-color: #c0392b !important; box-shadow: 0 0 30px #e74c3c; animation: pulse-red 1s infinite; }
         .rare-SECRET_RARE { background: linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff); background-size: 400%; animation: rainbow-bg 3s linear infinite; border: 3px solid #fff !important; box-shadow: 0 0 60px gold; }
-
         @keyframes pulse-red { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
         @keyframes rainbow-bg { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
         .shaking { animation: shake-hard 0.1s infinite; }
         @keyframes shake-hard { 0% { transform: translate(1px, 1px) rotate(0deg); } 50% { transform: translate(-1px, -2px) rotate(-1deg); } 100% { transform: translate(-2px, 1px) rotate(1deg); } }
-
         #toastBox { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 1000; display: flex; flex-direction: column; gap: 10px; width: 90%; max-width: 350px; pointer-events: none; }
         .toast { background: rgba(0,0,0,0.9); color: #fff; padding: 15px 20px; border-radius: 12px; font-size: 14px; font-weight: bold; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 10px; animation: slideIn 0.3s; border-left: 5px solid; }
         .toast.success { border-color: #4caf50; } .toast.error { border-color: #f44336; } .toast.info { border-color: #2196f3; }
         @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
         .list-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px dashed rgba(255,255,255,0.1); font-size: 12px; color: #aaa; align-items: center; }
         .target-hl { color: #d32f2f; font-weight: 800; background: #ffebee; padding: 2px 6px; border-radius: 4px; }
         #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); backdrop-filter: blur(5px); z-index: 100; display: none; justify-content: center; align-items: center; }
         .modal-card { background: #fff; width: 90%; max-width: 380px; padding: 30px; border-radius: 24px; text-align: center; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
-        
         #adminPanel { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #111; z-index: 200; padding: 20px; overflow-y: auto; }
         .admin-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; border-bottom: 1px solid #333; position: sticky; top: 0; background: #111; z-index: 5; }
         .upload-area { display: block; border: 2px dashed #aaa; padding: 15px; border-radius: 10px; margin-bottom:10px; cursor: pointer; }
@@ -78,6 +65,7 @@
 <body>
 
 <div id="toastBox"></div>
+<div id="snowContainer"></div>
 
 <div class="app-container">
     <div id="viewLogin">
@@ -118,14 +106,12 @@
         <div class="dashboard">
             <div style="font-size:10px; color:#aaa; font-weight: bold; letter-spacing: 1px;">QUỸ TỪ THIỆN TEAM</div>
             <div class="balance" id="lblBalance">0</div>
-            
             <div style="border-top: 1px dashed #444; margin: 10px 0; padding-top: 10px;">
                 <div style="font-size:12px; color:#4caf50; font-weight:bold; margin-bottom:5px;">
                     TỔNG CẢ KHỐI: <span id="lblBlockTotal" style="color:#fff; font-size:16px;">0</span>
                 </div>
                 <div style="font-size:10px; color:#666;">MỤC TIÊU KHỐI: <span id="lblCap" style="color:#eee">1,250,000</span></div>
             </div>
-
             <div class="progress-bar"><div id="progBar" class="progress-fill"></div></div>
         </div>
 
@@ -269,10 +255,7 @@
     const BOSS_CHAIRMAN = { val:50000, type:"action", req:"TOÀN KHỐI", name:"TIM CHỦ TỊCH", desc:"Tìm <b>Chủ tịch Lại Minh Duy</b>. Cả Khối cùng đứng xung quanh và tạo dáng 'Bắn Tim'." };
 
     window.onload = () => { 
-        createSnow(); // NO SNOW ASKED BEFORE, BUT RE-ADDED AS REQUESTED "FINAL CHARITY"
-        // Wait, user asked to remove snow previously. I will comment it out to be safe.
-        // createSnow(); 
-        
+        createSnow(); 
         initLogin(); 
         startPolling(); 
         setInterval(checkCooldownUI, 1000);
@@ -341,19 +324,6 @@
         if(pendingTask) localStorage.setItem(`pendingTask_${curBlock}_${curSubIdx}`, JSON.stringify(pendingTask));
         else localStorage.removeItem(`pendingTask_${curBlock}_${curSubIdx}`);
     }
-    
-    // --- LOAD DONE TASKS (BLACKLIST) ---
-    function getDoneTasks() {
-        const key = `done_tasks_${curBlock}_${curSubIdx}`;
-        return JSON.parse(localStorage.getItem(key) || "[]");
-    }
-    function addDoneTask(taskName) {
-        const key = `done_tasks_${curBlock}_${curSubIdx}`;
-        let done = getDoneTasks();
-        if(!done.includes(taskName)) done.push(taskName);
-        localStorage.setItem(key, JSON.stringify(done));
-    }
-
     function getTeamData(b, i) { if(serverData.teams && serverData.teams[b] && serverData.teams[b][i]) { return serverData.teams[b][i]; } return { bal: 0, st: 0, msg: "" }; }
     function checkBlockSync() { let allDone = true; ORG_CHART[curBlock].subs.forEach((s,i) => { const t = getTeamData(curBlock, i); if(t.bal < BLOCK_CAP) allDone = false; }); return allDone; }
     
@@ -445,6 +415,7 @@
         checkCooldownUI();
     }
 
+    function createSnow() { const c = document.getElementById('snowContainer'); setInterval(()=>{ const d=document.createElement('div'); d.classList.add('snowflake'); d.innerText='❄'; d.style.left=Math.random()*100+'vw'; d.style.animationDuration=Math.random()*3+2+'s'; c.appendChild(d); setTimeout(()=>d.remove(),5000); },200); }
     function getSmartStaff() { return STAFF_DB[Math.floor(Math.random()*STAFF_DB.length)]; }
 
     function spinGacha() { 
@@ -475,36 +446,12 @@
     function finalizeResult() {
         try {
             const myData = getTeamData(curBlock, curSubIdx);
-            const doneTasks = getDoneTasks(); // Lấy danh sách đã làm
-
-            // --- TỈ LỆ RA TIỀN MỚI (ANTI-INFLATION) ---
-            let rand = Math.random() * 100;
-            let targetRarity = "COMMON";
-            if(rand > 99.8) targetRarity = "SECRET_RARE"; // 0.2%
-            else if(rand > 99.4) targetRarity = "ULTRA_RARE"; // 0.4%
-            else if(rand > 98) targetRarity = "SUPER_RARE"; // 1.4%
-            else if(rand > 90) targetRarity = "RARE"; // 8%
-            else if(rand > 60) targetRarity = "UNCOMMON"; // 30%
-            else targetRarity = "COMMON"; // 60%
-
-            // --- CÂN BẰNG TỈ LỆ: 70% ACTION - 30% QUIZ ---
-            let wantAction = Math.random() < 0.7; // 70%
-            let basePool = wantAction ? ACTION_TASKS : QUIZ_TASKS;
-
-            // --- LỌC TASK THEO RARITY VÀ BLACKLIST ---
-            let pool = basePool.filter(t => t.r === targetRarity && !doneTasks.includes(t.name));
             
-            // Nếu không tìm thấy (do đã làm hết task loại đó), giảm độ khó xuống dần
-            if(!pool.length) {
-                // Fallback: Lấy task COMMON chưa làm trong cùng loại (Action/Quiz)
-                pool = basePool.filter(t => t.r === "COMMON" && !doneTasks.includes(t.name));
-            }
-            // Nếu vẫn không có (làm hết sạch sành sanh), reset lại cho phép trùng Common
-            if(!pool.length) {
-                pool = ALL_TASKS.filter(t => t.r === "COMMON"); 
-            }
-
-            // Chọn ngẫu nhiên
+            // --- LOGIC CÂN BẰNG TỈ LỆ: 70% ACTION - 30% QUIZ ---
+            let wantAction = Math.random() < 0.7; // 70%
+            let pool = wantAction ? ACTION_TASKS : QUIZ_TASKS;
+            
+            // Lấy ngẫu nhiên từ pool
             let task = JSON.parse(JSON.stringify(pool[Math.floor(Math.random() * pool.length)])); 
             
             if(task.desc && task.desc.includes("{target}")) { 
@@ -522,7 +469,7 @@
         } catch(e) { 
             console.error(e); 
             // EMERGENCY FALLBACK
-            pendingTask = ALL_TASKS[0]; savePendingTaskLocally(); showQuestResult("COMMON", pendingTask);
+            pendingTask = ACTION_TASKS[0]; savePendingTaskLocally(); showQuestResult("COMMON", pendingTask);
         }
     }
 
@@ -545,7 +492,7 @@
         // --- FIX CRITICAL: REGENERATE TASK IF NULL ---
         if(!pendingTask) { 
             console.warn("Task data lost, regenerating...");
-            pendingTask = ALL_TASKS[0];
+            pendingTask = ACTION_TASKS[0];
             savePendingTaskLocally();
         }
 
@@ -645,9 +592,6 @@
             
             await saveData();
             
-            // GHI NHỚ TASK ĐÃ LÀM (Để không random lại cái này nữa)
-            addDoneTask(pendingTask.name);
-
             // Don't start cooldown yet, wait for approval
             document.getElementById('overlay').style.display = 'none';
             document.getElementById('cardInner').classList.remove('is-flipped');
@@ -667,9 +611,6 @@
             const currentBal = serverData.teams[curBlock][curSubIdx].bal || 0;
             serverData.teams[curBlock][curSubIdx].bal = currentBal + pendingTask.val;
             await saveData();
-            
-            addDoneTask(pendingTask.name); // Add to blacklist
-            
             clearPendingAndCooldown(COOLDOWN_SUCCESS);
             resetSkips();
             confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 } });
