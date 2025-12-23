@@ -91,7 +91,7 @@
             perspective: 1200px; width: 260px; height: 340px; margin: 0 auto;
             cursor: pointer; position: relative; z-index: 5;
         }
-        .card-inner { width: 100%; height: 100%; transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-style: preserve-3d; }
+        .card-inner { width: 100%; height: 100%; transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-style: preserve-3d; }
         .card-inner.is-flipped { transform: rotateY(180deg); }
         .card-face {
             position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
@@ -101,6 +101,58 @@
         .card-front { background: linear-gradient(145deg, #1c1c1e, #000); }
         .card-front::after { content: ''; position: absolute; inset: 0; border-radius: 32px; padding: 2px; background: linear-gradient(45deg, transparent, var(--gold), transparent); mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; opacity: 0.5; }
         .card-back { transform: rotateY(180deg); background: #FFFFFF; color: #000; }
+
+        /* --- CINEMATIC ANIMATION OVERLAY --- */
+        #cineOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 999; display: none;
+            overflow: hidden; justify-content: center; align-items: center;
+        }
+        
+        /* Phase 1: Explosion */
+        .cine-card {
+            position: absolute; width: 60px; height: 90px;
+            background: linear-gradient(135deg, #444, #111);
+            border: 1px solid #666; border-radius: 6px;
+            opacity: 0; pointer-events: none;
+        }
+
+        /* Phase 2: Horizontal Run */
+        .cine-track {
+            position: absolute; top: 50%; left: 0; height: 140px; width: 100%;
+            transform: translateY(-50%);
+            display: flex; gap: 15px; align-items: center;
+            overflow: hidden; opacity: 0;
+        }
+        .cine-strip {
+            display: flex; gap: 15px; position: absolute; left: 100%;
+            will-change: transform;
+        }
+        .strip-card {
+            width: 90px; height: 130px; border-radius: 10px;
+            background: #222; border: 2px solid #555;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 24px; font-weight: bold; color: #555;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        /* Phase 3: Final Tension Card */
+        #cineFinalCard {
+            width: 180px; height: 260px; border-radius: 20px;
+            background: #111; border: 4px solid #FFF;
+            box-shadow: 0 0 50px rgba(255,255,255,0.5);
+            display: none; opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.3s;
+        }
+        .pulsing-white { animation: pulseColor 0.2s infinite; }
+        @keyframes pulseColor {
+            0% { border-color: #FFF; box-shadow: 0 0 30px #FFF; }
+            25% { border-color: var(--blue); box-shadow: 0 0 30px var(--blue); }
+            50% { border-color: var(--green); box-shadow: 0 0 30px var(--green); }
+            75% { border-color: var(--purple); box-shadow: 0 0 30px var(--purple); }
+            100% { border-color: var(--primary); box-shadow: 0 0 30px var(--primary); }
+        }
 
         /* --- RARITY & VALUES --- */
         .rarity-tag { font-family: var(--font-head); font-size: 12px; padding: 8px 20px; border-radius: 100px; font-weight: 800; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; color: #fff; }
@@ -147,6 +199,14 @@
 
 <div id="toastBox"></div>
 <div id="snowContainer"></div>
+
+<div id="cineOverlay">
+    <div id="cineExplosionContainer"></div>
+    <div class="cine-track" id="cineTrack">
+        <div class="cine-strip" id="cineStrip"></div>
+    </div>
+    <div id="cineFinalCard"></div>
+</div>
 
 <div class="app-container">
     
@@ -305,7 +365,8 @@
         spin: new Audio("https://assets.mixkit.co/active_storage/sfx/2044/2044-preview.mp3"),
         win: new Audio("https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3"),
         fail: new Audio("https://assets.mixkit.co/active_storage/sfx/2572/2572-preview.mp3"),
-        alarm: new Audio("https://assets.mixkit.co/active_storage/sfx/995/995-preview.mp3") 
+        tick: new Audio("https://assets.mixkit.co/active_storage/sfx/2578/2578-preview.mp3"),
+        reveal: new Audio("https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3") // Big reveal
     };
     function playSound(name) { try { sounds[name].currentTime = 0; sounds[name].play(); vibrate(10); } catch(e){} }
     function vibrate(ms) { if (navigator.vibrate) navigator.vibrate(ms); }
@@ -316,8 +377,7 @@
     let displayedTotal = 0;
 
     const BLOCK_CAP = 1250000;
-    const COOLDOWN_MINUTES = 5; // Reduced to 5 minutes
-    const MAX_SKIPS = 99; 
+    const COOLDOWN_MINUTES = 5; 
     const RECENT_TASK_LIMIT = 5;
 
     const ORG_CHART = { 
@@ -328,10 +388,7 @@
     };
     const STAFF_DB = ["Nguyễn Thị Thu Hương","Lê Thị Như Cát Tiên","Phạm Thị Minh Châu","Võ Thùy Phương Thảo","Nguyễn Phan Phúc An","Nguyễn Thị Tuyết Nhung","Nguyễn Thị Tuyết Hạnh","Bùi Ngọc Dung","Nguyễn Anh Tú","Trần Ngọc Quỳnh Hương","Huỳnh Ngọc Quý","Võ Khánh Tường","Bùi Thanh Sang","Lại Thị Ngọc Bích","Nguyễn Thị Hoài Thương","Tăng Bửu Oanh","Lê Xuân Yến Ngọc","Chung Cát Tiên","Nguyễn Thùy Trang","Nguyễn Lê Trung","Nguyễn Huy Khôi","Nguyễn Thị Mỹ Nhung","Đỗ Thị Uyển Nhi","Lê Đinh Quang Huy","Nguyễn Thanh Tuấn","Hồ Chí Khang","Nguyễn Ngọc Diễm Quỳnh","Nguyễn Lê Nhật Tân","Vũ Ngọc Phương Linh","Hoàng Thị Lan Anh","Vũ Ngọc Tân","Trần Anh Khoa","Nguyễn Như Mai Hân","Nguyễn Hoàng Thụy Diệp My","Huỳnh Viết Trung","Nguyễn Tấn Mạnh","Diệp Thúy Oanh","Hồ Đăng Khoa","Lê Thành Tài","Lâm Sanyo","Nguyễn Phương Tiến","Nguyễn Mạnh Dũng","Phan Tuấn Nguyên","Hồ Ngọc Hoàn Nhi","Hồng Ân","Hoàng Nhân"];
 
-    // --- ULTIMATE TASK LIST (DIVERSE & FUN) ---
-    // Common: 10k | Uncommon: 30k | Rare: 100k | Super Rare: 250k
     const ALL_TASKS = [
-        // COMMON (10k) - Easy, Quick, Social
         {type:"action", val:10000, r:"COMMON", req:"1 Đại diện", name:"NGƯỜI LẠ ƠI", desc:"Tìm 1 người lạ (khác khối) và nói 'Hôm nay bạn đẹp lắm'."},
         {type:"action", val:10000, r:"COMMON", req:"1 Đại diện", name:"OẲN TÙ TÌ", desc:"Rủ {target} chơi Oẳn Tù Tì. Thắng hay thua đều phải chụp ảnh chung."},
         {type:"action", val:10000, r:"COMMON", req:"1 Đại diện", name:"ĐẬP TAY HOMIE", desc:"Thực hiện màn đập tay kiểu 'cool ngầu' với {target}."},
@@ -343,7 +400,6 @@
         {type:"action", val:10000, r:"COMMON", req:"1 Đại diện", name:"BẮT TAY", desc:"Bắt tay với 3 người khác team và nói 'Hẹn gặp lại'."},
         {type:"action", val:10000, r:"COMMON", req:"1 Đại diện", name:"THẢ TIM", desc:"Tạo dáng bắn tim đôi với {target}."},
         
-        // UNCOMMON (30k) - Funny, Group interaction, Physical
         {type:"action", val:30000, r:"UNCOMMON", req:"2 Đại diện", name:"CÕNG BẠN", desc:"Cõng/Bế một thành viên trong team trên lưng (cẩn thận nhé)."},
         {type:"action", val:30000, r:"UNCOMMON", req:"2 Đại diện", name:"KHOÁC VAI", desc:"Khoác vai {target} và cùng hát 1 câu nhạc Xuân/Noel."},
         {type:"action", val:30000, r:"UNCOMMON", req:"2 Đại diện", name:"MANNEQUIN", desc:"Giả làm tượng (đứng im bất động) trong 5s cùng {target}."},
@@ -355,7 +411,6 @@
         {type:"action", val:30000, r:"UNCOMMON", req:"2 Đại diện", name:"TẠO DÁNG FASHION", desc:"Tạo dáng như người mẫu bìa tạp chí cùng {target}."},
         {type:"action", val:30000, r:"UNCOMMON", req:"2 Đại diện", name:"CHÚC TẾT", desc:"Quay video ngắn 5s chúc mừng năm mới cùng {target}."},
         
-        // RARE (100k) - High Effort, Performance, Embarrassing
         {type:"action", val:100000, r:"RARE", req:"Cả Team", name:"THÁP NGƯỜI", desc:"Xếp tháp người hoặc kiểu dáng độc lạ thể hiện sự đoàn kết."},
         {type:"action", val:100000, r:"RARE", req:"1 Đại diện", name:"CATWALK", desc:"Đi catwalk 1 đoạn ngắn như người mẫu giữa sảnh tiệc (quay clip)."},
         {type:"action", val:100000, r:"RARE", req:"Cả Team", name:"HÔ TÊN", desc:"Cả team cùng hô to tên Khối mình thật tự hào (Quay clip)."},
@@ -365,7 +420,6 @@
         {type:"action", val:100000, r:"RARE", req:"1 Đại diện", name:"TỎ TÌNH", desc:"Quỳ gối 'tỏ tình' (diễn sâu) với... cái ghế hoặc cái cây."},
         {type:"action", val:100000, r:"RARE", req:"Cả Team", name:"GIA ĐÌNH VĂN HÓA", desc:"Chụp ảnh tập thể phong cách nghiêm túc (mặt không cảm xúc)."},
         
-        // SUPER RARE (250k) - Boss/Big Moments
         {type:"action", val:250000, r:"SUPER_RARE", req:"TOÀN KHỐI", name:"CEO MOMENT", desc:"Tìm <b>CEO Mai Hữu Minh Phúc</b>. Mời anh Phúc chụp chung một kiểu ảnh 'ngầu nhất'." },
         {type:"action", val:250000, r:"SUPER_RARE", req:"TOÀN KHỐI", name:"CHAIRMAN MOMENT", desc:"Tìm <b>Chủ tịch Lại Minh Duy</b>. Cả Khối vây quanh Chủ tịch và hô 'TST VÔ ĐỊCH'." },
         {type:"action", val:250000, r:"SUPER_RARE", req:"3 Đại diện", name:"TRÙM CUỐI", desc:"Tìm 1 thành viên Ban Tổ Chức (BTC) và chụp ảnh năn nỉ 'Cho em xin giải'."}
@@ -380,7 +434,6 @@
         if ('wakeLock' in navigator) navigator.wakeLock.request('screen').catch(e => console.log(e)); 
     };
 
-    // --- LOGIC: BAG SYSTEM (THUẬT TOÁN TÚI QUÀ) ---
     function shuffle(array) {
         let currentIndex = array.length, randomIndex;
         while (currentIndex != 0) {
@@ -393,60 +446,37 @@
 
     function getNextRarity(block, idx) {
         let team = getTeamData(block, idx);
-        // Init spin history/bag if not exists
         if (!team.bag || team.bag.length === 0) {
             let totalSpins = team.totalSpins || 0;
-            
             if (totalSpins < 10) {
-                // TÚI 1: KHỞI ĐỘNG (10 items)
-                // 5 Common, 3 Uncommon, 1 Rare, 1 Super Rare
-                const bag1 = [
-                    'COMMON','COMMON','COMMON','COMMON','COMMON',
-                    'UNCOMMON','UNCOMMON','UNCOMMON',
-                    'RARE',
-                    'SUPER_RARE'
-                ];
+                const bag1 = ['COMMON','COMMON','COMMON','COMMON','COMMON','UNCOMMON','UNCOMMON','UNCOMMON','RARE','SUPER_RARE'];
                 team.bag = shuffle(bag1);
             } else {
-                // TÚI 2: HARDCORE (20 items - 1 SR)
-                // 10 Common, 6 Uncommon, 3 Rare, 1 Super Rare
-                const bag2 = [
-                    'COMMON','COMMON','COMMON','COMMON','COMMON','COMMON','COMMON','COMMON','COMMON','COMMON',
-                    'UNCOMMON','UNCOMMON','UNCOMMON','UNCOMMON','UNCOMMON','UNCOMMON',
-                    'RARE','RARE','RARE',
-                    'SUPER_RARE'
-                ];
+                const bag2 = ['COMMON','COMMON','COMMON','COMMON','COMMON','COMMON','COMMON','COMMON','COMMON','COMMON','UNCOMMON','UNCOMMON','UNCOMMON','UNCOMMON','UNCOMMON','UNCOMMON','RARE','RARE','RARE','SUPER_RARE'];
                 team.bag = shuffle(bag2);
             }
         }
-        
         let rarity = team.bag.pop();
         team.totalSpins = (team.totalSpins || 0) + 1;
         return rarity;
     }
 
-    // --- COUNTDOWN LOGIC ---
     function updateEventCountdown() {
         const now = new Date();
         const end = new Date();
-        end.setHours(17, 0, 0, 0); // 17:00 Today
-        
+        end.setHours(17, 0, 0, 0); 
         let diff = end - now;
         if (diff < 0) {
             document.getElementById('globalTimer').innerText = "00:00:00";
             document.getElementById('globalTimer').style.color = "#FF3B30";
             return;
         }
-
         const h = Math.floor(diff / (1000 * 60 * 60));
         const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
         const s = Math.floor((diff % (1000 * 60)) / 1000);
-
-        document.getElementById('globalTimer').innerText = 
-            `${h<10?'0'+h:h}:${m<10?'0'+m:m}:${s<10?'0'+s:s}`;
+        document.getElementById('globalTimer').innerText = `${h<10?'0'+h:h}:${m<10?'0'+m:m}:${s<10?'0'+s:s}`;
     }
 
-    // --- ANIMATION UTILS ---
     function animateNumber(elementId, start, end, duration, isGlobal = false) {
         if (start === end) return;
         const obj = document.getElementById(elementId);
@@ -504,14 +534,12 @@
                 if (!serverData.boss) serverData.boss = {};
                 if (!serverData.recentTasks) serverData.recentTasks = {};
                 if (!serverData.pendingTask) serverData.pendingTask = {};
-                
                 const lastReset = parseInt(localStorage.getItem('lastReset') || 0);
                 if ((serverData.resetSignal || 0) > lastReset) {
                     localStorage.clear();
                     localStorage.setItem('lastReset', serverData.resetSignal);
                     location.reload();
                 }
-
                 if (curBlock && curSubIdx >= 0) {
                     restorePendingTaskFromServer();
                     updateUI();
@@ -640,19 +668,14 @@
     function updateUI() {
         if (curSubIdx < 0) return;
         const myData = getTeamData(curBlock, curSubIdx);
-        
         const realBal = myData.bal || 0;
         if(realBal !== displayedBalance) animateNumber('lblBalance', displayedBalance, realBal, 800, false);
-        
         let totalBlock = 0;
         ORG_CHART[curBlock].subs.forEach((_, i) => totalBlock += (getTeamData(curBlock, i).bal || 0));
-        
         if(totalBlock !== displayedTotal) animateNumber('lblBlockTotal', displayedTotal, totalBlock, 800, true);
-        
         const pct = Math.min((totalBlock / BLOCK_CAP) * 100, 100);
         document.getElementById('progBar').style.width = pct + "%";
         if (pct >= 100) document.getElementById('progBar').style.background = "#32D74B";
-
         const msg = document.getElementById('msgStatus');
         if (totalBlock >= BLOCK_CAP) {
             msg.innerHTML = "<span style='color:var(--gold); font-weight:bold; font-size:16px;'>🏆 KHỐI ĐÃ VỀ ĐÍCH!</span>";
@@ -663,7 +686,6 @@
         } else {
             msg.innerHTML = "👇 Bấm vào túi quà để rút nhiệm vụ!";
         }
-
         let listHtml = "";
         ORG_CHART[curBlock].subs.forEach((s, i) => {
             const t = getTeamData(curBlock, i);
@@ -692,52 +714,118 @@
         if (getCooldownEnd() > Date.now()) return showToast("Đang hồi chiêu!", "error");
         if (pendingTask) { openFullTask(); return; }
         if (getTeamData(curBlock, curSubIdx).st === 1) return showToast("Đang chờ duyệt!", "error");
+        
+        // --- 5s CINEMATIC LOGIC ---
+        const overlay = document.getElementById('cineOverlay');
+        const explosionCont = document.getElementById('cineExplosionContainer');
+        const track = document.getElementById('cineTrack');
+        const strip = document.getElementById('cineStrip');
+        const finalCard = document.getElementById('cineFinalCard');
+        
+        // Reset States
+        overlay.style.display = 'flex';
+        explosionCont.innerHTML = '';
+        strip.innerHTML = '';
+        track.style.opacity = '0';
+        finalCard.style.display = 'none';
+        finalCard.style.opacity = '0';
+        finalCard.className = '';
+        
+        // 1. EXPLOSION (0s - 0.5s)
+        playSound('spin'); // start woosh
+        for(let i=0; i<30; i++) {
+            const p = document.createElement('div');
+            p.className = 'cine-card';
+            p.style.left = '50%'; p.style.top = '50%';
+            p.style.transform = `translate(-50%, -50%) scale(0.5)`;
+            explosionCont.appendChild(p);
+            
+            const destX = (Math.random() - 0.5) * window.innerWidth;
+            const destY = (Math.random() - 0.5) * window.innerHeight;
+            const rot = Math.random() * 720;
+            
+            p.animate([
+                { transform: `translate(-50%, -50%) scale(0.5)`, opacity: 1 },
+                { transform: `translate(${destX}px, ${destY}px) rotate(${rot}deg) scale(1.5)`, opacity: 0 }
+            ], { duration: 600, easing: 'ease-out', fill: 'forwards' });
+        }
+        
+        // 2. HORIZONTAL RUN (0.5s - 3.0s)
+        setTimeout(() => {
+            track.style.opacity = '1';
+            // Generate dummy cards
+            let html = "";
+            for(let i=0; i<30; i++) {
+                const val = Math.random() < 0.8 ? "10K" : (Math.random()<0.5?"30K":"100K");
+                html += `<div class="strip-card">${val}</div>`;
+            }
+            strip.innerHTML = html;
+            
+            // Animate scroll
+            strip.animate([
+                { transform: 'translateX(0)' },
+                { transform: 'translateX(-2000px)' }
+            ], { duration: 2500, easing: 'linear', iterations: 1 });
+            
+            // Ticking sound loop & Vibration
+            const tickInterval = setInterval(() => { playSound('tick'); vibrate(30); }, 100);
+            setTimeout(() => clearInterval(tickInterval), 2500);
+        }, 400);
 
-        playSound('spin'); vibrate(50);
-        document.getElementById('cardInner').classList.add('shaking');
-        setTimeout(finalizeResult, 800);
+        // 3. FINAL TENSION (3.0s - 4.8s)
+        setTimeout(() => {
+            track.style.opacity = '0'; // Hide strip
+            finalCard.style.display = 'block';
+            
+            // Fade in center card
+            finalCard.animate([
+                { transform: 'scale(0.5)', opacity: 0 },
+                { transform: 'scale(1)', opacity: 1 }
+            ], { duration: 300, fill: 'forwards' });
+            
+            // Pulsing colors
+            finalCard.classList.add('pulsing-white');
+            vibrate(500);
+        }, 2900);
+
+        // 4. REVEAL (5.0s)
+        setTimeout(() => {
+            overlay.style.display = 'none'; // Close cinematic
+            finalizeResult(); // Show real modal
+        }, 4800);
     }
 
     async function finalizeResult() {
         try {
-            // DETERMINE RARITY FROM BAG
             const forcedRarity = getNextRarity(curBlock, curSubIdx);
-            
-            // FILTER TASKS BY RARITY
             const pool = ALL_TASKS.filter(t => t.r === forcedRarity);
             const recent = getRecentTasks();
             let task, attempts = 0;
-            
-            // PICK RANDOM TASK IN RARITY POOL
             if (pool.length > 0) {
                 do {
                     task = pool[Math.floor(Math.random() * pool.length)];
                     attempts++;
-                } while (recent.includes(task.name) && attempts < 15); // Try harder to avoid dupes
+                } while (recent.includes(task.name) && attempts < 15);
             } else {
-                task = ALL_TASKS[0]; // Safe fallback
+                task = ALL_TASKS[0];
             }
-
             const cloned = JSON.parse(JSON.stringify(task));
             if (cloned.desc && cloned.desc.includes("{target}")) {
                 const staff = STAFF_DB[Math.floor(Math.random() * STAFF_DB.length)];
                 cloned.desc = cloned.desc.replace(/{target}/g, `<b style="color:var(--gold)">${staff}</b>`);
             }
-
             pendingTask = cloned;
             addRecentTask(pendingTask.name);
             savePendingTaskToServer();
             await saveData();
             
+            playSound('reveal'); 
             showQuestResult(pendingTask.r || "COMMON", pendingTask);
-            playSound('win'); vibrate(100);
             if (pendingTask.r === "SUPER_RARE" || pendingTask.r === "RARE") {
                 confetti({ particleCount: 200, spread: 150, colors: ['#FFD60A', '#FF3B30'] });
             }
         } catch (e) {
             console.error(e);
-        } finally {
-            document.getElementById('cardInner').classList.remove('shaking');
         }
     }
 
@@ -746,13 +834,11 @@
         document.getElementById('resRarity').className = `rarity-tag rare-${rarity}`;
         document.getElementById('resName').innerText = task.name;
         document.getElementById('resVal').innerText = "+" + task.val.toLocaleString();
-        
         let color = "#000";
         if(rarity === "SUPER_RARE") color = "#FF3B30";
         else if(rarity === "RARE") color = "#BF5AF2";
         else if(rarity === "UNCOMMON") color = "#32D74B";
         else color = "#0A84FF";
-        
         document.getElementById('resVal').style.color = color;
         document.getElementById('cardInner').classList.add('is-flipped');
     }
@@ -766,8 +852,6 @@
         document.getElementById('modalReq').innerText = pendingTask.req || "Cả Team";
         document.getElementById('modalDesc').innerHTML = pendingTask.desc || "";
         document.getElementById('modalIcon').innerText = "📸";
-
-        // Update color for modal val
         let color = "#FFF";
         if(pendingTask.r === "SUPER_RARE") color = "#FF3B30";
         else if(pendingTask.r === "RARE") color = "#BF5AF2";
@@ -775,12 +859,10 @@
         else color = "#0A84FF";
         document.getElementById('modalVal').style.background = color;
         document.getElementById('modalVal').style.color = "#000";
-
         document.getElementById('uiQuiz').classList.add('hide');
         document.getElementById('uiAction').classList.remove('hide');
         document.getElementById('imgPreview').style.display = 'none';
         document.getElementById('evidenceFile').value = "";
-
         document.getElementById('overlay').style.display = 'flex';
     }
 
@@ -814,9 +896,7 @@
         playSound('click');
         const btn = document.getElementById('btnSubmitAction');
         const fileInp = document.getElementById('evidenceFile');
-        
         if (fileInp.files.length === 0) return showToast("Bắt buộc chụp ảnh!", "error");
-
         btn.disabled = true; btn.innerText = "ĐANG GỬI...";
         try {
             let publicUrl = "";
@@ -828,7 +908,6 @@
                 const { data } = db.storage.from('evidence').getPublicUrl(name);
                 publicUrl = data.publicUrl;
             }
-            
             const reqId = Date.now() + "_" + Math.random().toString(36).substr(2, 5);
             serverData.requests.push({
                 id: reqId,
@@ -871,9 +950,7 @@
             renderAdmin();
         }
     }
-
     function closeAdmin() { document.getElementById('adminPanel').style.display = 'none'; }
-
     async function adminResetCooldown() {
         if (confirm("Reset cooldown toàn server?")) {
             for (let b in serverData.teams) {
@@ -885,7 +962,6 @@
             showToast("Đã reset cooldown toàn server!", "success");
         }
     }
-
     function renderAdmin() {
         const pending = document.getElementById('pendingList');
         if (!serverData.requests || serverData.requests.length === 0) {
@@ -908,7 +984,6 @@
             });
             pending.innerHTML = html;
         }
-
         const ov = document.getElementById('adminOverviewList');
         let ovHtml = "";
         for (let b in ORG_CHART) {
@@ -926,7 +1001,6 @@
         }
         ov.innerHTML = ovHtml;
     }
-
     async function editBalance(b, i) {
         const newBal = prompt("Sửa số tiền:", getTeamData(b,i).bal || 0);
         if (newBal !== null && !isNaN(newBal)) {
@@ -935,7 +1009,6 @@
             renderAdmin();
         }
     }
-
     async function unlockTeam(b, i) {
         if (confirm("Gỡ trạng thái chờ duyệt/lỗi cho team này?")) {
             getTeamData(b,i).st = 0;
@@ -945,7 +1018,6 @@
             showToast("Đã mở khóa!", "success");
         }
     }
-
     async function adminApprove(idx) {
         const r = serverData.requests[idx];
         const team = getTeamData(r.block, r.idx);
@@ -958,7 +1030,6 @@
         renderAdmin();
         showToast("Đã duyệt!", "success");
     }
-
     async function adminReject(idx) {
         const reason = prompt("Lý do từ chối:", "Chưa đạt yêu cầu");
         if (!reason) return;
@@ -972,7 +1043,6 @@
         renderAdmin();
         showToast("Đã từ chối", "info");
     }
-
     async function resetServerData() {
         if (confirm("XÓA TOÀN BỘ DỮ LIỆU SERVER?")) {
             serverData = { teams: {}, requests: [], boss: {}, recentTasks: {}, pendingTask: {}, resetSignal: Date.now() };
