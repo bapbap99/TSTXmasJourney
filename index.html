@@ -108,16 +108,12 @@
             background: rgba(0,0,0,0.95); z-index: 999; display: none;
             overflow: hidden; justify-content: center; align-items: center;
         }
-        
-        /* Phase 1: Explosion */
         .cine-card {
             position: absolute; width: 60px; height: 90px;
             background: linear-gradient(135deg, #444, #111);
             border: 1px solid #666; border-radius: 6px;
             opacity: 0; pointer-events: none;
         }
-
-        /* Phase 2: Horizontal Run */
         .cine-track {
             position: absolute; top: 50%; left: 0; height: 140px; width: 100%;
             transform: translateY(-50%);
@@ -135,8 +131,6 @@
             font-size: 24px; font-weight: bold; color: #555;
             box-shadow: 0 0 10px rgba(0,0,0,0.5);
         }
-
-        /* Phase 3: Final Tension Card */
         #cineFinalCard {
             width: 180px; height: 260px; border-radius: 20px;
             background: #111; border: 4px solid #FFF;
@@ -333,7 +327,7 @@
         </div>
 
         <div style="display: flex; gap: 10px; margin-top: 15px;">
-            <button class="btn btn-secondary" style="flex:1;" onclick="skipTask()">BỎ QUA (-5p)</button>
+            <button class="btn btn-secondary" style="flex:1;" onclick="skipTask()">BỎ QUA</button>
             <button class="btn btn-secondary" style="flex:1; background: transparent; border: 1px solid #444;" onclick="closeTask()">ĐỂ SAU</button>
         </div>
     </div>
@@ -366,7 +360,7 @@
         win: new Audio("https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3"),
         fail: new Audio("https://assets.mixkit.co/active_storage/sfx/2572/2572-preview.mp3"),
         tick: new Audio("https://assets.mixkit.co/active_storage/sfx/2578/2578-preview.mp3"),
-        reveal: new Audio("https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3") // Big reveal
+        reveal: new Audio("https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3") 
     };
     function playSound(name) { try { sounds[name].currentTime = 0; sounds[name].play(); vibrate(10); } catch(e){} }
     function vibrate(ms) { if (navigator.vibrate) navigator.vibrate(ms); }
@@ -452,7 +446,8 @@
                 const bag1 = ['COMMON','COMMON','COMMON','COMMON','COMMON','UNCOMMON','UNCOMMON','UNCOMMON','RARE','SUPER_RARE'];
                 team.bag = shuffle(bag1);
             } else {
-                const bag2 = ['COMMON','COMMON','COMMON','COMMON','COMMON','COMMON','COMMON','COMMON','COMMON','COMMON','UNCOMMON','UNCOMMON','UNCOMMON','UNCOMMON','UNCOMMON','UNCOMMON','RARE','RARE','RARE','SUPER_RARE'];
+                // HARDCORE MODE: 14 Common, 4 Uncommon, 1 Rare, 1 Super Rare
+                const bag2 = ['COMMON','COMMON','COMMON','COMMON','COMMON','COMMON','COMMON','COMMON','COMMON','COMMON','COMMON','COMMON','COMMON','COMMON','UNCOMMON','UNCOMMON','UNCOMMON','UNCOMMON','RARE','SUPER_RARE'];
                 team.bag = shuffle(bag2);
             }
         }
@@ -722,7 +717,6 @@
         const strip = document.getElementById('cineStrip');
         const finalCard = document.getElementById('cineFinalCard');
         
-        // Reset States
         overlay.style.display = 'flex';
         explosionCont.innerHTML = '';
         strip.innerHTML = '';
@@ -731,8 +725,7 @@
         finalCard.style.opacity = '0';
         finalCard.className = '';
         
-        // 1. EXPLOSION (0s - 0.5s)
-        playSound('spin'); // start woosh
+        playSound('spin'); 
         for(let i=0; i<30; i++) {
             const p = document.createElement('div');
             p.className = 'cine-card';
@@ -750,48 +743,30 @@
             ], { duration: 600, easing: 'ease-out', fill: 'forwards' });
         }
         
-        // 2. HORIZONTAL RUN (0.5s - 3.0s)
         setTimeout(() => {
             track.style.opacity = '1';
-            // Generate dummy cards
             let html = "";
             for(let i=0; i<30; i++) {
                 const val = Math.random() < 0.8 ? "10K" : (Math.random()<0.5?"30K":"100K");
                 html += `<div class="strip-card">${val}</div>`;
             }
             strip.innerHTML = html;
-            
-            // Animate scroll
-            strip.animate([
-                { transform: 'translateX(0)' },
-                { transform: 'translateX(-2000px)' }
-            ], { duration: 2500, easing: 'linear', iterations: 1 });
-            
-            // Ticking sound loop & Vibration
+            strip.animate([{ transform: 'translateX(0)' }, { transform: 'translateX(-2000px)' }], { duration: 2500, easing: 'linear', iterations: 1 });
             const tickInterval = setInterval(() => { playSound('tick'); vibrate(30); }, 100);
             setTimeout(() => clearInterval(tickInterval), 2500);
         }, 400);
 
-        // 3. FINAL TENSION (3.0s - 4.8s)
         setTimeout(() => {
-            track.style.opacity = '0'; // Hide strip
+            track.style.opacity = '0'; 
             finalCard.style.display = 'block';
-            
-            // Fade in center card
-            finalCard.animate([
-                { transform: 'scale(0.5)', opacity: 0 },
-                { transform: 'scale(1)', opacity: 1 }
-            ], { duration: 300, fill: 'forwards' });
-            
-            // Pulsing colors
+            finalCard.animate([{ transform: 'scale(0.5)', opacity: 0 }, { transform: 'scale(1)', opacity: 1 }], { duration: 300, fill: 'forwards' });
             finalCard.classList.add('pulsing-white');
             vibrate(500);
         }, 2900);
 
-        // 4. REVEAL (5.0s)
         setTimeout(() => {
-            overlay.style.display = 'none'; // Close cinematic
-            finalizeResult(); // Show real modal
+            overlay.style.display = 'none'; 
+            finalizeResult(); 
         }, 4800);
     }
 
@@ -920,6 +895,10 @@
                 timestamp: Date.now()
             });
             getTeamData(curBlock, curSubIdx).st = 1;
+            
+            // RESET SKIP COUNT ON SUBMIT
+            localStorage.setItem(`skip_${curBlock}_${curSubIdx}`, 0);
+            
             pendingTask = null;
             savePendingTaskToServer();
             await saveData();
@@ -936,9 +915,21 @@
 
     function skipTask() {
         playSound('click');
-        if (confirm(`Bỏ qua nhiệm vụ này? Bạn sẽ phải chờ ${COOLDOWN_MINUTES} phút.`)) {
-            clearTaskAndCooldown(COOLDOWN_MINUTES);
-            showToast("Đã bỏ qua!", "info");
+        const key = `skip_${curBlock}_${curSubIdx}`;
+        let usedSkips = parseInt(localStorage.getItem(key) || 0);
+        const FREE_LIMIT = 2; // 2 Free skips
+
+        if (usedSkips < FREE_LIMIT) {
+            if(confirm(`Bỏ qua nhiệm vụ này? (Miễn phí: ${usedSkips + 1}/${FREE_LIMIT})`)) {
+                localStorage.setItem(key, usedSkips + 1);
+                clearTaskAndCooldown(0); // 0 minutes penalty
+                showToast(`Đã bỏ qua! Còn ${FREE_LIMIT - (usedSkips + 1)} lượt miễn phí.`, "info");
+            }
+        } else {
+            if (confirm(`Hết lượt miễn phí! Bỏ qua sẽ bị phạt ${COOLDOWN_MINUTES} phút hồi chiêu?`)) {
+                clearTaskAndCooldown(COOLDOWN_MINUTES);
+                showToast("Đã bỏ qua (Có phạt)!", "info");
+            }
         }
     }
 
